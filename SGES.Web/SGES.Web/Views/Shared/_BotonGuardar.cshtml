@@ -1,0 +1,41 @@
+@*
+    _BotonGuardar.cshtml — Botón de acción para guardar / enviar formularios
+
+    Parámetros (vía ViewData al invocar el partial):
+        "texto"     : string — Texto visible del botón (default: "Guardar")
+        "icono"     : string — Clase de ícono Bootstrap Icons, ej: "bi-floppy" (default: "bi-floppy")
+        "cssClass"  : string — Clases CSS adicionales (opcional)
+        "disabled"  : bool   — Deshabilita el botón (default: false)
+        "id"        : string — Atributo id del botón (opcional)
+        "form"      : string — Id del formulario al que pertenece si está fuera de él (opcional)
+
+    Uso básico:
+        @Html.Partial("_BotonGuardar")
+
+    Con opciones:
+        @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData) {
+            { "texto",   "Registrar" },
+            { "icono",   "bi-person-plus" },
+            { "disabled", !Model.EsEditable }
+        })
+*@
+
+@{
+    var texto    = ViewData["texto"]?.ToString() ?? "Guardar";
+    var icono    = ViewData["icono"]?.ToString() ?? "bi-floppy";
+    var cssClass = ViewData["cssClass"]?.ToString() ?? "";
+    var disabled = ViewData["disabled"] is bool d && d;
+    var id       = ViewData["id"]?.ToString() ?? "";
+    var form     = ViewData["form"]?.ToString() ?? "";
+
+    var btnClass = "btn btn-primary sges-btn-guardar " + cssClass;
+}
+
+<button type="submit"
+        class="@btnClass"
+        @(disabled ? "disabled" : "")
+        @(!string.IsNullOrEmpty(id)   ? $"id=\"{id}\""     : "")
+        @(!string.IsNullOrEmpty(form) ? $"form=\"{form}\"" : "")>
+    <i class="bi @icono me-1" aria-hidden="true"></i>
+    @texto
+</button>

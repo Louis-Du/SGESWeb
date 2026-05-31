@@ -1,0 +1,75 @@
+@*
+    _TextArea.cshtml — Componente reutilizable de área de texto multilínea
+
+    Parámetros (vía ViewData al invocar el partial):
+        "id"          : string  — Atributo id/name del textarea (requerido)
+        "label"       : string  — Etiqueta visible del campo (requerido)
+        "value"       : string  — Contenido actual del textarea (opcional)
+        "placeholder" : string  — Texto de ayuda dentro del textarea (opcional)
+        "rows"        : int     — Número de filas visibles (default: 4)
+        "required"    : bool    — Marca el campo como obligatorio (default: false)
+        "disabled"    : bool    — Deshabilita el campo (default: false)
+        "readonly"    : bool    — Campo de solo lectura (default: false)
+        "maxLength"   : int     — Longitud máxima de caracteres (opcional)
+        "helpText"    : string  — Texto de ayuda debajo del campo (opcional)
+        "cssClass"    : string  — Clases CSS adicionales (opcional)
+        "resize"      : string  — Control de redimensión: none | vertical | horizontal | both (default: "vertical")
+
+    Uso básico:
+        @Html.Partial("_TextArea", null, new ViewDataDictionary(ViewData) {
+            { "id",          "observaciones" },
+            { "label",       "Observaciones" },
+            { "value",       Model.Observaciones },
+            { "rows",        5 },
+            { "placeholder", "Escriba sus observaciones aquí..." },
+            { "required",    false }
+        })
+*@
+
+@{
+    var id          = ViewData["id"]?.ToString() ?? "textarea";
+    var label       = ViewData["label"]?.ToString() ?? "Campo";
+    var value       = ViewData["value"]?.ToString() ?? "";
+    var placeholder = ViewData["placeholder"]?.ToString() ?? "";
+    var rows        = ViewData["rows"] is int rw ? rw : 4;
+    var required    = ViewData["required"] is bool req && req;
+    var disabled    = ViewData["disabled"] is bool dis && dis;
+    var readOnly    = ViewData["readonly"] is bool ro && ro;
+    var maxLength   = ViewData["maxLength"];
+    var helpText    = ViewData["helpText"]?.ToString();
+    var cssClass    = ViewData["cssClass"]?.ToString() ?? "";
+    var resize      = ViewData["resize"]?.ToString() ?? "vertical";
+
+    var textareaClass = "form-control sges-textarea " + cssClass;
+    var helpId        = id + "Help";
+    var resizeStyle   = $"resize:{resize};";
+}
+
+<div class="mb-3">
+    <label for="@id" class="form-label sges-label">
+        @label
+        @if (required)
+        {
+            <span class="text-danger ms-1" title="Campo obligatorio" aria-hidden="true">*</span>
+        }
+    </label>
+
+    <textarea id="@id"
+              name="@id"
+              class="@textareaClass"
+              rows="@rows"
+              placeholder="@placeholder"
+              style="@resizeStyle"
+              @(required ? "required" : "")
+              @(disabled ? "disabled" : "")
+              @(readOnly ? "readonly" : "")
+              @(maxLength != null ? $"maxlength=\"{maxLength}\"" : "")
+              @(!string.IsNullOrEmpty(helpText) ? $"aria-describedby=\"{helpId}\"" : "")>@value</textarea>
+
+    @if (!string.IsNullOrEmpty(helpText))
+    {
+        <div id="@helpId" class="form-text sges-help-text">
+            @helpText
+        </div>
+    }
+</div>

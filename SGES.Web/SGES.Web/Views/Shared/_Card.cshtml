@@ -1,0 +1,105 @@
+@*
+    _Card.cshtml — Componente reutilizable de tarjeta (Bootstrap Card)
+
+    Envuelve contenido en una card de Bootstrap con encabezado, cuerpo y pie opcionales.
+    El contenido del cuerpo se define en la vista padre usando RenderSection o
+    pasando HTML pre-renderizado vía ViewData.
+
+    Parámetros (vía ViewData al invocar el partial):
+        "titulo"        : string — Texto del encabezado de la card (opcional)
+        "subtitulo"     : string — Subtítulo o descripción debajo del título (opcional)
+        "icono"         : string — Clase Bootstrap Icons para el encabezado, ej: "bi-person" (opcional)
+        "footer"        : string — Texto o HTML simple del pie de la card (opcional)
+        "cuerpoHtml"    : string — HTML del contenido principal (para uso sin secciones) (opcional)
+        "cssClass"      : string — Clases CSS adicionales a la card (opcional)
+        "headerCss"     : string — Clases CSS adicionales al card-header (opcional)
+        "bodyCss"       : string — Clases CSS adicionales al card-body (opcional)
+        "shadow"        : string — Sombra: "sm" | "" | "lg" (default: "sm")
+        "color"         : string — Color de acento del header: "primary" | "secondary" | "success" | "danger" | "warning" | "info" | "dark" | "" (default: "")
+        "id"            : string — Atributo id de la card (opcional)
+        "sinBorde"      : bool   — Quita el borde de la card (default: false)
+
+    Uso básico (pasando HTML como string):
+        @Html.Partial("_Card", null, new ViewDataDictionary(ViewData) {
+            { "titulo",     "Datos del Estudiante" },
+            { "icono",      "bi-person-vcard" },
+            { "cuerpoHtml", htmlContenido.ToString() },
+            { "shadow",     "sm" }
+        })
+
+    Uso como wrapper en vista (método recomendado):
+        @{
+            ViewData["titulo"] = "Datos del Estudiante";
+            ViewData["icono"]  = "bi-person-vcard";
+        }
+        @Html.Partial("_Card")
+        @* El contenido se coloca dentro del card-body en la vista que llama *@
+
+@{
+    var titulo     = ViewData["titulo"]?.ToString();
+    var subtitulo  = ViewData["subtitulo"]?.ToString();
+    var icono      = ViewData["icono"]?.ToString();
+    var footer     = ViewData["footer"]?.ToString();
+    var cuerpoHtml = ViewData["cuerpoHtml"]?.ToString();
+    var cssClass   = ViewData["cssClass"]?.ToString() ?? "";
+    var headerCss  = ViewData["headerCss"]?.ToString() ?? "";
+    var bodyCss    = ViewData["bodyCss"]?.ToString() ?? "";
+    var shadow     = ViewData["shadow"]?.ToString() ?? "sm";
+    var color      = ViewData["color"]?.ToString() ?? "";
+    var cardId     = ViewData["id"]?.ToString() ?? "";
+    var sinBorde   = ViewData["sinBorde"] is bool sb && sb;
+
+    // Construir clases de la card
+    var shadowClass = shadow == "lg" ? "shadow-lg" : shadow == "sm" ? "shadow-sm" : "shadow";
+    var cardClasses = $"card sges-card {shadowClass} {(sinBorde ? "border-0" : "")} {cssClass}".Trim();
+
+    // Clases del header según color
+    var headerColorClass = !string.IsNullOrEmpty(color)
+        ? $"text-bg-{color}"
+        : "sges-card-header";
+    var headerClasses = $"card-header {headerColorClass} {headerCss}".Trim();
+}
+
+<div class="@cardClasses"
+     @(!string.IsNullOrEmpty(cardId) ? $"id=\"{cardId}\"" : "")>
+
+    @* ── Encabezado ── *@
+    @if (!string.IsNullOrEmpty(titulo) || !string.IsNullOrEmpty(icono))
+    {
+        <div class="@headerClasses">
+            <div class="d-flex align-items-center gap-2">
+                @if (!string.IsNullOrEmpty(icono))
+                {
+                    <i class="bi @icono fs-5" aria-hidden="true"></i>
+                }
+                <div>
+                    @if (!string.IsNullOrEmpty(titulo))
+                    {
+                        <h5 class="mb-0 sges-card-title">@titulo</h5>
+                    }
+                    @if (!string.IsNullOrEmpty(subtitulo))
+                    {
+                        <small class="sges-card-subtitle opacity-75">@subtitulo</small>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @* ── Cuerpo ── *@
+    <div class="card-body @bodyCss">
+        @if (!string.IsNullOrEmpty(cuerpoHtml))
+        {
+            @Html.Raw(cuerpoHtml)
+        }
+    </div>
+
+    @* ── Pie ── *@
+    @if (!string.IsNullOrEmpty(footer))
+    {
+        <div class="card-footer sges-card-footer text-muted">
+            @Html.Raw(footer)
+        </div>
+    }
+
+</div>
