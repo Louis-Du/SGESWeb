@@ -1,0 +1,54 @@
+﻿@using System.Web.Mvc
+
+@{
+    ViewBag.Title = "Crear Evento";
+}
+
+@(
+    Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+    {
+        { "titulo", "Registrar Evento" },
+        { "icono", "bi-calendar-event" },
+        { "subtitulo", "Información del evento" }
+    })
+)
+
+@Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+{
+    {"id", "TipoEvento" },
+    { "label", "Tipo de Evento" },
+    { "defaultOption", "-- Seleccione --" }
+})
+
+
+@Html.Partial("_TextBox", null,
+new ViewDataDictionary(ViewData)
+{
+    { "id", "FechaHoraInicio" },
+    { "label", "Fecha y Hora Inicio" },
+    { "type", "datetime-local" }
+})
+
+
+@Html.Partial("_TextBox", null,
+new ViewDataDictionary(ViewData)
+{
+    { "id", "FechaHoraFin" },
+    { "label", "Fecha y Hora Fin" },
+    { "type", "datetime-local" }
+})
+
+<div class="mt-3">
+
+    @Html.Partial("_BotonGuardar")
+
+    @Html.Partial("_BotonCancelar",
+    null,
+    new ViewDataDictionary(ViewData)
+    {
+        { "url", "/" }
+    })
+
+</div>
+
+

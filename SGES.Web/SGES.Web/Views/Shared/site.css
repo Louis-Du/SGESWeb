@@ -1,0 +1,589 @@
+/* ============================================================
+   site.css — Estilos globales SGES (Sistema de Gestión Escolar)
+   Versión: 1.0
+   Descripción: Estilos institucionales, personalizaciones de Bootstrap
+                y clases reutilizables para toda la aplicación.
+   ============================================================ */
+
+/* ────────────────────────────────────────────────────────────
+   1. VARIABLES CSS — Colores institucionales y tokens de diseño
+   ──────────────────────────────────────────────────────────── */
+:root {
+    /* Paleta institucional */
+    --sges-primario:        #1a3a6b;   /* Azul institucional oscuro */
+    --sges-primario-hover:  #122c52;   /* Azul más oscuro para hover */
+    --sges-primario-light:  #e8f0fb;   /* Azul muy claro (fondos) */
+    --sges-secundario:      #4a6fa5;   /* Azul medio */
+    --sges-acento:          #f0a500;   /* Amarillo/dorado institucional */
+    --sges-acento-hover:    #c98a00;
+
+    /* Semánticos */
+    --sges-exito:           #198754;
+    --sges-peligro:         #dc3545;
+    --sges-advertencia:     #ffc107;
+    --sges-info:            #0dcaf0;
+
+    /* Neutros */
+    --sges-blanco:          #ffffff;
+    --sges-gris-claro:      #f8f9fa;
+    --sges-gris-borde:      #dee2e6;
+    --sges-gris-texto:      #6c757d;
+    --sges-negro-suave:     #212529;
+
+    /* Tipografía */
+    --sges-font-base:       'Segoe UI', system-ui, -apple-system, sans-serif;
+    --sges-font-size-base:  0.9375rem; /* 15px */
+    --sges-font-size-sm:    0.8125rem; /* 13px */
+    --sges-font-size-lg:    1.0625rem; /* 17px */
+    --sges-line-height:     1.6;
+
+    /* Espaciado */
+    --sges-radio-borde:     0.375rem;  /* 6px */
+    --sges-radio-card:      0.5rem;    /* 8px */
+    --sges-padding-card:    1.25rem;   /* 20px */
+    --sges-gap-form:        1rem;      /* 16px */
+
+    /* Sombras */
+    --sges-sombra-sm:       0 1px 4px rgba(26, 58, 107, 0.08);
+    --sges-sombra-md:       0 4px 16px rgba(26, 58, 107, 0.12);
+    --sges-sombra-lg:       0 8px 32px rgba(26, 58, 107, 0.16);
+
+    /* Transiciones */
+    --sges-transicion:      all 0.2s ease-in-out;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   2. TIPOGRAFÍA BASE
+   ──────────────────────────────────────────────────────────── */
+body {
+    font-family:      var(--sges-font-base);
+    font-size:        var(--sges-font-size-base);
+    line-height:      var(--sges-line-height);
+    color:            var(--sges-negro-suave);
+    background-color: var(--sges-gris-claro);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color:       var(--sges-primario);
+    line-height: 1.3;
+}
+
+p {
+    margin-bottom: 0.75rem;
+}
+
+small, .text-small {
+    font-size: var(--sges-font-size-sm);
+}
+
+.sges-titulo-seccion {
+    font-size:     1.25rem;
+    font-weight:   700;
+    color:         var(--sges-primario);
+    border-left:   4px solid var(--sges-acento);
+    padding-left:  0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   3. LAYOUT Y CONTENEDOR PRINCIPAL
+   ──────────────────────────────────────────────────────────── */
+.sges-wrapper {
+    min-height: 100vh;
+    display:    flex;
+    flex-direction: column;
+}
+
+.sges-main {
+    flex: 1;
+    padding: 1.5rem 0;
+}
+
+/* Página con breadcrumb */
+.sges-page-header {
+    background:    var(--sges-blanco);
+    border-bottom: 1px solid var(--sges-gris-borde);
+    padding:       1rem 0;
+    margin-bottom: 1.5rem;
+    box-shadow:    var(--sges-sombra-sm);
+}
+
+.sges-page-title {
+    font-size:   1.5rem;
+    font-weight: 700;
+    color:       var(--sges-primario);
+    margin:      0;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   4. NAVBAR — Personalización institucional
+   ──────────────────────────────────────────────────────────── */
+.sges-navbar {
+    background-color: var(--sges-primario) !important;
+    box-shadow:       var(--sges-sombra-md);
+    padding:          0.5rem 1rem;
+}
+
+.sges-navbar .navbar-brand {
+    font-weight: 700;
+    font-size:   1.2rem;
+    color:       var(--sges-blanco) !important;
+    letter-spacing: 0.02em;
+}
+
+.sges-navbar .navbar-brand img {
+    height:       38px;
+    margin-right: 8px;
+}
+
+.sges-navbar .nav-link {
+    color:       rgba(255, 255, 255, 0.87) !important;
+    font-weight: 500;
+    padding:     0.5rem 0.9rem !important;
+    border-radius: var(--sges-radio-borde);
+    transition:  var(--sges-transicion);
+}
+
+.sges-navbar .nav-link:hover,
+.sges-navbar .nav-link:focus {
+    color:            var(--sges-blanco) !important;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.sges-navbar .nav-link.active {
+    color:            var(--sges-blanco) !important;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sges-navbar .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.sges-navbar .navbar-toggler-icon {
+    filter: invert(1);
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   5. SIDEBAR (si se utiliza)
+   ──────────────────────────────────────────────────────────── */
+.sges-sidebar {
+    width:            240px;
+    min-height:       100vh;
+    background-color: var(--sges-primario);
+    padding-top:      1rem;
+    box-shadow:       2px 0 8px rgba(0,0,0,0.12);
+}
+
+.sges-sidebar .nav-link {
+    color:         rgba(255, 255, 255, 0.8);
+    padding:       0.6rem 1.25rem;
+    border-radius: 0;
+    transition:    var(--sges-transicion);
+    font-size:     var(--sges-font-size-sm);
+    font-weight:   500;
+}
+
+.sges-sidebar .nav-link:hover {
+    color:            var(--sges-blanco);
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.sges-sidebar .nav-link.active {
+    color:            var(--sges-blanco);
+    background-color: var(--sges-acento);
+    font-weight:      600;
+}
+
+.sges-sidebar .nav-link i {
+    width:        20px;
+    margin-right: 8px;
+    text-align:   center;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   6. CARD — Componente _Card.cshtml
+   ──────────────────────────────────────────────────────────── */
+.sges-card {
+    border-radius: var(--sges-radio-card);
+    border:        1px solid var(--sges-gris-borde);
+    transition:    var(--sges-transicion);
+    overflow:      hidden;
+}
+
+.sges-card-header {
+    background-color: var(--sges-primario);
+    color:            var(--sges-blanco);
+    padding:          0.85rem var(--sges-padding-card);
+    border-bottom:    none;
+}
+
+.sges-card-title {
+    font-size:   1rem;
+    font-weight: 600;
+    margin:      0;
+    color:       inherit;
+}
+
+.sges-card-subtitle {
+    font-size: var(--sges-font-size-sm);
+    display:   block;
+    margin-top: 2px;
+}
+
+.sges-card-footer {
+    background-color: var(--sges-gris-claro);
+    border-top:       1px solid var(--sges-gris-borde);
+    padding:          0.75rem var(--sges-padding-card);
+    font-size:        var(--sges-font-size-sm);
+}
+
+/* Card body hereda el padding de Bootstrap */
+.sges-card .card-body {
+    padding: var(--sges-padding-card);
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   7. FORMULARIOS — _TextBox, _TextArea, _ComboBox
+   ──────────────────────────────────────────────────────────── */
+.sges-label {
+    font-weight: 600;
+    font-size:   var(--sges-font-size-sm);
+    color:       var(--sges-primario);
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.sges-input,
+.sges-textarea,
+.sges-select {
+    border:        1px solid var(--sges-gris-borde);
+    border-radius: var(--sges-radio-borde);
+    padding:       0.45rem 0.75rem;
+    font-size:     var(--sges-font-size-base);
+    color:         var(--sges-negro-suave);
+    background-color: var(--sges-blanco);
+    transition:    border-color 0.18s ease, box-shadow 0.18s ease;
+    width:         100%;
+}
+
+.sges-input:focus,
+.sges-textarea:focus,
+.sges-select:focus {
+    border-color: var(--sges-secundario);
+    box-shadow:   0 0 0 0.2rem rgba(74, 111, 165, 0.2);
+    outline:      none;
+}
+
+.sges-input:disabled,
+.sges-textarea:disabled,
+.sges-select:disabled {
+    background-color: #f0f0f0;
+    cursor:           not-allowed;
+    opacity:          0.7;
+}
+
+.sges-input[readonly],
+.sges-textarea[readonly] {
+    background-color: var(--sges-primario-light);
+    border-color:     var(--sges-secundario);
+    cursor:           default;
+}
+
+.sges-help-text {
+    font-size: var(--sges-font-size-sm);
+    color:     var(--sges-gris-texto);
+    margin-top: 0.25rem;
+}
+
+/* Validación */
+.sges-input.is-invalid,
+.sges-textarea.is-invalid,
+.sges-select.is-invalid {
+    border-color: var(--sges-peligro);
+}
+
+.sges-input.is-valid,
+.sges-textarea.is-valid,
+.sges-select.is-valid {
+    border-color: var(--sges-exito);
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   8. BOTONES — _BotonGuardar, _BotonCancelar, _BotonEliminar
+   ──────────────────────────────────────────────────────────── */
+/* Base compartida */
+.sges-btn-guardar,
+.sges-btn-cancelar,
+.sges-btn-eliminar {
+    font-weight:   600;
+    font-size:     var(--sges-font-size-sm);
+    padding:       0.45rem 1.1rem;
+    border-radius: var(--sges-radio-borde);
+    transition:    var(--sges-transicion);
+    letter-spacing: 0.02em;
+    display:       inline-flex;
+    align-items:   center;
+    gap:           0.3rem;
+}
+
+/* Guardar — Primario institucional */
+.sges-btn-guardar {
+    background-color: var(--sges-primario);
+    border-color:     var(--sges-primario);
+    color:            var(--sges-blanco);
+}
+
+.sges-btn-guardar:hover:not(:disabled) {
+    background-color: var(--sges-primario-hover);
+    border-color:     var(--sges-primario-hover);
+    color:            var(--sges-blanco);
+    box-shadow:       var(--sges-sombra-sm);
+    transform:        translateY(-1px);
+}
+
+/* Cancelar — Neutro secundario */
+.sges-btn-cancelar {
+    background-color: #6c757d;
+    border-color:     #6c757d;
+    color:            var(--sges-blanco);
+    text-decoration:  none;
+}
+
+.sges-btn-cancelar:hover:not(.disabled) {
+    background-color: #5c636a;
+    border-color:     #565e64;
+    color:            var(--sges-blanco);
+    text-decoration:  none;
+    transform:        translateY(-1px);
+}
+
+/* Eliminar — Peligro */
+.sges-btn-eliminar {
+    /* Los estilos base vienen de Bootstrap btn-danger */
+    transition: var(--sges-transicion);
+}
+
+.sges-btn-eliminar:hover:not(:disabled) {
+    transform:  translateY(-1px);
+    box-shadow: var(--sges-sombra-sm);
+}
+
+/* Grupo de botones de formulario */
+.sges-acciones-form {
+    display:     flex;
+    gap:         0.75rem;
+    align-items: center;
+    margin-top:  1.5rem;
+    padding-top: 1rem;
+    border-top:  1px solid var(--sges-gris-borde);
+    flex-wrap:   wrap;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   9. TABLA — _TablaBasica.cshtml
+   ──────────────────────────────────────────────────────────── */
+.sges-tabla {
+    font-size: var(--sges-font-size-sm);
+    margin-bottom: 0;
+}
+
+.sges-tabla-thead th {
+    background-color: var(--sges-primario);
+    color:            var(--sges-blanco);
+    font-weight:      600;
+    font-size:        var(--sges-font-size-sm);
+    text-transform:   uppercase;
+    letter-spacing:   0.04em;
+    border-color:     var(--sges-primario-hover);
+    white-space:      nowrap;
+    padding:          0.65rem 0.85rem;
+}
+
+.sges-tabla tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.sges-tabla tbody td {
+    padding:        0.55rem 0.85rem;
+    vertical-align: middle;
+    border-color:   var(--sges-gris-borde);
+    color:          var(--sges-negro-suave);
+}
+
+.sges-tabla.table-hover tbody tr:hover {
+    background-color: var(--sges-primario-light);
+}
+
+/* Columna de acciones */
+.sges-col-acciones {
+    width:      1%;       /* Ancho mínimo para ajustarse al contenido */
+    white-space: nowrap;
+}
+
+/* Estado vacío */
+.sges-tabla-vacia {
+    font-size:  var(--sges-font-size-base);
+    color:      var(--sges-gris-texto) !important;
+    padding:    2rem !important;
+}
+
+.sges-tabla-titulo {
+    font-size:   1rem;
+    font-weight: 600;
+    color:       var(--sges-primario);
+}
+
+/* Contenedor responsive de tabla con estilo */
+.table-responsive {
+    border-radius: var(--sges-radio-card);
+    overflow:      hidden;
+    box-shadow:    var(--sges-sombra-sm);
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   10. ALERTAS Y MENSAJES
+   ──────────────────────────────────────────────────────────── */
+.sges-alerta {
+    border-radius:  var(--sges-radio-borde);
+    border-left:    4px solid transparent;
+    padding:        0.85rem 1rem;
+    font-size:      var(--sges-font-size-sm);
+    margin-bottom:  1rem;
+}
+
+.sges-alerta-exito  { border-left-color: var(--sges-exito);      background: #d1e7dd; color: #0a3622; }
+.sges-alerta-error  { border-left-color: var(--sges-peligro);    background: #f8d7da; color: #58151c; }
+.sges-alerta-aviso  { border-left-color: var(--sges-advertencia); background: #fff3cd; color: #664d03; }
+.sges-alerta-info   { border-left-color: var(--sges-info);       background: #cff4fc; color: #055160; }
+
+
+/* ────────────────────────────────────────────────────────────
+   11. BADGES Y ETIQUETAS
+   ──────────────────────────────────────────────────────────── */
+.sges-badge {
+    font-size:     0.72rem;
+    font-weight:   600;
+    padding:       0.3em 0.65em;
+    border-radius: 50px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   12. CLASES UTILITARIAS REUTILIZABLES
+   ──────────────────────────────────────────────────────────── */
+/* Separadores de sección */
+.sges-divider {
+    border:     none;
+    border-top: 2px solid var(--sges-gris-borde);
+    margin:     1.5rem 0;
+}
+
+/* Texto institucional */
+.sges-text-primario   { color: var(--sges-primario)   !important; }
+.sges-text-secundario { color: var(--sges-secundario) !important; }
+.sges-text-acento     { color: var(--sges-acento)     !important; }
+
+/* Fondos institucionales */
+.sges-bg-primario   { background-color: var(--sges-primario)        !important; }
+.sges-bg-primario-light { background-color: var(--sges-primario-light) !important; }
+.sges-bg-acento     { background-color: var(--sges-acento)          !important; }
+
+/* Márgenes de sección */
+.sges-mt-seccion  { margin-top:    2rem; }
+.sges-mb-seccion  { margin-bottom: 2rem; }
+.sges-py-seccion  { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+
+/* Carga / esqueleto */
+.sges-loading {
+    opacity:    0.6;
+    pointer-events: none;
+}
+
+/* Cursor de tabla interactiva */
+.sges-tabla-clickable tbody tr {
+    cursor: pointer;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   13. FOOTER
+   ──────────────────────────────────────────────────────────── */
+.sges-footer {
+    background-color: var(--sges-primario);
+    color:            rgba(255, 255, 255, 0.75);
+    padding:          1rem 0;
+    margin-top:       auto;
+    font-size:        var(--sges-font-size-sm);
+    text-align:       center;
+}
+
+.sges-footer a {
+    color:           rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+}
+
+.sges-footer a:hover {
+    color:           var(--sges-blanco);
+    text-decoration: underline;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   14. RESPONSIVE — Ajustes para móvil
+   ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .sges-page-title {
+        font-size: 1.25rem;
+    }
+
+    .sges-card .card-body {
+        padding: 1rem;
+    }
+
+    .sges-acciones-form {
+        flex-direction: column;
+        align-items:    stretch;
+    }
+
+    .sges-acciones-form .btn {
+        width:       100%;
+        justify-content: center;
+    }
+
+    .sges-tabla-thead th {
+        font-size: 0.75rem;
+        padding:   0.5rem 0.6rem;
+    }
+
+    .sges-tabla tbody td {
+        font-size: 0.82rem;
+        padding:   0.45rem 0.6rem;
+    }
+
+    .sges-sidebar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    :root {
+        --sges-font-size-base: 0.875rem;
+    }
+
+    .sges-titulo-seccion {
+        font-size: 1.05rem;
+    }
+}
