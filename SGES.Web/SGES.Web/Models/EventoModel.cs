@@ -1,4 +1,6 @@
-﻿namespace SGESWeb.Models
+﻿using System;
+
+namespace SGESWeb.Models
 {
     public class EventoModel
     {

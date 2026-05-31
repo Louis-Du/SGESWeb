@@ -8,9 +8,9 @@ namespace SGESWeb.Models
     {
         private readonly Conexion cn = new Conexion();
 
-        public List<Evento> ObtenerEventos()
+        public List<EventoModel> ObtenerEventos()
         {
-            List<Evento> lista = new List<Evento>();
+            List<EventoModel> lista = new List<EventoModel>();
 
             using (SqlConnection con = cn.ObtenerConexion())
             {
@@ -24,7 +24,7 @@ namespace SGESWeb.Models
 
                 while (dr.Read())
                 {
-                    lista.Add(new Evento
+                    lista.Add(new EventoModel
                     {
                         IdEvento = Convert.ToInt32(dr["idEvento"]),
                         NombreEvento = dr["nombreEvento"].ToString(),
@@ -43,8 +43,8 @@ namespace SGESWeb.Models
         {
             using (SqlConnection con = cn.ObtenerConexion())
             {
-                string query = @"INSERT INTO Eventos (idEvento, nombreEvento, tipoEvento, diaEvento, fechaHoraInicio, fechaHoraFin, idUser)
-                               VALUES (@idEvento, @nombreEvento, @tipoEvento, @diaEvento, @fechaHoraInicio, @fechaHoraFin, @idUser)";
+                string query = @"INSERT INTO Eventos (nombreEvento, tipoEvento, diaEvento, fechaHoraInicio, fechaHoraFin, idUser)
+                               VALUES (@nombreEvento, @tipoEvento, @diaEvento, @fechaHoraInicio, @fechaHoraFin, @idUser)";
 
                 SqlCommand cmd = new SqlCommand(query, con);
 

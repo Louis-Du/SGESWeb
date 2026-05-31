@@ -1,11 +1,11 @@
 ﻿USE SGES;
 GO
 
-INSERT INTO Programas
+INSERT INTO Programas (codigoProg, nombreProg, fechaIniProg, fechaFinProg, nivelProg, duracionProg)
 VALUES
-(101, 'Análisis de Datos', '2024-01-15', 24, 'Tecnólogo'),
-(102, 'Desarrollo de Software', '2024-02-01', 18, 'Técnico'),
-(103, 'Ciberseguridad', '2024-03-10', 12, 'Especialización');
+(101, 'Análisis de Datos', '2024-01-15', '2026-01-15', 'Tecnólogo', 24),
+(102, 'Desarrollo de Software', '2024-02-01', '2025-08-01', 'Técnico', 18),
+(103, 'Ciberseguridad', '2024-03-10', '2025-03-10', 'Especialización', 12);
 
 INSERT INTO Usuario (nombreUser, emailUser, contraseñaUser, tipoUser)
 VALUES
