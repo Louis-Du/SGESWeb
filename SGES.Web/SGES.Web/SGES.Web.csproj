@@ -120,10 +120,14 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\EventoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Models\Conexión.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\EventoDAO.cs" />
+    <Compile Include="Models\EventoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +147,8 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Database\Data.sql" />
+    <Content Include="Database\Shema.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -163,6 +169,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Views\Shared\site.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -177,10 +184,19 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\_BotonCancelar.cshtml" />
+    <Content Include="Views\Shared\_BotonEliminar.cshtml" />
+    <Content Include="Views\Shared\_BotonGuardar.cshtml" />
+    <Content Include="Views\Shared\_Card.cshtml" />
+    <Content Include="Views\Shared\_ComboBox.cshtml" />
+    <Content Include="Views\Shared\COMPONENTES.md" />
+    <Content Include="Views\Shared\_TablaBasica.cshtml" />
+    <Content Include="Views\Shared\_TextArea.cshtml" />
+    <Content Include="Views\Shared\_TextBox.cshtml" />
+    <Content Include="Views\Evento\CrearEvento.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

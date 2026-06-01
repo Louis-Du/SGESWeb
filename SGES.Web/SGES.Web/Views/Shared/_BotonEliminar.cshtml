@@ -1,0 +1,82 @@
+@*
+    _BotonEliminar.cshtml — Botón de acción para eliminar registros
+
+    Genera un formulario POST con confirmación de seguridad antes de eliminar.
+    Siempre usa POST para operaciones destructivas (nunca GET).
+
+    Parámetros (vía ViewData al invocar el partial):
+        "id"          : object  — Identificador del registro a eliminar (requerido)
+        "accion"      : string  — Nombre del Action del controlador (default: "Delete")
+        "controlador" : string  — Nombre del Controlador (requerido)
+        "area"        : string  — Nombre del Área si aplica (opcional)
+        "texto"       : string  — Texto visible del botón (default: "Eliminar")
+        "icono"       : string  — Clase de ícono Bootstrap Icons (default: "bi-trash3")
+        "confirm"     : string  — Mensaje de confirmación (default: "¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer.")
+        "cssClass"    : string  — Clases CSS adicionales al botón (opcional)
+        "disabled"    : bool    — Deshabilita el botón (default: false)
+        "size"        : string  — Tamaño: "sm" | "" | "lg" (default: "")
+        "outline"     : bool    — Estilo outline en lugar de sólido (default: false)
+
+    Uso básico:
+        @Html.Partial("_BotonEliminar", null, new ViewDataDictionary(ViewData) {
+            { "id",          item.EstudianteId },
+            { "controlador", "Estudiantes" }
+        })
+
+    En tabla con botón pequeño outline:
+        @Html.Partial("_BotonEliminar", null, new ViewDataDictionary(ViewData) {
+            { "id",          item.Id },
+            { "controlador", "Estudiantes" },
+            { "accion",      "Delete" },
+            { "texto",       "" },
+            { "size",        "sm" },
+            { "outline",     true }
+        })
+*@
+
+@{
+    var registroId  = ViewData["id"];
+    var accion      = ViewData["accion"]?.ToString() ?? "Delete";
+    var controlador = ViewData["controlador"]?.ToString() ?? "Home";
+    var area        = ViewData["area"]?.ToString() ?? "";
+    var texto       = ViewData["texto"]?.ToString() ?? "Eliminar";
+    var icono       = ViewData["icono"]?.ToString() ?? "bi-trash3";
+    var confirm     = ViewData["confirm"]?.ToString()
+                        ?? "¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer.";
+    var cssClass    = ViewData["cssClass"]?.ToString() ?? "";
+    var disabled    = ViewData["disabled"] is bool d && d;
+    var size        = ViewData["size"]?.ToString() ?? "";
+    var outline     = ViewData["outline"] is bool o && o;
+
+    // Construir clases del botón
+    var btnVariant  = outline ? "btn-outline-danger" : "btn-danger";
+    var btnSize     = !string.IsNullOrEmpty(size) ? $"btn-{size}" : "";
+    var btnClass    = $"btn {btnVariant} sges-btn-eliminar {btnSize} {cssClass}".Trim();
+
+    // ID único para el formulario (evitar colisiones en tablas con múltiples botones)
+    var formId      = $"frmEliminar_{controlador}_{registroId}";
+
+    // Construir la URL de la acción
+    var routeValues = new System.Web.Routing.RouteValueDictionary();
+    routeValues["id"] = registroId;
+    if (!string.IsNullOrEmpty(area)) { routeValues["area"] = area; }
+
+    var actionUrl = Url.Action(accion, controlador, routeValues);
+}
+
+@using (Html.BeginForm(accion, controlador, routeValues, FormMethod.Post,
+    new { id = formId, style = "display:inline;" }))
+{
+    @Html.AntiForgeryToken()
+
+    <button type="button"
+            class="@btnClass"
+            @(disabled ? "disabled" : "")
+            onclick="if(confirm('@Html.Raw(confirm)')) { document.getElementById('@formId').submit(); }">
+        <i class="bi @icono @(!string.IsNullOrEmpty(texto) ? "me-1" : "")" aria-hidden="true"></i>
+        @if (!string.IsNullOrEmpty(texto))
+        {
+            @texto
+        }
+    </button>
+}

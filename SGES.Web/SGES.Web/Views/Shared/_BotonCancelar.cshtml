@@ -1,0 +1,55 @@
+@*
+    _BotonCancelar.cshtml — Botón de acción para cancelar / volver
+
+    Parámetros (vía ViewData al invocar el partial):
+        "texto"     : string — Texto visible del botón (default: "Cancelar")
+        "url"       : string — URL de destino al cancelar (default: "javascript:history.back()")
+        "icono"     : string — Clase de ícono Bootstrap Icons (default: "bi-x-circle")
+        "cssClass"  : string — Clases CSS adicionales (opcional)
+        "disabled"  : bool   — Deshabilita el botón (default: false)
+        "id"        : string — Atributo id del botón (opcional)
+        "confirm"   : string — Mensaje de confirmación antes de cancelar (opcional)
+
+    Uso básico:
+        @Html.Partial("_BotonCancelar")
+
+    Con URL específica:
+        @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData) {
+            { "texto", "Volver al listado" },
+            { "url",   Url.Action("Index", "Estudiantes") }
+        })
+
+    Con confirmación:
+        @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData) {
+            { "url",     Url.Action("Index", "Estudiantes") },
+            { "confirm", "¿Está seguro que desea cancelar? Los cambios no guardados se perderán." }
+        })
+*@
+
+@{
+    var texto    = ViewData["texto"]?.ToString() ?? "Cancelar";
+    var url      = ViewData["url"]?.ToString() ?? "javascript:history.back()";
+    var icono    = ViewData["icono"]?.ToString() ?? "bi-x-circle";
+    var cssClass = ViewData["cssClass"]?.ToString() ?? "";
+    var disabled = ViewData["disabled"] is bool d && d;
+    var id       = ViewData["id"]?.ToString() ?? "";
+    var confirm  = ViewData["confirm"]?.ToString() ?? "";
+
+    var btnClass = "btn btn-secondary sges-btn-cancelar " + cssClass;
+
+    // Si hay mensaje de confirmación, el href se maneja via onclick
+    var href    = string.IsNullOrEmpty(confirm) ? url : "#";
+    var onclick = string.IsNullOrEmpty(confirm)
+        ? ""
+        : $"return confirm('{confirm}') ? (window.location='{url}', true) : false;";
+}
+
+<a href="@href"
+   class="@btnClass @(disabled ? "disabled" : "")"
+   role="button"
+   @(disabled ? "aria-disabled=\"true\"" : "")
+   @(!string.IsNullOrEmpty(id)      ? $"id=\"{id}\""           : "")
+   @(!string.IsNullOrEmpty(onclick) ? $"onclick=\"{onclick}\""  : "")>
+    <i class="bi @icono me-1" aria-hidden="true"></i>
+    @texto
+</a>
