@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Web.Mvc;
 using SGES.Web.Models;
+using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Web.Mvc;
 
-namespace SGES.Web.Controllers
+namespace SGESWeb.Controllers
 {
     public class EventoController : Controller
     {
@@ -17,10 +17,21 @@ namespace SGES.Web.Controllers
             _dao = dao ?? throw new ArgumentNullException(nameof(dao));
         }
 
+        private SelectList ObtenerTiposEvento()
+        {
+            return new SelectList(new List<string>
+            {
+                "Educativo",
+                "Deportivo",
+                "Social",
+                "Cultural"
+            });
+        }
+
         [HttpGet]
         public ActionResult CrearEvento()
         {
-            PopulateTiposEvento();
+            ViewBag.TiposEvento = ObtenerTiposEvento();
             return View(new EventoModel());
         }
 
@@ -28,7 +39,25 @@ namespace SGES.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CrearEvento(EventoModel evento)
         {
-            PopulateTiposEvento();
+            ViewBag.TiposEvento = ObtenerTiposEvento();
+
+            if (evento.FechaHoraInicio < DateTime.Now)
+            {
+                ModelState.AddModelError(
+                    "FechaHoraInicio",
+                    "La fecha de inicio no puede ser anterior a la fecha y hora actual."
+                );
+            }
+
+            if (evento.FechaHoraFin != default(DateTime)
+                && evento.FechaHoraInicio != default(DateTime)
+                && evento.FechaHoraFin < evento.FechaHoraInicio)
+            {
+                ModelState.AddModelError(
+                    "FechaHoraFin",
+                    "La fecha de fin debe ser posterior a la fecha de inicio."
+                );
+            }
 
             if (!ModelState.IsValid)
                 return View(evento);
@@ -41,20 +70,13 @@ namespace SGES.Web.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Error al guardar el evento: " + ex.Message);
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Error al guardar el evento: " + ex.Message
+                );
+
                 return View(evento);
             }
-        }
-
-        private void PopulateTiposEvento()
-        {
-            ViewBag.TiposEvento = new SelectList(new List<string>
-            {
-                "Educativo",
-                "Deportivo",
-                "Social",
-                "Cultural"
-            });
         }
 
         // NUEVA ACCIÓN: Listado de eventos disponibles para el aprendiz autenticado
@@ -63,16 +85,14 @@ namespace SGES.Web.Controllers
         // [Authorize] // HABILITAR HASTA QUE JAVIER HAGA EL LOGIN XD
         public ActionResult Listado()
         {
-            // Obtener todos los eventos desde el DAO
             var eventos = _dao.ObtenerEventos() ?? new List<EventoModel>();
 
-            // Filtrar: sólo eventos futuros (disponibles)
             var disponibles = eventos
                 .Where(e => e.FechaHoraInicio >= DateTime.Now)
                 .OrderBy(e => e.FechaHoraInicio)
                 .ToList();
 
-            return View(disponibles); // Views/Evento/Listado.cshtml
+            return View(disponibles);
         }
     }
 }
