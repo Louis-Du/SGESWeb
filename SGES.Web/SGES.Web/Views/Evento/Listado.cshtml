@@ -1,0 +1,41 @@
+﻿@model IEnumerable<SGES.Web.Models.EventoModel>
+
+@{
+    ViewBag.Title = "Eventos disponibles";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (!Model.Any())
+{
+    <p>No hay eventos disponibles en este momento.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var e in Model)
+        {
+            <tr>
+                <td>@e.NombreEvento</td>
+                <td>@e.TipoEvento</td>
+                <td>@e.FechaHoraInicio.ToString("g")</td>
+                <td>@e.FechaHoraFin.ToString("g")</td>
+                <td>
+                    @* Enlace para ver detalles/inscribirse (crear acción Details/Enroll después) *@
+                    @Html.ActionLink("Ver / Inscribirse", "Details", "Evento", new { id = e.IdEvento }, null)
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
