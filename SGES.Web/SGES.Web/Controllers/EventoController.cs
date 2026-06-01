@@ -60,7 +60,7 @@ namespace SGES.Web.Controllers
         // NUEVA ACCIÓN: Listado de eventos disponibles para el aprendiz autenticado
         // URL: /Evento/Listado
         [HttpGet]
-        [Authorize] // asegurar que el aprendiz está autenticado
+        // [Authorize] // HABILITAR HASTA QUE JAVIER HAGA EL LOGIN XD
         public ActionResult Listado()
         {
             // Obtener todos los eventos desde el DAO
@@ -71,9 +71,6 @@ namespace SGES.Web.Controllers
                 .Where(e => e.FechaHoraInicio >= DateTime.Now)
                 .OrderBy(e => e.FechaHoraInicio)
                 .ToList();
-
-            // TODO: si la BD tiene columnas de plazas/inscritos, filtrar por plazas disponibles aquí.
-            // TODO: aplicar lógica adicional (filtrado por programa/ficha del aprendiz) si procede.
 
             return View(disponibles); // Views/Evento/Listado.cshtml
         }
