@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
-namespace SGESWeb.Models
+namespace SGES.Web.Models
 {
     public class EventoDAO
     {

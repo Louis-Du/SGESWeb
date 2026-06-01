@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SGESWeb.Models
+namespace SGES.Web.Models
 {
     public class EventoModel
     {
