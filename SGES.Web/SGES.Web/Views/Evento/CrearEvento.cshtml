@@ -7,77 +7,159 @@
 
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
-    { "titulo", "Registrar Evento" },
-    { "icono", "bi-calendar-event" },
-    { "subtitulo", "Información del evento" }
+    { "titulo",    "Registrar Evento" },
+    { "icono",     "bi-calendar-event" },
+    { "subtitulo", "Complete la información del nuevo evento" }
 })
 
 @using (Html.BeginForm("CrearEvento", "Evento", FormMethod.Post))
 {
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id", "IdUser" },
-        { "label", "Nombre del Evento" },
-        { "value",  Model?.IdUser },
-        { "placeholder", "Por ejemplo: Día del niño" },
-        { "type", "text" },
-        { "required", true },
-        { "maxLength", 50 }
-    })    
+    @Html.AntiForgeryToken()
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id", "NombreEvento" },
-        { "label", "Nombre del Evento" },
-        { "value",  Model?.NombreEvento },
-        { "placeholder", "Por ejemplo: Día del niño" },
-        { "type", "text" },
-        { "required", true },
-        { "maxLength", 50 }
+{
+        { "id",          "NombreEvento" },
+        { "label",       "Nombre del Evento" },
+        { "value",       Model?.NombreEvento },
+        { "placeholder", "Ej: Dia del niño" },
+        { "required",    true },
+        { "maxLength",   100 }
     })
+    @Html.ValidationMessage("NombreEvento", "", new { @class = "text-danger small" })
 
     @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id", "TipoEvento" },
-        { "label", "Tipo de Evento" },
-        { "items", ViewBag.TiposEvento },
+{
+        { "id",            "TipoEvento" },
+        { "label",         "Tipo de Evento" },
+        { "items",         ViewBag.TiposEvento },
+        { "selectedValue", Model?.TipoEvento },
         { "defaultOption", "-- Seleccione --" },
+        { "required",      true }
+    })
+    @Html.ValidationMessage("TipoEvento", "", new { @class = "text-danger small" })
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+{
+        { "id",      "FechaHoraInicio" },
+        { "label",   "Fecha y Hora de Inicio" },
+        { "type",    "datetime-local" },
+        { "value",   Model != null && Model.FechaHoraInicio != DateTime.MinValue
+                         ? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
         { "required", true }
     })
+    @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id", "FechaHoraInicio" },
-        { "label", "Fecha y Hora Inicio" },
-        { "type", "datetime-local" },
-        { "value", Model != null && Model.FechaHoraInicio != DateTime.MinValue? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
-        { "placeholder", "Por ejemplo: 2026/05/31 02:07" },
-        { "required", true },
-        { "helpText", "Asegurate de que sea posterior a la fecha actual" }
+{
+        { "id",      "FechaHoraFin" },
+        { "label",   "Fecha y Hora de Fin" },
+        { "type",    "datetime-local" },
+        { "value",   Model != null && Model.FechaHoraFin != DateTime.MinValue
+                         ? Model.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm") : "" },
+        { "required", true }
     })
-
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id", "FechaHoraFin" },
-        { "label", "Fecha y Hora Fin" },
-        { "type", "datetime-local" },
-        { "value", Model != null && Model.FechaHoraInicio != DateTime.MinValue? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
-        { "placeholder", "Por ejemplo: 2026/06/01 02:07" },
-        { "required", true },
-        { "helpText", "Asegurate de que sea posterior a la fecha y hora de inicio" }
-    })
+    @Html.ValidationMessage("FechaHoraFin", "", new { @class = "text-danger small" })
 
     <div class="mt-3">
-
         @Html.Partial("_BotonGuardar")
-
-        @Html.Partial("_BotonCancelar",
-        null,
-        new ViewDataDictionary(ViewData)
-        {
+        @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
+{
             { "url", "/" }
         })
-
     </div>
 }
 
+@section scripts {
+    <script>
+        (function () {
+            var nombre = document.getElementById("NombreEvento");
+            var tipo = document.getElementById("TipoEvento");
+            var inicio = document.getElementById("FechaHoraInicio");
+            var fin = document.getElementById("FechaHoraFin");
+
+            function mostrarError(campo, spanValidation, mensaje) {
+                campo.classList.add("is-invalid");
+                campo.classList.remove("is-valid");
+                if (spanValidation) {
+                    spanValidation.textContent = mensaje;
+                    spanValidation.style.display = "block";
+                }
+            }
+
+            function limpiar(campo, spanValidation) {
+                campo.classList.remove("is-invalid");
+                campo.classList.add("is-valid");
+                if (spanValidation) {
+                    spanValidation.textContent = "";
+                    spanValidation.style.display = "none";
+                }
+            }
+
+            function getSpan(fieldId) {
+                return document.querySelector('[data-valmsg-for="' + fieldId + '"]');
+            }
+
+            function validarNombre() {
+                if (!nombre.value || !nombre.value.trim()) {
+                    mostrarError(nombre, getSpan("NombreEvento"),
+                        "El nombre del evento no puede estar vacío.");
+                    return false;
+                }
+                limpiar(nombre, getSpan("NombreEvento"));
+                return true;
+            }
+
+            function validarTipo() {
+                if (!tipo.value) {
+                    mostrarError(tipo, getSpan("TipoEvento"),
+                        "Debe seleccionar un tipo de evento.");
+                    return false;
+                }
+                limpiar(tipo, getSpan("TipoEvento"));
+                return true;
+            }
+
+            function validarInicio() {
+                if (!inicio.value) { limpiar(inicio, getSpan("FechaHoraInicio")); return true; }
+
+                if (new Date(inicio.value) < new Date()) {
+                    mostrarError(inicio, getSpan("FechaHoraInicio"),
+                        "La fecha de inicio no puede ser anterior a la fecha y hora actual.");
+                    return false;
+                }
+                limpiar(inicio, getSpan("FechaHoraInicio"));
+                if (fin.value) validarFin();
+                return true;
+            }
+
+            function validarFin() {
+                if (!fin.value) { limpiar(fin, getSpan("FechaHoraFin")); return true; }
+
+                if (new Date(fin.value) < new Date()) {
+                    mostrarError(fin, getSpan("FechaHoraFin"),
+                        "La fecha de fin no puede ser anterior a la fecha y hora actual.");
+                    return false;
+                }
+                if (inicio.value && new Date(fin.value) <= new Date(inicio.value)) {
+                    mostrarError(fin, getSpan("FechaHoraFin"),
+                        "La fecha de fin debe ser posterior a la fecha de inicio.");
+                    return false;
+                }
+                limpiar(fin, getSpan("FechaHoraFin"));
+                return true;
+            }
+
+            // Feedback en tiempo real al salir de cada campo
+            nombre.addEventListener("blur", validarNombre);
+            tipo.addEventListener("change", validarTipo);
+            inicio.addEventListener("change", validarInicio);
+            fin.addEventListener("change", validarFin);
+
+            // Seguro extra: bloquear submit si JS detecta algún error
+            document.querySelector("form").addEventListener("submit", function (e) {
+                var ok = validarNombre() & validarTipo() & validarInicio() & validarFin();
+                if (!ok) e.preventDefault();
+            });
+        }());
+    </script>
+}

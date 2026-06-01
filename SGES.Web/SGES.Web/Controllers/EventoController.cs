@@ -1,46 +1,58 @@
 ﻿using SGESWeb.Models;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Web.Mvc;
 
 namespace SGESWeb.Controllers
 {
     public class EventoController : Controller
     {
-        [HttpGet]
-        public ActionResult CrearEvento()
+        private SelectList ObtenerTiposEvento()
         {
-            ViewBag.TiposEvento = new SelectList(new List<string>
+            return new SelectList(new List<string>
             {
                 "Educativo",
                 "Deportivo",
                 "Social",
                 "Cultural"
             });
+        }
 
+        [HttpGet]
+        public ActionResult CrearEvento()
+        {
+            ViewBag.TiposEvento = ObtenerTiposEvento();
             return View(new EventoModel());
         }
 
         [HttpPost]
         public ActionResult CrearEvento(EventoModel evento)
         {
+            if (evento.FechaHoraInicio < DateTime.Now)
+            {
+                ModelState.AddModelError(
+                    "FechaHoraInicio",
+                    "La fecha de inicio no puede ser anterior a la fecha y hora actual."
+                );
+            }
+
+            if (evento.FechaHoraFin != default && evento.FechaHoraInicio != default
+                && evento.FechaHoraFin < evento.FechaHoraInicio)
+            {
+                ModelState.AddModelError(
+                    "FechaHoraFin",
+                    "La fecha de fin debe ser posterior a la fecha de inicio."
+                );
+            }
+
             if (ModelState.IsValid)
             {
                 EventoDAO dao = new EventoDAO();
                 dao.InsertarEvento(evento);
-
                 return RedirectToAction("CrearEvento");
             }
 
-            // Se vuelve a enviar los valores del combobox en caso de que ocurra un error
-            ViewBag.TiposEvento = new SelectList(new List<string>
-            {
-                "Educativo",
-                "Deportivo",
-                "Social",
-                "Cultural"
-            });
-
+            ViewBag.TiposEvento = ObtenerTiposEvento();
             return View(evento);
         }
     }
