@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.Data.SqlClient;
 
-namespace SGESWeb.Models
+namespace SGES.Web.Models
 {
     public class Conexion
     {
