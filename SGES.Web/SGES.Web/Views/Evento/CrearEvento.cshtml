@@ -1,0 +1,83 @@
+﻿@using System.Web.Mvc
+@model SGESWeb.Models.EventoModel
+
+@{
+    ViewBag.Title = "Crear Evento";
+}
+
+@Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+{
+    { "titulo", "Registrar Evento" },
+    { "icono", "bi-calendar-event" },
+    { "subtitulo", "Información del evento" }
+})
+
+@using (Html.BeginForm("CrearEvento", "Evento", FormMethod.Post))
+{
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id", "IdUser" },
+        { "label", "Nombre del Evento" },
+        { "value",  Model?.IdUser },
+        { "placeholder", "Por ejemplo: Día del niño" },
+        { "type", "text" },
+        { "required", true },
+        { "maxLength", 50 }
+    })    
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id", "NombreEvento" },
+        { "label", "Nombre del Evento" },
+        { "value",  Model?.NombreEvento },
+        { "placeholder", "Por ejemplo: Día del niño" },
+        { "type", "text" },
+        { "required", true },
+        { "maxLength", 50 }
+    })
+
+    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id", "TipoEvento" },
+        { "label", "Tipo de Evento" },
+        { "items", ViewBag.TiposEvento },
+        { "defaultOption", "-- Seleccione --" },
+        { "required", true }
+    })
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id", "FechaHoraInicio" },
+        { "label", "Fecha y Hora Inicio" },
+        { "type", "datetime-local" },
+        { "value", Model != null && Model.FechaHoraInicio != DateTime.MinValue? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
+        { "placeholder", "Por ejemplo: 2026/05/31 02:07" },
+        { "required", true },
+        { "helpText", "Asegurate de que sea posterior a la fecha actual" }
+    })
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id", "FechaHoraFin" },
+        { "label", "Fecha y Hora Fin" },
+        { "type", "datetime-local" },
+        { "value", Model != null && Model.FechaHoraInicio != DateTime.MinValue? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
+        { "placeholder", "Por ejemplo: 2026/06/01 02:07" },
+        { "required", true },
+        { "helpText", "Asegurate de que sea posterior a la fecha y hora de inicio" }
+    })
+
+    <div class="mt-3">
+
+        @Html.Partial("_BotonGuardar")
+
+        @Html.Partial("_BotonCancelar",
+        null,
+        new ViewDataDictionary(ViewData)
+        {
+            { "url", "/" }
+        })
+
+    </div>
+}
+
