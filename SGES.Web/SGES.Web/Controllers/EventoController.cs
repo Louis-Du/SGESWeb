@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace SGESWeb.Controllers
+namespace SGES.Web.Controllers
 {
     public class EventoController : Controller
     {
@@ -14,7 +14,8 @@ namespace SGESWeb.Controllers
 
         public EventoController(EventoDAO dao)
         {
-            _dao = dao ?? throw new ArgumentNullException(nameof(dao));
+            if (dao == null) throw new ArgumentNullException("dao");
+            _dao = dao;
         }
 
         private SelectList ObtenerTiposEvento()
@@ -51,7 +52,7 @@ namespace SGESWeb.Controllers
 
             if (evento.FechaHoraFin != default(DateTime)
                 && evento.FechaHoraInicio != default(DateTime)
-                && evento.FechaHoraFin < evento.FechaHoraInicio)
+                && evento.FechaHoraFin <= evento.FechaHoraInicio)
             {
                 ModelState.AddModelError(
                     "FechaHoraFin",
@@ -70,19 +71,12 @@ namespace SGESWeb.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(
-                    string.Empty,
-                    "Error al guardar el evento: " + ex.Message
-                );
-
+                ModelState.AddModelError(string.Empty, "Error al guardar el evento: " + ex.Message);
                 return View(evento);
             }
         }
 
-        // NUEVA ACCIÓN: Listado de eventos disponibles para el aprendiz autenticado
-        // URL: /Evento/Listado
         [HttpGet]
-        // [Authorize] // HABILITAR HASTA QUE JAVIER HAGA EL LOGIN XD
         public ActionResult Listado()
         {
             var eventos = _dao.ObtenerEventos() ?? new List<EventoModel>();

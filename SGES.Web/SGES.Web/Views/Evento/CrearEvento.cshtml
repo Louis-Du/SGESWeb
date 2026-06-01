@@ -7,9 +7,6 @@
 
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
-    { "titulo", "Registrar Evento" },
-    { "icono", "bi-calendar-event" },
-    { "subtitulo", "Información del evento" }
     { "titulo",    "Registrar Evento" },
     { "icono",     "bi-calendar-event" },
     { "subtitulo", "Complete la información del nuevo evento" }
@@ -17,80 +14,13 @@
 
 @using (Html.BeginForm("CrearEvento", "Evento", FormMethod.Post))
 {
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id", "IdUser" },
-        { "label", "Nombre del Evento" },
-        { "value",  Model?.IdUser },
-        { "placeholder", "Por ejemplo: Día del niño" },
-        { "type", "text" },
-        { "required", true },
-        { "maxLength", 50 }
-    })    
-
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id", "NombreEvento" },
-        { "label", "Nombre del Evento" },
-        { "value",  Model?.NombreEvento },
-        { "placeholder", "Por ejemplo: Día del niño" },
-        { "type", "text" },
-        { "required", true },
-        { "maxLength", 50 }
-    })
-
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id", "TipoEvento" },
-        { "label", "Tipo de Evento" },
-        { "items", ViewBag.TiposEvento },
-        { "defaultOption", "-- Seleccione --" },
-        { "required", true }
-    })
-
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id", "FechaHoraInicio" },
-        { "label", "Fecha y Hora Inicio" },
-        { "type", "datetime-local" },
-        { "value", Model != null && Model.FechaHoraInicio != DateTime.MinValue? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
-        { "placeholder", "Por ejemplo: 2026/05/31 02:07" },
-        { "required", true },
-        { "helpText", "Asegurate de que sea posterior a la fecha actual" }
-    })
-
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id", "FechaHoraFin" },
-        { "label", "Fecha y Hora Fin" },
-        { "type", "datetime-local" },
-        { "value", Model != null && Model.FechaHoraInicio != DateTime.MinValue? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
-        { "placeholder", "Por ejemplo: 2026/06/01 02:07" },
-        { "required", true },
-        { "helpText", "Asegurate de que sea posterior a la fecha y hora de inicio" }
-    })
-
-    <div class="mt-3">
-
-        @Html.Partial("_BotonGuardar")
-
-        @Html.Partial("_BotonCancelar",
-        null,
-        new ViewDataDictionary(ViewData)
-        {
-            { "url", "/" }
-        })
-
-    </div>
-}
-
     @Html.AntiForgeryToken()
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
 {
         { "id",          "NombreEvento" },
         { "label",       "Nombre del Evento" },
-        { "value",       Model?.NombreEvento },
+        { "value",       Model != null ? Model.NombreEvento : "" },
         { "placeholder", "Ej: Dia del niño" },
         { "required",    true },
         { "maxLength",   100 }
@@ -102,7 +32,7 @@
         { "id",            "TipoEvento" },
         { "label",         "Tipo de Evento" },
         { "items",         ViewBag.TiposEvento },
-        { "selectedValue", Model?.TipoEvento },
+        { "selectedValue", Model != null ? Model.TipoEvento : "" },
         { "defaultOption", "-- Seleccione --" },
         { "required",      true }
     })
@@ -190,9 +120,16 @@
             }
 
             function validarInicio() {
-                if (!inicio.value) { limpiar(inicio, getSpan("FechaHoraInicio")); return true; }
+                if (!inicio.value) {
+                    mostrarError(inicio, getSpan("FechaHoraInicio"),
+                        "La fecha de inicio es obligatoria.");
+                    return false;
+                }
 
-                if (new Date(inicio.value) < new Date()) {
+                var ahora = new Date();
+                ahora.setSeconds(0, 0);
+
+                if (new Date(inicio.value) < ahora) {
                     mostrarError(inicio, getSpan("FechaHoraInicio"),
                         "La fecha de inicio no puede ser anterior a la fecha y hora actual.");
                     return false;
@@ -203,9 +140,16 @@
             }
 
             function validarFin() {
-                if (!fin.value) { limpiar(fin, getSpan("FechaHoraFin")); return true; }
+                if (!fin.value) {
+                    mostrarError(fin, getSpan("FechaHoraFin"),
+                        "La fecha de fin es obligatoria.");
+                    return false;
+                }
 
-                if (new Date(fin.value) < new Date()) {
+                var ahora = new Date();
+                ahora.setSeconds(0, 0); 
+
+                if (new Date(fin.value) < ahora) {
                     mostrarError(fin, getSpan("FechaHoraFin"),
                         "La fecha de fin no puede ser anterior a la fecha y hora actual.");
                     return false;

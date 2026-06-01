@@ -31,7 +31,7 @@
     var url      = ViewData["url"]?.ToString() ?? "javascript:history.back()";
     var icono    = ViewData["icono"]?.ToString() ?? "bi-x-circle";
     var cssClass = ViewData["cssClass"]?.ToString() ?? "";
-    var disabled = ViewData["disabled"] is bool d && d;
+    var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
     var id       = ViewData["id"]?.ToString() ?? "";
     var confirm  = ViewData["confirm"]?.ToString() ?? "";
 

@@ -32,8 +32,8 @@
     var items         = ViewData["items"] as SelectList;
     var selectedValue = ViewData["selectedValue"];
     var defaultOption = ViewData["defaultOption"]?.ToString();
-    var required      = ViewData["required"] is bool req && req;
-    var disabled      = ViewData["disabled"] is bool dis && dis;
+    var required = ViewData["required"] is bool && (bool)ViewData["required"];
+    var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
     var cssClass      = ViewData["cssClass"]?.ToString() ?? "";
     var helpText      = ViewData["helpText"]?.ToString();
     var onchange      = ViewData["onchange"]?.ToString() ?? "";
@@ -44,7 +44,17 @@
     // Reconstruir la SelectList con el valor seleccionado si se proporcionó
     if (items != null && selectedValue != null)
     {
-        items = new SelectList(items.Items, "Value", "Text", selectedValue);
+        var primeraOpcion = items.Items.Cast<object>().FirstOrDefault();
+        if (primeraOpcion is string)
+        {
+            // Lista de strings simples — Value y Text son el mismo valor
+            items = new SelectList(items.Items, selectedValue);
+        }
+        else
+        {
+            // Lista de objetos con propiedades Value/Text
+            items = new SelectList(items.Items, "Value", "Text", selectedValue);
+        }
     }
 }
 

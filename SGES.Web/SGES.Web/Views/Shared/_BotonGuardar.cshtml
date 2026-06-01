@@ -24,7 +24,7 @@
     var texto    = ViewData["texto"]?.ToString() ?? "Guardar";
     var icono    = ViewData["icono"]?.ToString() ?? "bi-floppy";
     var cssClass = ViewData["cssClass"]?.ToString() ?? "";
-    var disabled = ViewData["disabled"] is bool d && d;
+    var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
     var id       = ViewData["id"]?.ToString() ?? "";
     var form     = ViewData["form"]?.ToString() ?? "";
 

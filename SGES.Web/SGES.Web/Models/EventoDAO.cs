@@ -44,17 +44,17 @@ namespace SGES.Web.Models
             using (SqlConnection con = cn.ObtenerConexion())
             {
                 string query = @"INSERT INTO Eventos (nombreEvento, tipoEvento, diaEvento, fechaHoraInicio, fechaHoraFin, idUser)
-                               VALUES (@nombreEvento, @tipoEvento, @diaEvento, @fechaHoraInicio, @fechaHoraFin, @idUser)";
+                         VALUES (@nombreEvento, @tipoEvento, @diaEvento, @fechaHoraInicio, @fechaHoraFin, @idUser)";
 
                 SqlCommand cmd = new SqlCommand(query, con);
 
-                cmd.Parameters.AddWithValue("@idEvento", evento.IdEvento);
+                // ← Se eliminó el @idEvento que no pertenecía al query
                 cmd.Parameters.AddWithValue("@nombreEvento", evento.NombreEvento);
                 cmd.Parameters.AddWithValue("@tipoEvento", evento.TipoEvento);
                 cmd.Parameters.AddWithValue("@diaEvento", evento.FechaHoraInicio.Date);
                 cmd.Parameters.AddWithValue("@fechaHoraInicio", evento.FechaHoraInicio);
                 cmd.Parameters.AddWithValue("@fechaHoraFin", evento.FechaHoraFin);
-                cmd.Parameters.AddWithValue("@idUser", evento.IdUser);
+                cmd.Parameters.AddWithValue("@idUser", evento.IdUser == 0 ? 1 : evento.IdUser); // temporal hasta tener auth
 
                 con.Open();
                 cmd.ExecuteNonQuery();

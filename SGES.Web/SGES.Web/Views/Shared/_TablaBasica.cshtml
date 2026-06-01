@@ -39,11 +39,11 @@
     var accionesHtml = (ViewData["accionesHtml"] as IEnumerable<IEnumerable<object>>);
 
     var titulo       = ViewData["titulo"]?.ToString();
-    var striped      = !(ViewData["striped"]    is bool st && !st);
-    var hover        = !(ViewData["hover"]      is bool hv && !hv);
-    var bordered     = ViewData["bordered"]     is bool bo && bo;
-    var small        = ViewData["small"]        is bool sm && sm;
-    var responsive   = !(ViewData["responsive"] is bool rp && !rp);
+    var striped = !(ViewData["striped"] is bool && !(bool)ViewData["striped"]);
+    var hover = !(ViewData["hover"] is bool && !(bool)ViewData["hover"]);
+    var bordered = ViewData["bordered"] is bool && (bool)ViewData["bordered"];
+    var small = ViewData["small"] is bool && (bool)ViewData["small"];
+    var responsive = !(ViewData["responsive"] is bool && !(bool)ViewData["responsive"]);
     var mensajeVacio = ViewData["mensajeVacio"]?.ToString() ?? "No hay registros para mostrar.";
     var cssClass     = ViewData["cssClass"]?.ToString() ?? "";
     var tableId      = ViewData["id"]?.ToString() ?? "";

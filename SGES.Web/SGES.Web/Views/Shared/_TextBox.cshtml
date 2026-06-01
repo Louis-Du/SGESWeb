@@ -30,9 +30,9 @@
     var value       = ViewData["value"];
     var placeholder = ViewData["placeholder"]?.ToString() ?? "";
     var type        = ViewData["type"]?.ToString() ?? "text";
-    var required    = ViewData["required"] is bool r && r;
-    var disabled    = ViewData["disabled"] is bool d && d;
-    var readOnly    = ViewData["readonly"] is bool ro && ro;
+    var required = ViewData["required"] is bool && (bool)ViewData["required"];
+    var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
+    var readOnly = ViewData["readonly"] is bool && (bool)ViewData["readonly"];
     var cssClass    = ViewData["cssClass"]?.ToString() ?? "";
     var helpText    = ViewData["helpText"]?.ToString();
     var maxLength   = ViewData["maxLength"];
