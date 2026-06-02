@@ -13,7 +13,7 @@ namespace SGES.Web.Models
         /// </summary>
         public UsuarioSesion Login(int id, string contrasena)
         {
-            // 1. Buscar en tabla Usuario (Administrador)
+            // Buscar en tabla Usuario (Administrador)
             using (SqlConnection con = cn.ObtenerConexion())
             {
                 string sql = @"SELECT idUser, nombreUser, tipoUser
@@ -39,7 +39,7 @@ namespace SGES.Web.Models
                 }
             }
 
-            // 2. Buscar en tabla Aprendiz
+            // Buscar en tabla Aprendiz
             using (SqlConnection con = cn.ObtenerConexion())
             {
                 string sql = @"SELECT idApr, nombreApr, tipoUser

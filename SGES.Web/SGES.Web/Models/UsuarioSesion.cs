@@ -4,6 +4,6 @@ namespace SGES.Web.Models
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
-        public string Tipo { get; set; } // "Administrador" o "Aprendiz"
+        public string Tipo { get; set; } 
     }
 }

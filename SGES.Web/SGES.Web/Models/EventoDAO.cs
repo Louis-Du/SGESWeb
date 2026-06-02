@@ -54,12 +54,9 @@ namespace SGES.Web.Models
                 cmd.Parameters.AddWithValue("@diaEvento", evento.FechaHoraInicio.Date);
                 cmd.Parameters.AddWithValue("@fechaHoraInicio", evento.FechaHoraInicio);
                 cmd.Parameters.AddWithValue("@fechaHoraFin", evento.FechaHoraFin);
-                cmd.Parameters.AddWithValue("@idUser", evento.IdUser == 0 ? 1 : evento.IdUser); // temporal hasta tener auth
+                cmd.Parameters.AddWithValue("@idUser", evento.IdUser);
 
                 con.Open();
-                System.Diagnostics.Debug.WriteLine(
-                    "IdUser enviado: " + (evento.IdUser == 0 ? 1 : evento.IdUser)
-                );
                 cmd.ExecuteNonQuery();
             }
         }
