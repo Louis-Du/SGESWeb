@@ -1,4 +1,4 @@
-@model SGES.Web.Models.LoginModel
+﻿@model SGES.Web.Models.LoginModel
 
 @{
     ViewBag.Title = "Iniciar Sesión";
@@ -18,7 +18,7 @@
     @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
+{
         { "id",          "Id" },
         { "label",       "ID de Usuario" },
         { "type",        "number" },
@@ -29,20 +29,77 @@
     @Html.ValidationMessage("Id", "", new { @class = "text-danger small" })
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
+{
         { "id",          "Contrasena" },
         { "label",       "Contraseña" },
         { "type",        "password" },
         { "placeholder", "Ingrese su contraseña" },
         { "required",    true }
     })
-    @Html.ValidationMessage("Contrasena", "", new { @class = "text-danger small" })
+    @Html.ValidationMessage("Contraseña", "", new { @class = "text-danger small" })
 
     <div class="mt-3">
         @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
-        {
+{
             { "texto", "Ingresar" },
             { "icono", "bi-box-arrow-in-right" }
         })
     </div>
+}
+
+@section scripts {
+    <script>
+        (function () {
+            var id = document.getElementById("Id");
+            var contrasena = document.getElementById("Contrasena");
+
+            function mostrarError(campo, spanValidation, mensaje) {
+                campo.classList.add("is-invalid");
+                campo.classList.remove("is-valid");
+                if (spanValidation) {
+                    spanValidation.textContent = mensaje;
+                    spanValidation.style.display = "block";
+                }
+            }
+
+            function limpiar(campo, spanValidation) {
+                campo.classList.remove("is-invalid");
+                campo.classList.add("is-valid");
+                if (spanValidation) {
+                    spanValidation.textContent = "";
+                    spanValidation.style.display = "none";
+                }
+            }
+
+            function getSpan(fieldId) {
+                return document.querySelector('[data-valmsg-for="' + fieldId + '"]');
+            }
+
+            function validarId() {
+                if (!id.value || !id.value.trim()) {
+                    mostrarError(id, getSpan("Id"), "El ID no puede estar vacío.");
+                    return false;
+                }
+                limpiar(id, getSpan("Id"));
+                return true;
+            }
+
+            function validarContrasena() {
+                if (!contrasena.value || !contrasena.value.trim()) {
+                    mostrarError(contrasena, getSpan("Contrasena"), "La contraseña no puede estar vacía.");
+                    return false;
+                }
+                limpiar(contrasena, getSpan("Contrasena"));
+                return true;
+            }
+
+            id.addEventListener("blur", validarId);
+            contrasena.addEventListener("blur", validarContrasena);
+
+            document.querySelector("form").addEventListener("submit", function (e) {
+                var ok = validarId() & validarContrasena();
+                if (!ok) e.preventDefault();
+            });
+        }());
+    </script>
 }

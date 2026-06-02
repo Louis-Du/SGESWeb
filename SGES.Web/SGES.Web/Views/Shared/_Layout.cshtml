@@ -38,7 +38,13 @@
                             </span>
                         </li>
                         <li class="nav-item">
-                            @Html.ActionLink("Cerrar sesión", "Logout", "Auth", new { area = "" }, new { @class = "nav-link" })
+                            @Html.ActionLink(
+                               "Cerrar sesión", "Logout", "Auth", new { area = "" }, 
+                               new { 
+                                   @class = "nav-link", 
+                                   onclick = "return confirm('¿Está seguro que desea cerrar la sesión?');" 
+                               }
+                            )
                         </li>
                     </ul>
                 }
