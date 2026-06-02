@@ -65,14 +65,22 @@ namespace SGES.Web.Controllers
 
             try
             {
+                System.Diagnostics.Debug.WriteLine(
+                    "IdUser recibido: " + evento.IdUser
+                );
+                // Temporal para depurar — quitar después
+                System.Diagnostics.Debug.WriteLine("NombreEvento: " + evento.NombreEvento);
+                System.Diagnostics.Debug.WriteLine("TipoEvento: " + evento.TipoEvento);
+                System.Diagnostics.Debug.WriteLine("FechaHoraInicio: " + evento.FechaHoraInicio);
+                System.Diagnostics.Debug.WriteLine("FechaHoraFin: " + evento.FechaHoraFin);
+                System.Diagnostics.Debug.WriteLine("IdUser: " + evento.IdUser);
                 _dao.InsertarEvento(evento);
                 TempData["Success"] = "Evento creado correctamente.";
                 return RedirectToAction("CrearEvento");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Error al guardar el evento: " + ex.Message);
-                return View(evento);
+                return Content(ex.ToString());
             }
         }
 

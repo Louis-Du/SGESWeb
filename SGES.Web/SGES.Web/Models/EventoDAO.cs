@@ -57,6 +57,9 @@ namespace SGES.Web.Models
                 cmd.Parameters.AddWithValue("@idUser", evento.IdUser == 0 ? 1 : evento.IdUser); // temporal hasta tener auth
 
                 con.Open();
+                System.Diagnostics.Debug.WriteLine(
+                    "IdUser enviado: " + (evento.IdUser == 0 ? 1 : evento.IdUser)
+                );
                 cmd.ExecuteNonQuery();
             }
         }
