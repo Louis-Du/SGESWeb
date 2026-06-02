@@ -19,7 +19,7 @@ namespace SGES.Web.Models
                 string sql = @"SELECT idUser, nombreUser, tipoUser
                                FROM Usuario
                                WHERE idUser = @id
-                                 AND contraseñaUser = @pass";
+                                 AND contraseñaUser COLLATE Latin1_General_CS_AS = @pass";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@id",   id);
@@ -45,7 +45,7 @@ namespace SGES.Web.Models
                 string sql = @"SELECT idApr, nombreApr, tipoUser
                                FROM Aprendiz
                                WHERE idApr = @id
-                                 AND contraseñaUser = @pass";
+                                 AND contraseñaUser COLLATE Latin1_General_CS_AS = @pass";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@id",   id);
