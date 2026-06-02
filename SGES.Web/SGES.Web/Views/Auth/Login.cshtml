@@ -50,8 +50,8 @@
 @section scripts {
     <script>
         (function () {
-            var id = document.getElementById("ID");
-            var password = document.getElementById("contrasena");
+            var id = document.getElementById("Id");
+            var contrasena = document.getElementById("Contrasena");
 
             function mostrarError(campo, spanValidation, mensaje) {
                 campo.classList.add("is-invalid");
@@ -77,35 +77,29 @@
 
             function validarId() {
                 if (!id.value || !id.value.trim()) {
-                    mostrarError(id, getSpan("id"),
-                        "El id no puede estar vacío.");
+                    mostrarError(id, getSpan("Id"), "El ID no puede estar vacío.");
                     return false;
                 }
-                limpiar(id, getSpan("id"));
+                limpiar(id, getSpan("Id"));
                 return true;
             }
 
             function validarContrasena() {
                 if (!contrasena.value || !contrasena.value.trim()) {
-                    mostrarError(id, getSpan("contrasena"),
-                        "La contraseña no puede estar vacío.");
+                    mostrarError(contrasena, getSpan("Contrasena"), "La contraseña no puede estar vacía.");
                     return false;
                 }
-                limpiar(id, getSpan("contrasena"));
+                limpiar(contrasena, getSpan("Contrasena"));
                 return true;
             }
 
-            // Feedback en tiempo real al salir de cada campo
-            nombre.addEventListener("blur", validarNombre);
-            tipo.addEventListener("change", validarTipo);
-            inicio.addEventListener("change", validarInicio);
-            fin.addEventListener("change", validarFin);
+            id.addEventListener("blur", validarId);
+            contrasena.addEventListener("blur", validarContrasena);
 
-            // Seguro extra: bloquear submit si JS detecta algún error
             document.querySelector("form").addEventListener("submit", function (e) {
-                var ok = validarNombre() & validarTipo() & validarInicio() & validarFin();
+                var ok = validarId() & validarContrasena();
                 if (!ok) e.preventDefault();
             });
-        }
+        }());
     </script>
 }
