@@ -113,6 +113,8 @@
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\EventoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Models\AprendizDAO.cs" />
+    <Compile Include="Models\AprendizModel.cs" />
     <Compile Include="Models\AuthDAO.cs" />
     <Compile Include="Models\Conexión.cs" />
     <Compile Include="Global.asax.cs">
@@ -120,6 +122,7 @@
     </Compile>
     <Compile Include="Models\EventoDAO.cs" />
     <Compile Include="Models\EventoModel.cs" />
+    <Compile Include="Models\InscripcionModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\UsuarioSesion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -193,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Usuarios\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
