@@ -12,7 +12,7 @@ namespace SGES.Web.Models
     {
         private readonly Conexion cn = new Conexion();
 
-        public List<AprendizModel> ObtenerAprendices()
+        public List<AprendizModel> ObtenerAprendicesPorEvento(int idEvento)
         {
             List<AprendizModel> lista = new List<AprendizModel>();
 
