@@ -96,8 +96,10 @@ namespace SGES.Web.Controllers
             }
         }
 
+
+
         [HttpGet]
-        public ActionResult Listado()
+        public ActionResult InicioAprendiz()
         {
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
@@ -110,6 +112,20 @@ namespace SGES.Web.Controllers
                 .ToList();
 
             return View(disponibles);
+        }
+
+        [HttpGet]
+        public ActionResult InicioAdmin()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult AprendicesRegistrados(int idEvento)
+        {
+            var aprendices = new AprendizDAO().ObtenerAprendicesPorEvento(idEvento);
+
+                return View(aprendices);
         }
     }
 }
