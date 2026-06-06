@@ -5,9 +5,19 @@
     ViewBag.Title = "Eventos Disponibles";
 }
 
+
+@Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+{
+    { "titulo",    "Menú de inicio para el aprendiz" },
+    { "icono",     "house-door-fill" },
+    { "subtitulo", "Elija una acción" }
+})
+
 @Html.Partial("_TablaBasica", null, new ViewDataDictionary(ViewData)
 {
     { "titulo", "Listado de Eventos" },
+    { "seleccionable", true },
+    { "idFila", Model.Select(e => e.IdEvento) },
 
     { "columnas", new[]
         {
@@ -26,4 +36,5 @@
             e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
         })
     }
+
 })
