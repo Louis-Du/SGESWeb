@@ -18,15 +18,6 @@
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    @if (Session["Usuario"] != null)
-                    {
-                        var u = (SGES.Web.Models.UsuarioSesion)Session["Usuario"];
-                        if (u.Tipo == "Administrador")
-                        {
-                            <li>@Html.ActionLink("Crear Evento", "CrearEvento", "Evento", new { area = "" }, new { @class = "nav-link" })</li>
-                        }
-                        <li>@Html.ActionLink("Listado", "Listado", "Evento", new { area = "" }, new { @class = "nav-link" })</li>
-                    }
                 </ul>
                 @if (Session["Usuario"] != null)
                 {
