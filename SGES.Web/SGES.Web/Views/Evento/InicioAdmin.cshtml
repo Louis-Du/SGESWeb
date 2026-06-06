@@ -15,6 +15,7 @@
 @Html.Partial("_TablaBasica", null, new ViewDataDictionary(ViewData)
 {
     { "titulo", "Listado de Eventos" },
+    { "mensajeVacio", "No hay eventos disponibles en este momento." },
     { "seleccionable", true },
     { "idFila", Model.Select(e => e.IdEvento) },
 
