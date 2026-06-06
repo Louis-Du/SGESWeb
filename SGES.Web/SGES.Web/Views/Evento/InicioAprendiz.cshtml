@@ -1,0 +1,29 @@
+﻿@using System.Web.Mvc
+@model IEnumerable<SGES.Web.Models.EventoModel>
+
+@{
+    ViewBag.Title = "Eventos Disponibles";
+}
+
+@Html.Partial("_TablaBasica", null, new ViewDataDictionary(ViewData)
+{
+    { "titulo", "Listado de Eventos" },
+
+    { "columnas", new[]
+        {
+            "Nombre",
+            "Tipo",
+            "Inicio",
+            "Fin"
+        }
+    },
+
+    { "filas", Model.Select(e => new object[]
+        {
+            e.NombreEvento,
+            e.TipoEvento,
+            e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
+            e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
+        })
+    }
+})
