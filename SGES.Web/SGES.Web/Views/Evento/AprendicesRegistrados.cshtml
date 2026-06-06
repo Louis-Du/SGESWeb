@@ -1,0 +1,26 @@
+﻿@using System.Web.Mvc
+@model IEnumerable<SGES.Web.Models.EventoModel>
+
+@Html.Partial("_TablaBasica", null,
+    new ViewDataDictionary(ViewData)
+    {
+        { "titulo", "Aprendices Registrados" },
+
+        { "columnas", new[]
+            {
+                "ID",
+                "Nombre",
+                "Correo",
+                "Contacto"
+            }
+        },
+
+        { "filas", Model.Select(a => new object[]
+            {
+                a.IdApr,
+                a.NombreApr,
+                a.EmailApr,
+                a.ContactoApr
+            })
+        }
+    })
