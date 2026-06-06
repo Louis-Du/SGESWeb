@@ -1,0 +1,48 @@
+﻿@using System.Web.Mvc
+@model IEnumerable<SGES.Web.Models.EventoModel>
+
+@{
+    ViewBag.Title = "MenuInicioAdmin";
+}
+
+@Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+{
+    { "titulo",    "Menú de inicio para el administrador" },
+    { "icono",     "house-door-fill" },
+    { "subtitulo", "Elija una acción" }
+})
+
+@Html.Partial("_TablaBasica", null, new ViewDataDictionary(ViewData)
+{
+    { "titulo", "Listado de Eventos" },
+    { "mensajeVacio", "No hay eventos disponibles en este momento." },
+    { "seleccionable", true },
+    { "idFila", Model.Select(e => e.IdEvento) },
+
+    { "columnas", new[]
+    {
+            "ID",
+            "Nombre",
+            "Tipo",
+            "Inicio",
+            "Fin"
+        }
+    },
+
+    { "filas", Model.Select(e => new object[]
+    {
+            e.IdEvento,
+            e.NombreEvento,
+            e.TipoEvento,
+            e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
+            e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
+        })
+    }
+})
+
+@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+{
+    { "texto", "Crear Evento" },
+    { "icono", "bi-plus-circle" },
+    { "url", Url.Action("CrearEvento", "Evento") }
+})

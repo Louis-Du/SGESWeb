@@ -27,29 +27,36 @@
 *@
 
 @{
-    var texto    = ViewData["texto"]?.ToString() ?? "Cancelar";
-    var url      = ViewData["url"]?.ToString() ?? "javascript:history.back()";
-    var icono    = ViewData["icono"]?.ToString() ?? "bi-x-circle";
+    var texto = ViewData["texto"]?.ToString() ?? "Cancelar";
+    var url = ViewData["url"]?.ToString() ?? "javascript:history.back()";
+    var icono = ViewData["icono"]?.ToString() ?? "bi-x-circle";
     var cssClass = ViewData["cssClass"]?.ToString() ?? "";
     var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
-    var id       = ViewData["id"]?.ToString() ?? "";
-    var confirm  = ViewData["confirm"]?.ToString() ?? "";
-
+    var id = ViewData["id"]?.ToString() ?? "";
+    var confirm = ViewData["confirm"]?.ToString() ?? "";
     var btnClass = "btn btn-secondary sges-btn-cancelar " + cssClass;
-
-    // Si hay mensaje de confirmación, el href se maneja via onclick
-    var href    = string.IsNullOrEmpty(confirm) ? url : "#";
-    var onclick = string.IsNullOrEmpty(confirm)
-        ? ""
-        : $"return confirm('{confirm}') ? (window.location='{url}', true) : false;";
 }
 
-<a href="@href"
-   class="@btnClass @(disabled ? "disabled" : "")"
-   role="button"
-   @(disabled ? "aria-disabled=\"true\"" : "")
-   @(!string.IsNullOrEmpty(id)      ? $"id=\"{id}\""           : "")
-   @(!string.IsNullOrEmpty(onclick) ? $"onclick=\"{onclick}\""  : "")>
-    <i class="bi @icono me-1" aria-hidden="true"></i>
-    @texto
-</a>
+@if (string.IsNullOrEmpty(confirm))
+{
+    <a href="@url"
+       class="@btnClass @(disabled ? "disabled" : "")"
+       role="button"
+       @(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "")
+       @(disabled ? "aria-disabled=\"true\"" : "")>
+        <i class="bi @icono me-1" aria-hidden="true"></i>
+        @texto
+    </a>
+}
+else
+{
+    <a href="#"
+       class="@btnClass @(disabled ? "disabled" : "")"
+       role="button"
+       @(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "")
+       @(disabled ? "aria-disabled=\"true\"" : "")
+       onclick="if(confirm('@confirm')) { window.location.href='@url'; }">
+        <i class="bi @icono me-1" aria-hidden="true"></i>
+        @texto
+    </a>
+}

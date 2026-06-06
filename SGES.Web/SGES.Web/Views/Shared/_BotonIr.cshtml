@@ -1,0 +1,55 @@
+﻿@*
+    _BotonIr.cshtml — Botón para navegación entre vistas
+
+    ```
+    Parámetros (vía ViewData al invocar el partial):
+        "texto"     : string — Texto visible del botón (default: "Ir")
+        "icono"     : string — Clase Bootstrap Icons (default: "bi-arrow-right")
+        "url"       : string — URL destino (requerido)
+        "cssClass"  : string — Clases CSS adicionales (opcional)
+        "id"        : string — Id del botón (opcional)
+        "disabled"  : bool   — Deshabilita el botón (default: false)
+
+    Uso:
+        @Html.Partial("_BotonIr", null,
+            new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Crear Evento" },
+                { "icono", "bi-plus-circle" },
+                { "url", Url.Action("CrearEvento", "Evento") }
+            })
+    ```
+
+*@
+
+@{
+    var texto = ViewData["texto"] != null
+    ? ViewData["texto"].ToString()
+    : "Ir";
+
+    var icono = ViewData["icono"] != null
+        ? ViewData["icono"].ToString()
+        : "bi-arrow-right";
+
+    var url = ViewData["url"] != null
+        ? ViewData["url"].ToString()
+        : "#";
+
+    var cssClass = ViewData["cssClass"] != null
+        ? ViewData["cssClass"].ToString()
+        : "";
+
+    var id = ViewData["id"] != null
+        ? ViewData["id"].ToString()
+        : "";
+
+    var disabled = ViewData["disabled"] is bool
+        && (bool)ViewData["disabled"];
+
+    var btnClass = "btn btn-primary sges-btn-ir " + cssClass;
+
+}
+
+<a href="@url" class="btn btn-primary">
+    @texto
+</a>

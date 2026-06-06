@@ -111,5 +111,21 @@ namespace SGES.Web.Controllers
 
             return View(disponibles);
         }
+
+        [HttpGet]
+        public ActionResult InicioAdmin()
+        {
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+
+            var eventos = _dao.ObtenerEventos() ?? new List<EventoModel>();
+
+            var disponibles = eventos
+                .Where(e => e.FechaHoraInicio >= DateTime.Now)
+                .OrderBy(e => e.FechaHoraInicio)
+                .ToList();
+
+            return View(disponibles);
+        }
     }
 }
