@@ -19,7 +19,7 @@
     { "idFila", Model.Select(e => e.IdEvento) },
 
     { "columnas", new[]
-{
+    {
             "ID",
             "Nombre",
             "Tipo",
@@ -29,7 +29,7 @@
     },
 
     { "filas", Model.Select(e => new object[]
-{
+    {
             e.IdEvento,
             e.NombreEvento,
             e.TipoEvento,
@@ -37,4 +37,11 @@
             e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
         })
     }
+})
+
+@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+{
+    { "texto", "Crear Evento" },
+    { "icono", "bi-plus-circle" },
+    { "url", Url.Action("CrearEvento", "Evento") }
 })
