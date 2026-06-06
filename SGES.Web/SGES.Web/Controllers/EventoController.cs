@@ -111,5 +111,10 @@ namespace SGES.Web.Controllers
 
             return View(disponibles);
         }
+        [HttpGet]
+        public ActionResult InicioAdmin() 
+        {
+            return Listado();
+        }
     }
 }

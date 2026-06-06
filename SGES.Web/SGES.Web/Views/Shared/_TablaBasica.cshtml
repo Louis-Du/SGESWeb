@@ -1,3 +1,36 @@
+@*
+    _TablaBasica.cshtml — Componente reutilizable de tabla de datos con encabezados y acciones
+
+    Parámetros (vía ViewData al invocar el partial):
+        "columnas"        : IEnumerable<string>       — Encabezados de las columnas (requerido)
+        "filas"           : IEnumerable<IEnumerable<object>> — Filas de datos en el mismo orden que columnas (requerido)
+        "acciones"        : IEnumerable<string>       — Encabezados de columnas de acción, ej: ["Editar","Eliminar"] (opcional)
+        "accionesHtml"    : IEnumerable<IEnumerable<MvcHtmlString>> — HTML de cada botón de acción por fila (opcional)
+        "titulo"          : string  — Título opcional sobre la tabla (opcional)
+        "striped"         : bool    — Filas alternadas (default: true)
+        "hover"           : bool    — Resaltar fila al pasar el mouse (default: true)
+        "bordered"        : bool    — Bordes en celdas (default: false)
+        "small"           : bool    — Tabla compacta (default: false)
+        "responsive"      : bool    — Contenedor responsive (default: true)
+        "mensajeVacio"    : string  — Mensaje cuando no hay registros (default: "No hay registros para mostrar.")
+        "cssClass"        : string  — Clases CSS adicionales a la tabla (opcional)
+        "id"              : string  — Atributo id de la tabla (opcional)
+
+    Uso básico:
+        @Html.Partial("_TablaBasica", null, new ViewDataDictionary(ViewData) {
+            { "columnas", new[] { "Código", "Nombre", "Apellido", "Grado" } },
+            { "filas",    Model.Estudiantes.Select(e => new object[] {
+                              e.Codigo, e.Nombre, e.Apellido, e.Grado.Nombre }) },
+            { "acciones", new[] { "Acciones" } },
+            { "accionesHtml", Model.Estudiantes.Select(e => new[] {
+                  Html.Raw(Html.Partial("_BotonEliminar", null,
+                    new ViewDataDictionary(ViewData) {
+                      { "id", e.EstudianteId },
+                      { "controlador", "Estudiantes" },
+                      { "size", "sm" }
+                    }).ToHtmlString()) }) }
+        })
+*@
 @using System.Linq
 
 @{
@@ -70,9 +103,7 @@
     </h5>
 }
 
-@if (responsive) {
-<div class="table-responsive">
-}
+@Html.Raw(responsive ? "<div class='table-responsive'>" : "")
 
 <table class="@tableClasses.ToString()" id="@tableId">
 
@@ -100,7 +131,7 @@
                     class="text-center text-muted py-4 sges-tabla-vacia">
 
                     <i class="bi bi-inbox fs-4 d-block mb-2"
-                        aria-hidden="true"></i>
+                       aria-hidden="true"></i>
 
                     @mensajeVacio
                 </td>
@@ -125,7 +156,7 @@
                         foreach (var accionBtn in accionFila)
                         {
                             <td class="text-center sges-col-acciones">
-                                @Html.Raw(accionBtn != null? accionBtn.ToString(): "")
+                                @Html.Raw(accionBtn != null ? accionBtn.ToString() : "")
                             </td>
                         }
                     }
@@ -135,9 +166,7 @@
             }
         }
     </tbody>
+
 </table>
 
-@if (responsive)
-{
-</div>
-}
+@Html.Raw(responsive ? "</div>" : "")
