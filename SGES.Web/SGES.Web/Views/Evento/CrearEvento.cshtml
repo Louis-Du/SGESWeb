@@ -16,8 +16,6 @@
 {
     @Html.AntiForgeryToken()
 
-    @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
-
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
     {
         { "id",          "NombreEvento" },
