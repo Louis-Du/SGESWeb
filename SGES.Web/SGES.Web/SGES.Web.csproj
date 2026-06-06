@@ -191,8 +191,9 @@
     <Content Include="Views\Shared\_TextBox.cshtml" />
     <Content Include="Views\Shared\COMPONENTES.md" />
     <Content Include="Views\Evento\CrearEvento.cshtml" />
-    <Content Include="Views\Evento\Listado.cshtml" />
+    <Content Include="Views\Evento\InicioAprendiz.cshtml" />
     <Content Include="Views\Auth\Login.cshtml" />
+    <Content Include="Views\Evento\InicioAdmin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
