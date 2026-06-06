@@ -86,13 +86,27 @@
         tableClasses.Append(" " + cssClass);
     }
 
+    var seleccionable = ViewData["seleccionable"] is bool
+&& (bool)ViewData["seleccionable"];
+
     var totalColumnas = columnas.Count() + acciones.Count();
+
+    if (seleccionable)
+    {
+        totalColumnas++;
+    }
 
     var filasLista = filas.ToList();
 
     var accionesLista = accionesHtml != null
         ? accionesHtml.ToList()
         : null;
+
+    var idsFila = ViewData["idFila"] as IEnumerable<object>;
+
+    var idsLista = idsFila != null
+        ? idsFila.ToList()
+        : new List<object>();
 }
 
 @if (!string.IsNullOrEmpty(titulo))
@@ -109,6 +123,12 @@
 
     <thead class="sges-tabla-thead">
         <tr>
+
+            @if (seleccionable)
+            {
+                <th style="width:40px;"></th>
+            }
+
             @foreach (var col in columnas)
             {
                 <th scope="col">@col</th>
@@ -120,6 +140,7 @@
                     @acc
                 </th>
             }
+
         </tr>
     </thead>
 
@@ -144,6 +165,16 @@
             foreach (var fila in filasLista)
             {
                 <tr>
+
+                    @if (seleccionable)
+                    {
+                        <td>
+                            <input type="radio"
+                                   name="filaSeleccionada"
+                                   value="@(filaIndex < idsLista.Count ? idsLista[filaIndex] : "")" />
+                        </td>
+                    }
+
                     @foreach (var celda in fila)
                     {
                         <td>@celda</td>
@@ -160,6 +191,7 @@
                             </td>
                         }
                     }
+
                 </tr>
 
                 filaIndex++;
@@ -170,3 +202,4 @@
 </table>
 
 @Html.Raw(responsive ? "</div>" : "")
+

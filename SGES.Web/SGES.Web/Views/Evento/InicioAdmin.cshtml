@@ -14,17 +14,21 @@
 
 @Html.Partial("_TablaBasica", null, new ViewDataDictionary(ViewData)
 {
-    {
-        "titulo",
-        "Listado de Eventos"
+    { "titulo", "Listado de Eventos" },
+    { "seleccionable", true },
+    { "idFila", Model.Select(e => e.IdEvento) },
+
+    { "columnas", new[]
+{
+            "ID",
+            "Nombre",
+            "Tipo",
+            "Inicio",
+            "Fin"
+        }
     },
-    {
-        "columnas",
-        new[] { "ID", "Nombre", "Tipo", "Inicio", "Fin" }
-    },
-    {
-        "filas",
-        Model.Select(e => new object[]
+
+    { "filas", Model.Select(e => new object[]
 {
             e.IdEvento,
             e.NombreEvento,
