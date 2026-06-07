@@ -130,12 +130,23 @@ namespace SGES.Web.Controllers
             return View(disponibles);
         }
 
-        [HttpGet]
-        public ActionResult AprendicesRegistrados(int idEvento)
+        // GET: /Evento/AprendicesRegistrados?idEvento=5
+        public ActionResult AprendicesRegistrados(int? idEvento)
         {
-            var aprendices = new AprendizDAO().ObtenerAprendicesPorEvento(idEvento);
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+            if (idEvento == null)
+                return new HttpStatusCodeResult(400, "idEvento requerido");
 
-                return View(aprendices);
+            try
+            {
+                List<AprendizModel> inscritos = _dao.ObtenerAprendicesPorEvento(idEvento.Value);
+                return View(inscritos ?? new List<AprendizModel>());
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(500, "Error al consultar aprendices: " + ex.Message);
+            }
         }
     }
 }

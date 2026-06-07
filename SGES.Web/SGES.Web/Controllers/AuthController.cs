@@ -57,7 +57,7 @@ namespace SGES.Web.Controllers
         private ActionResult RedirigirSegunRol(UsuarioSesion usuario)
         {
             if (usuario.Tipo == "Administrador")
-                return RedirectToAction("CrearEvento", "Evento");
+                return RedirectToAction("InicioAdmin", "Evento");
 
             return RedirectToAction("InicioAprendiz", "Evento");
         }

@@ -18,7 +18,10 @@ namespace SGES.Web.Models
 
             using (SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = "SELECT * FROM Aprendiz";
+                string sql = "SELECT A.idApr," +
+                    " A.nombreApr," + "A.emailApr," + "A.contactoApr " + 
+                    "FROM Aprendiz A " + "INNER JOIN Inscripciones I ON A.idApr = I.idApr " 
+                    + "WHERE I.idEvento = @idEvento";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
 
@@ -30,8 +33,8 @@ namespace SGES.Web.Models
                 {
                     lista.Add(new AprendizModel
                     {
-                        idApr = Convert.ToInt32(dr["idApr"]),
-                        nombreApr = dr["nombreApr"].ToString(),
+                        IdApr = Convert.ToInt32(dr["idApr"]),
+                        NombreApr = dr["nombreApr"].ToString(),
                         EmailApr = dr["emailApr"].ToString(),
                         ContactoApr = dr["contactoApr"].ToString()
                     });
