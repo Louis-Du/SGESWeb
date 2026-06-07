@@ -133,6 +133,8 @@
     </Compile>
     <Compile Include="Models\EventoDAO.cs" />
     <Compile Include="Models\EventoModel.cs" />
+    <Compile Include="Models\InscripcionDAO.cs" />
+    <Compile Include="Models\InscripcionModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\UsuarioSesion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -203,6 +205,7 @@
     <Content Include="Views\Evento\CrearEvento.cshtml" />
     <Content Include="Views\Evento\Listado.cshtml" />
     <Content Include="Views\Auth\Login.cshtml" />
+    <Content Include="Views\Evento\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

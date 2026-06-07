@@ -7,6 +7,15 @@
 
 <h2>@ViewBag.Title</h2>
 
+@if (TempData["Success"] != null)
+{
+    <script>
+        // Mostramos el mensaje de éxito con un alert y luego redirigimos al listado
+        alert("@TempData["Success"]");
+        window.location.href = "@Url.Action("Listado", "Evento")";
+    </script>
+}
+
 @if (Model == null || !Model.Any())
 {
     <p>No hay eventos disponibles en este momento.</p>
@@ -24,18 +33,18 @@ else
             </tr>
         </thead>
         <tbody>
-        @foreach (var e in Model)
-        {
-            <tr>
-                <td>@e.NombreEvento</td>
-                <td>@e.TipoEvento</td>
-                <td>@e.FechaHoraInicio.ToString("g")</td>
-                <td>@e.FechaHoraFin.ToString("g")</td>
-                <td>
-                    @Html.ActionLink("Ver / Inscribirse", "Details", "Evento", new { id = e.IdEvento }, null)
-                </td>
-            </tr>
-        }
+            @foreach (var e in Model)
+            {
+                <tr>
+                    <td>@e.NombreEvento</td>
+                    <td>@e.TipoEvento</td>
+                    <td>@e.FechaHoraInicio.ToString("g")</td>
+                    <td>@e.FechaHoraFin.ToString("g")</td>
+                    <td>
+                        @Html.ActionLink("Ver / Inscribirse", "Details", "Evento", new { id = e.IdEvento }, null)
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 }
