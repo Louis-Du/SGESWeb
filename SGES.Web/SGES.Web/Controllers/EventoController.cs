@@ -84,6 +84,17 @@ namespace SGES.Web.Controllers
                 );
             }
 
+            if (evento.FechaHoraFin != default(DateTime)
+                && evento.FechaHoraInicio != default(DateTime)
+                && evento.FechaHoraFin > evento.FechaHoraInicio
+                && (evento.FechaHoraFin - evento.FechaHoraInicio).TotalMinutes < 30)
+            {
+                ModelState.AddModelError(
+                    "FechaHoraFin",
+                    "La duración del evento debe ser de al menos 30 minutos."
+                );
+            }
+
             if (!ModelState.IsValid)
                 return View(evento);
 
