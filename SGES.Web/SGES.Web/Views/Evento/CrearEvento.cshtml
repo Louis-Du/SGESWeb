@@ -162,7 +162,6 @@
                     return false;
                 }
 
-                // ← Calcular primero, luego validar
                 var diferenciaMinutos = (new Date(fin.value) - new Date(inicio.value)) / 60000;
                 if (inicio.value && diferenciaMinutos < 30) {
                     mostrarError(fin, getSpan("FechaHoraFin"),
