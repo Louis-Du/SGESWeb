@@ -10,6 +10,10 @@ namespace SGES.Web.Controllers
     {
         private readonly EventoDAO _dao;
 
+        // DAO de inscripciones, separado del DAO de eventos
+        // para respetar el principio de responsabilidad única.
+        private readonly InscripcionDAO _inscripcionDao = new InscripcionDAO();
+
         public EventoController() : this(new EventoDAO()) { }
 
         public EventoController(EventoDAO dao)
@@ -130,6 +134,66 @@ namespace SGES.Web.Controllers
             return View(disponibles);
         }
 
+        [HttpPost]
+        public ActionResult Eliminar(int idEvento)
+        {
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+
+            try
+            {
+                int cantidadInscritos = _inscripcionDao.VerificarInscritos(idEvento);
+
+                if (cantidadInscritos > 0)
+                {
+                    TempData["ConfirmarEliminar"] = true;
+                    TempData["EventoId"] = idEvento;
+                    TempData["Mensaje"] =
+                        "Este evento tiene aprendices inscritos. ¿Desea eliminarlos también?";
+
+                    return RedirectToAction("InicioAdmin");
+                }
+
+                _dao.EliminarEventos(idEvento);
+
+                TempData["Success"] = "Evento eliminado correctamente.";
+
+                return RedirectToAction("InicioAdmin");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    "Error al eliminar el evento: " + ex.Message;
+
+                return RedirectToAction("InicioAdmin");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EliminarConfirmado(int idEvento)
+        {
+            try
+            {
+                if (UsuarioActual == null)
+                    return RedirectToAction("Login", "Auth");
+
+                _inscripcionDao.EliminarInscritos(idEvento);
+
+                _dao.EliminarEventos(idEvento);
+
+                TempData["Success"] =
+                    "Evento e inscripciones eliminados correctamente.";
+
+                return RedirectToAction("InicioAdmin");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    "Error al eliminar el evento: " + ex.Message;
+
+                return RedirectToAction("InicioAdmin");
+        }
+        
         // GET: /Evento/AprendicesRegistrados?idEvento=5
         public ActionResult AprendicesRegistrados(int? idEvento)
         {

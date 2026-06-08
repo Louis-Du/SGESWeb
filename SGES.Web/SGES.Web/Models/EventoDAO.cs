@@ -62,6 +62,18 @@ namespace SGES.Web.Models
             }
         }
 
+        public void EliminarEventos(int idEvento)
+        {
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                string sql = "DELETE FROM Eventos WHERE idEvento = @idEvento";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idEvento", idEvento);
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+          
         // Devuelve aprendices inscritos en un evento
         public List<AprendizModel> ObtenerAprendicesPorEvento(int idEvento)
         {
