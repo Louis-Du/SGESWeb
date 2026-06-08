@@ -15,6 +15,6 @@ namespace SGES.Web.Models
 
         public DateTime FechaInscrip { get; set; }
 
-        public string ModalidadInscrip { get; set; }
+        public string Modalidad { get; set; }
     }
 }

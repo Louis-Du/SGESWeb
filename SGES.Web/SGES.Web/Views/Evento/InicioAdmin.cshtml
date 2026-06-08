@@ -1,4 +1,4 @@
-@model IEnumerable<SGES.Web.Models.EventoModel>
+﻿@model IEnumerable<SGES.Web.Models.EventoModel>
 @using System.Linq
 @using System.Collections.Generic
 @using SGES.Web.Models
@@ -14,12 +14,12 @@
         e.TipoEvento,
         e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
         e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
-    }) ?? Enumerable.Empty<object[]>();
+            }) ?? Enumerable.Empty<object[]>();
 
     var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
 
     var tablaViewData = new ViewDataDictionary(ViewData)
-    {
+{
         { "columnas",      columnas },
         { "filas",         filas },
         { "mensajeVacio",  "No hay eventos disponibles en este momento." },

@@ -192,6 +192,7 @@ namespace SGES.Web.Controllers
                     "Error al eliminar el evento: " + ex.Message;
 
                 return RedirectToAction("InicioAdmin");
+            }
         }
         
         // GET: /Evento/AprendicesRegistrados?idEvento=5
