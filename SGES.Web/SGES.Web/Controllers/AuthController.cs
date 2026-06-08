@@ -67,7 +67,7 @@ namespace SGES.Web.Controllers
             if (usuario.Tipo == "Administrador")
                 return RedirectToAction("InicioAdmin", "Evento");
 
-            return RedirectToAction("Listado", "Evento");
+            return RedirectToAction("InicioAprendiz", "Evento");
         }
     }
 }

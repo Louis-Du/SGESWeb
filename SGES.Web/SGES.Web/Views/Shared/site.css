@@ -390,7 +390,7 @@ small, .text-small {
 
 
 /* ────────────────────────────────────────────────────────────
-   9. TABLA — _TablaBasica.cshtml
+   9. TABLA — _TablaSeleccion.cshtml
    ──────────────────────────────────────────────────────────── */
 .sges-tabla {
     font-size: var(--sges-font-size-sm);

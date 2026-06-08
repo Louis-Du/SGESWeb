@@ -96,8 +96,10 @@ namespace SGES.Web.Controllers
             }
         }
 
+
+
         [HttpGet]
-        public ActionResult Listado()
+        public ActionResult InicioAprendiz()
         {
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
@@ -126,6 +128,25 @@ namespace SGES.Web.Controllers
                 .ToList();
 
             return View(disponibles);
+        }
+
+        // GET: /Evento/AprendicesRegistrados?idEvento=5
+        public ActionResult AprendicesRegistrados(int? idEvento)
+        {
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+            if (idEvento == null)
+                return new HttpStatusCodeResult(400, "idEvento requerido");
+
+            try
+            {
+                List<AprendizModel> inscritos = _dao.ObtenerAprendicesPorEvento(idEvento.Value);
+                return View(inscritos ?? new List<AprendizModel>());
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(500, "Error al consultar aprendices: " + ex.Message);
+            }
         }
     }
 }
