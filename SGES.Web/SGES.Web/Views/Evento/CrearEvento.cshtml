@@ -16,10 +16,8 @@
 {
     @Html.AntiForgeryToken()
 
-    @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
-
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-{
+    {
         { "id",          "NombreEvento" },
         { "label",       "Nombre del Evento" },
         { "value",       Model != null ? Model.NombreEvento : "" },
@@ -30,7 +28,7 @@
     @Html.ValidationMessage("NombreEvento", "", new { @class = "text-danger small" })
 
     @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-{
+    {
         { "id",            "TipoEvento" },
         { "label",         "Tipo de Evento" },
         { "items",         ViewBag.TiposEvento },
@@ -41,7 +39,7 @@
     @Html.ValidationMessage("TipoEvento", "", new { @class = "text-danger small" })
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-{
+    {
         { "id",      "FechaHoraInicio" },
         { "label",   "Fecha y Hora de Inicio" },
         { "type",    "datetime-local" },
@@ -52,7 +50,7 @@
     @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-{
+    {
         { "id",      "FechaHoraFin" },
         { "label",   "Fecha y Hora de Fin" },
         { "type",    "datetime-local" },
@@ -64,6 +62,11 @@
 
     <div class="mt-3">
         @Html.Partial("_BotonGuardar")
+        @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData) {
+            { "texto", "Volver" },
+            { "url", Url.Action("InicioAdmin", "Evento") },
+            { "confirm", "¿Está seguro que desea volver?" }
+        })
     </div>
 }
 
