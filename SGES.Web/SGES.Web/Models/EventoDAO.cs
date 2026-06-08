@@ -60,5 +60,15 @@ namespace SGES.Web.Models
                 cmd.ExecuteNonQuery();
             }
         }
+
+        public void EliminarEventos(int idEvento)
+        {
+            string eliminarEvento = "DELETE FROM Eventos WHERE idEvento = @idEvento";
+            using (SqlCommand con = new SqlCommand(eliminarEvento, cn.ObtenerConexion()))
+            {
+                con.Parameters.AddWithValue("@idEvento", idEvento);
+                con.ExecuteNonQuery();
+            }
+        }
     }
 }
