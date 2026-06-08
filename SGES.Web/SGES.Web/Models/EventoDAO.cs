@@ -95,5 +95,35 @@ namespace SGES.Web.Models
 
             return lista;
         }
+
+        // ActualizarEvento: modifica los datos de un evento existente en la BD.
+        // Recibe un EventoModel con todos los campos ya validados desde el controlador
+        public void ActualizarEvento(EventoModel evento)
+        {
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                string sql = @"UPDATE Eventos
+                       SET nombreEvento    = @nombreEvento,
+                           tipoEvento      = @tipoEvento,
+                           diaEvento       = @diaEvento,
+                           fechaHoraInicio = @fechaHoraInicio,
+                           fechaHoraFin    = @fechaHoraFin
+                       WHERE idEvento = @idEvento";
+
+                SqlCommand cmd = new SqlCommand(sql, con);
+
+                // Parámetros: cada @nombre debe coincidir exactamente con el SQL de arriba
+                cmd.Parameters.AddWithValue("@nombreEvento", evento.NombreEvento);
+                cmd.Parameters.AddWithValue("@tipoEvento", evento.TipoEvento);
+                // diaEvento se deriva de la fecha de inicio (solo la parte de fecha)
+                cmd.Parameters.AddWithValue("@diaEvento", evento.FechaHoraInicio.Date);
+                cmd.Parameters.AddWithValue("@fechaHoraInicio", evento.FechaHoraInicio);
+                cmd.Parameters.AddWithValue("@fechaHoraFin", evento.FechaHoraFin);
+                cmd.Parameters.AddWithValue("@idEvento", evento.IdEvento);
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

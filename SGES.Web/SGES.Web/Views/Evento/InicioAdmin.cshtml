@@ -22,7 +22,7 @@
         e.TipoEvento,
         e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
         e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
-                                    }) ?? Enumerable.Empty<object[]>();
+                                            }) ?? Enumerable.Empty<object[]>();
 
     // ids alineadas con filas
     var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
@@ -44,6 +44,13 @@
     { "texto", "Crear Evento" },
     { "icono", "bi-plus-circle" },
     { "url", Url.Action("CrearEvento", "Evento") }
+})
+
+@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+{
+    { "texto", "Modificar Evento" },
+    { "icono", "bi-pencil-square" },
+    { "id",    "btnModificarEvento" }
 })
 
 @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
@@ -81,6 +88,22 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("No se pudo navegar. Ver consola.");
         }
     });
+
+        // Botón Modificar Evento: navega a ModificarEvento con el id del evento seleccionado
+        var btnModificar = document.getElementById("btnModificarEvento");
+        if (btnModificar) {
+            btnModificar.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
+                if (!seleccionado) { alert("Seleccione un evento para modificar."); return; }
+
+                var idEvento = seleccionado.value;
+                var url = '@Url.Action("ModificarEvento", "Evento")' + '?id=' + encodeURIComponent(idEvento);
+                window.location.href = url;
+        });
+}
+
 });
     </script>
 }
