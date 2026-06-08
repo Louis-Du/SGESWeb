@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SGES.Web.Models.EventoModel>
+@model IEnumerable<SGES.Web.Models.EventoModel>
 @using System.Linq
 @using System.Collections.Generic
 @using SGES.Web.Models
@@ -14,12 +14,12 @@
         e.TipoEvento,
         e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
         e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
-                                    }) ?? Enumerable.Empty<object[]>();
+    }) ?? Enumerable.Empty<object[]>();
 
     var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
 
     var tablaViewData = new ViewDataDictionary(ViewData)
-{
+    {
         { "columnas",      columnas },
         { "filas",         filas },
         { "mensajeVacio",  "No hay eventos disponibles en este momento." },
@@ -50,6 +50,13 @@
             { "url",   Url.Action("CrearEvento", "Evento") }
         })
 
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Ver Aprendices" },
+            { "icono", "bi-people-fill" },
+            { "id", "btnVerAprendices" }
+        })
+
         @Html.Partial("_BotonAccion", null, new ViewDataDictionary(ViewData)
         {
             { "texto",            "Eliminar Evento" },
@@ -60,4 +67,36 @@
             { "requireSelection", true }
         })
     </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var btn = document.getElementById("btnVerAprendices");
+            console.log('btnVerAprendices:', btn);
+            if (!btn) return;
+
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
+                console.log('seleccionado:', seleccionado);
+                if (!seleccionado) { alert("Seleccione un evento."); return; }
+
+                var idEvento = seleccionado.value;
+                if (!idEvento) { alert("Id inválido."); return; }
+
+                var baseUrl = '@Url.Action("AprendicesRegistrados", "Evento")';
+                var url = baseUrl + '?idEvento=' + encodeURIComponent(idEvento);
+
+                // navegación segura
+                try {
+                    window.location.href = url;
+                } catch (ex) {
+                    console.error("Fallo al navegar:", ex);
+                    alert("No se pudo navegar. Ver consola.");
+                }
+            });
+        });
+    </script>
 }

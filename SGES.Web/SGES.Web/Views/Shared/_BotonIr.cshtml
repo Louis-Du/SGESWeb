@@ -22,34 +22,39 @@
 
 *@
 
+@using System.Web
+
 @{
-    var texto = ViewData["texto"] != null
-    ? ViewData["texto"].ToString()
-    : "Ir";
-
-    var icono = ViewData["icono"] != null
-        ? ViewData["icono"].ToString()
-        : "bi-arrow-right";
-
-    var url = ViewData["url"] != null
-        ? ViewData["url"].ToString()
-        : "#";
-
-    var cssClass = ViewData["cssClass"] != null
-        ? ViewData["cssClass"].ToString()
-        : "";
-
-    var id = ViewData["id"] != null
-        ? ViewData["id"].ToString()
-        : "";
-
-    var disabled = ViewData["disabled"] is bool
-        && (bool)ViewData["disabled"];
-
-    var btnClass = "btn btn-primary sges-btn-ir " + cssClass;
-
+    // Contrato ViewData:
+    // ViewData["texto"] : string (texto del botón)
+    // ViewData["icono"] : string (clases de icono opcional, p. ej. "bi-plus-circle")
+    // ViewData["url"]   : string (url a la que navegar si se desea)
+    // ViewData["id"]    : string (id DOM opcional, p. ej. "btnVerAprendices")
+    // ViewData["class"] : string clases css adicionales
+    var texto = ViewData["texto"] as string ?? "Ir";
+    var icono = ViewData["icono"] as string;
+    var url = ViewData["url"] as string;
+    var id = ViewData["id"] as string;
+    var cssClass = ("btn btn-primary " + (ViewData["class"] as string ?? "")).Trim();
 }
 
-<a href="@url" class="btn btn-primary">
-    @texto
-</a>
+@if (!string.IsNullOrEmpty(url))
+{
+    <a id="@(id ?? "")" class="@cssClass" href="@url" role="button">
+        @if (!string.IsNullOrEmpty(icono))
+        {
+            <i class="@icono"></i>@Html.Raw("&nbsp;")
+        }
+        @texto
+    </a>
+}
+else
+{
+    <button id="@(id ?? "")" type="button" class="@cssClass">
+        @if (!string.IsNullOrEmpty(icono))
+        {
+            <i class="@icono"></i>@Html.Raw("&nbsp;")
+        }
+        @texto
+    </button>
+}
