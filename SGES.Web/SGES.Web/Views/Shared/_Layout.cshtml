@@ -48,8 +48,89 @@
         </footer>
     </div>
 
+    @* ── Toast flotante: Éxito / Error ── *@
+    @if (TempData["Success"] != null || TempData["Error"] != null)
+    {
+        var esExito = TempData["Success"] != null;
+        var mensaje = esExito ? TempData["Success"].ToString() : TempData["Error"].ToString();
+        var bgClass = esExito ? "text-bg-success" : "text-bg-danger";
+        var icono = esExito ? "bi-check-circle-fill" : "bi-x-circle-fill";
+
+        <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index:1100">
+            <div id="sgesNotificacion"
+                 class="toast align-items-center @bgClass border-0 shadow"
+                 role="alert" aria-live="assertive" aria-atomic="true"
+                 data-bs-autohide="true" data-bs-delay="4000">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center gap-2">
+                        <i class="bi @icono fs-5"></i>
+                        <span>@mensaje</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                            data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @* ── Modal flotante: Confirmación con inscritos ── *@
+    @if (TempData["ConfirmarEliminar"] != null)
+    {
+        var eventoId = TempData["EventoId"];
+        var mensajeConf = TempData["Mensaje"]?.ToString() ?? "¿Desea eliminar este evento?";
+
+        <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1"
+             aria-labelledby="modalConfirmarLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                        <h5 class="modal-title" id="modalConfirmarLabel">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar eliminación
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        @mensajeConf
+                    </div>
+                    <div class="modal-footer">
+                        @using (Html.BeginForm("EliminarConfirmado", "Evento", FormMethod.Post, new { id = "frmEliminarConfirmado" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="idEvento" value="@eventoId" />
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash3 me-1"></i>Sí, eliminar todo
+                            </button>
+                        }
+                        <a href="@Url.Action("InicioAdmin", "Evento")" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    @* ── Activar Toast y Modal automáticamente ── *@
+    @if (TempData["Success"] != null || TempData["Error"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var el = document.getElementById("sgesNotificacion");
+                if (el) { new bootstrap.Toast(el).show(); }
+            });
+        </script>
+    }
+    @if (TempData["ConfirmarEliminar"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var modal = new bootstrap.Modal(document.getElementById("modalConfirmarEliminar"));
+                modal.show();
+            });
+        </script>
+    }
 </body>
 </html>
