@@ -144,7 +144,6 @@ namespace SGES.Web.Controllers
             // con un mensaje informativo.
             if (_inscripcionDao.YaInscrito(UsuarioActual.Id, id))
             {
-                TempData["Error"] = "Ya estás inscrito en este evento.";
                 return RedirectToAction("InicioAprendiz");
             }
 
