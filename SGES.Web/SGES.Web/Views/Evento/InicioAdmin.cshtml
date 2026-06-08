@@ -5,6 +5,13 @@
     ViewBag.Title = "MenuInicioAdmin";
 }
 
+@if (TempData["Success"] != null)
+{
+    <script>
+        alert("@TempData["Success"]");
+    </script>
+}
+
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
     { "titulo",    "Menú de inicio para el administrador" },
@@ -22,7 +29,7 @@
         e.TipoEvento,
         e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
         e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
-                                            }) ?? Enumerable.Empty<object[]>();
+                                                    }) ?? Enumerable.Empty<object[]>();
 
     // ids alineadas con filas
     var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
