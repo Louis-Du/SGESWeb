@@ -195,6 +195,7 @@
     <Content Include="Views\Evento\InicioAdmin.cshtml" />
     <Content Include="Views\Shared\_BotonIr.cshtml" />
     <Content Include="Views\Shared\_BotonAccion.cshtml" />
+    <Content Include="Views\Shared\_TablaSeleccion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

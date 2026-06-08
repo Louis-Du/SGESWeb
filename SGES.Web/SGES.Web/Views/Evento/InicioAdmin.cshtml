@@ -40,7 +40,7 @@
     @Html.AntiForgeryToken()
     <input type="hidden" id="idEvento" name="idEvento" value="" />
 
-    @Html.Partial("_TablaBasica", null, tablaViewData)
+    @Html.Partial("_TablaSeleccion", null, tablaViewData)
 
     <div class="mt-3 d-flex gap-2">
         @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
