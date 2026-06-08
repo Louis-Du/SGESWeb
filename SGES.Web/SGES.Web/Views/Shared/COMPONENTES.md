@@ -129,12 +129,12 @@ Formulario POST con confirmación de seguridad.
 
 ---
 
-## _TablaBasica
+## _TablaSeleccion
 
 Tabla de datos con encabezados y columnas de acción opcionales.
 
 ```cshtml
-@Html.Partial("_TablaBasica", null, new ViewDataDictionary(ViewData) {
+@Html.Partial("_TablaSeleccion", null, new ViewDataDictionary(ViewData) {
     { "titulo",   "Listado de Estudiantes" },
     { "columnas", new[] { "Código", "Nombre", "Apellido", "Grado" } },
     { "filas",    Model.Select(e => new object[] {
@@ -245,7 +245,7 @@ SGESWeb/
 │       ├── _BotonGuardar.cshtml
 │       ├── _BotonCancelar.cshtml
 │       ├── _BotonEliminar.cshtml
-│       ├── _TablaBasica.cshtml
+│       ├── _TablaSeleccion.cshtml
 │       └── _Card.cshtml
 └── wwwroot/
     └── css/

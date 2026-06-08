@@ -186,7 +186,6 @@
     <Content Include="Views\Shared\_BotonGuardar.cshtml" />
     <Content Include="Views\Shared\_Card.cshtml" />
     <Content Include="Views\Shared\_ComboBox.cshtml" />
-    <Content Include="Views\Shared\_TablaBasica.cshtml" />
     <Content Include="Views\Shared\_TextArea.cshtml" />
     <Content Include="Views\Shared\_TextBox.cshtml" />
     <Content Include="Views\Shared\COMPONENTES.md" />
