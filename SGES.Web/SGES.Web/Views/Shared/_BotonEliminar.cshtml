@@ -44,9 +44,9 @@
     var confirm     = ViewData["confirm"]?.ToString()
                         ?? "¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer.";
     var cssClass    = ViewData["cssClass"]?.ToString() ?? "";
-    var disabled    = ViewData["disabled"] is bool d && d;
+    var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
     var size        = ViewData["size"]?.ToString() ?? "";
-    var outline     = ViewData["outline"] is bool o && o;
+    var outline = ViewData["outline"] is bool && (bool)ViewData["outline"];
 
     // Construir clases del botón
     var btnVariant  = outline ? "btn-outline-danger" : "btn-danger";

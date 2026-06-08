@@ -1,0 +1,94 @@
+@*
+    _TablaSeleccion.cshtml — Componente reutilizable de tabla de datos con encabezados y acciones
+    (contrato via ViewData documentado en el fichero)
+*@
+@using System.Collections.Generic
+@using System.Linq
+@using System.Web
+
+@{
+    // Lectura de parámetros desde ViewData
+    var columnas = ViewData["columnas"] as IEnumerable<string> ?? Enumerable.Empty<string>();
+    var filas = ViewData["filas"] as IEnumerable<IEnumerable<object>> ?? Enumerable.Empty<IEnumerable<object>>();
+    var mensajeVacio = ViewData["mensajeVacio"] as string ?? "No hay datos.";
+    var seleccionable = ViewData["seleccionable"] as bool? ?? false;
+    var idFilaEnum = (ViewData["idFila"] as IEnumerable<object>)?.ToList() ?? new List<object>();
+    var tableClass = ViewData["tableClass"] as string ?? "table table-striped";
+    var filasList = filas.ToList();
+    var totalColumnas = columnas.Count() + (seleccionable ? 1 : 0);
+
+    // CORRECCIÓN: obtener 'titulo' desde ViewData para que exista en el contexto
+    var titulo = ViewData["titulo"] as string;
+}
+
+@if (!string.IsNullOrEmpty(titulo))
+{
+    <h5 class="sges-tabla-titulo mb-2">
+        <i class="bi bi-table me-2" aria-hidden="true"></i>
+        @titulo
+    </h5>   
+}
+
+<div class="table-responsive">
+    <table class="@tableClass">
+        <thead>
+            <tr>
+                @if (seleccionable)
+                {
+                    <th></th>
+                }
+
+                @foreach (var col in columnas)
+                {
+                    <th>@col</th>
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (!filasList.Any())
+            {
+                <tr>
+                    <td colspan="@totalColumnas" class="text-center text-muted py-4 sges-tabla-vacia">
+                        <i class="bi bi-inbox fs-4 d-block mb-2" aria-hidden="true"></i>
+                        @mensajeVacio
+                    </td>
+                </tr>
+            }
+            else
+            {
+                for (int i = 0; i < filasList.Count; i++)
+                {
+                    var fila = filasList[i].ToList();
+                    <tr>
+                        @if (seleccionable)
+                        {
+                            var val = (i < idFilaEnum.Count) ? (idFilaEnum[i]?.ToString() ?? string.Empty) : string.Empty;
+                            <td class="align-middle text-center">
+                                <input type="radio" name="filaSeleccionada" value="@val" />
+                            </td>
+                        }
+
+                        @foreach (var celda in fila)
+                        {
+                            <td>
+                                @{
+                                    var htmlCell = celda as System.Web.IHtmlString;
+                                    if (htmlCell != null)
+                                    {
+                                        @htmlCell
+                                    }
+                                    else
+                                    {
+                                        @celda
+                                    }
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+

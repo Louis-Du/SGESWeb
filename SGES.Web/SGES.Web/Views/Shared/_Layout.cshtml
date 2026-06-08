@@ -1,40 +1,136 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
+    <title>@ViewBag.Title - SGES</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container">
-            @Html.ActionLink("Nombre de la aplicación", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
+            @Html.ActionLink("SGES", "Login", "Auth", new { area = "" }, new { @class = "navbar-brand" })
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Acerca de", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                 </ul>
+                @if (Session["Usuario"] != null)
+                {
+                    var u = (SGES.Web.Models.UsuarioSesion)Session["Usuario"];
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <span class="nav-link text-white-50">
+                                <i class="bi bi-person-circle me-1"></i>@u.Nombre
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Logout", "Auth")" class="nav-link"
+                               onclick="return confirm('¿Está seguro que desea cerrar la sesión?');">
+                                Cerrar sesión
+                            </a>
+                        </li>
+                    </ul>
+                }
             </div>
         </div>
     </nav>
-    <div class="container body-content">
+
+    <div class="container body-content mt-4">
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Mi aplicación ASP.NET</p>
+            <p>&copy; @DateTime.Now.Year - SGES</p>
         </footer>
     </div>
+
+    @* ── Toast flotante: Éxito / Error ── *@
+    @if (TempData["Success"] != null || TempData["Error"] != null)
+    {
+        var esExito = TempData["Success"] != null;
+        var mensaje = esExito ? TempData["Success"].ToString() : TempData["Error"].ToString();
+        var bgClass = esExito ? "text-bg-success" : "text-bg-danger";
+        var icono = esExito ? "bi-check-circle-fill" : "bi-x-circle-fill";
+
+        <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index:1100">
+            <div id="sgesNotificacion"
+                 class="toast align-items-center @bgClass border-0 shadow"
+                 role="alert" aria-live="assertive" aria-atomic="true"
+                 data-bs-autohide="true" data-bs-delay="4000">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center gap-2">
+                        <i class="bi @icono fs-5"></i>
+                        <span>@mensaje</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                            data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @* ── Modal flotante: Confirmación con inscritos ── *@
+    @if (TempData["ConfirmarEliminar"] != null)
+    {
+        var eventoId = TempData["EventoId"];
+        var mensajeConf = TempData["Mensaje"]?.ToString() ?? "¿Desea eliminar este evento?";
+
+        <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1"
+             aria-labelledby="modalConfirmarLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                        <h5 class="modal-title" id="modalConfirmarLabel">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar eliminación
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        @mensajeConf
+                    </div>
+                    <div class="modal-footer">
+                        @using (Html.BeginForm("EliminarConfirmado", "Evento", FormMethod.Post, new { id = "frmEliminarConfirmado" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="idEvento" value="@eventoId" />
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash3 me-1"></i>Sí, eliminar todo
+                            </button>
+                        }
+                        <a href="@Url.Action("InicioAdmin", "Evento")" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    @* ── Activar Toast y Modal automáticamente ── *@
+    @if (TempData["Success"] != null || TempData["Error"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var el = document.getElementById("sgesNotificacion");
+                if (el) { new bootstrap.Toast(el).show(); }
+            });
+        </script>
+    }
+    @if (TempData["ConfirmarEliminar"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var modal = new bootstrap.Modal(document.getElementById("modalConfirmarEliminar"));
+                modal.show();
+            });
+        </script>
+    }
 </body>
 </html>

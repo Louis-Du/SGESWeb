@@ -1,0 +1,34 @@
+﻿@using SGES.Web.Models
+@model IEnumerable<SGES.Web.Models.AprendizModel>
+
+@{
+    ViewBag.Title = "Aprendices Registrados";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@Html.Partial("_TablaSeleccion", null,
+        new ViewDataDictionary(ViewData)
+        {
+            { "titulo", "Aprendices Registrados" },
+
+            { "columnas", new[]
+    {
+                    "ID",
+                    "Nombre",
+                    "Correo",
+                    "Contacto"
+                }
+            },
+
+
+            { "filas", (Model ?? Enumerable.Empty<AprendizModel>()).Select(a => new List<object>
+    {
+                    a.IdApr,
+                    a.NombreApr,
+                    a.EmailApr,
+                    a.ContactoApr
+                })
+            }
+                    })
+

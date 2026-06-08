@@ -31,63 +31,119 @@
                     }).ToHtmlString()) }) }
         })
 *@
+@using System.Linq
 
 @{
-    var columnas     = (ViewData["columnas"]     as IEnumerable<string>)  ?? Enumerable.Empty<string>();
-    var filas        = (ViewData["filas"]        as IEnumerable<IEnumerable<object>>) ?? Enumerable.Empty<IEnumerable<object>>();
-    var acciones     = (ViewData["acciones"]     as IEnumerable<string>)  ?? Enumerable.Empty<string>();
-    var accionesHtml = (ViewData["accionesHtml"] as IEnumerable<IEnumerable<object>>);
+    var columnas = (ViewData["columnas"] as IEnumerable<string>) ?? Enumerable.Empty<string>();
+    var filas = (ViewData["filas"] as IEnumerable<IEnumerable<object>>) ?? Enumerable.Empty<IEnumerable<object>>();
+    var acciones = (ViewData["acciones"] as IEnumerable<string>) ?? Enumerable.Empty<string>();
+    var accionesHtml = ViewData["accionesHtml"] as IEnumerable<IEnumerable<object>>;
 
-    var titulo       = ViewData["titulo"]?.ToString();
-    var striped      = !(ViewData["striped"]    is bool st && !st);
-    var hover        = !(ViewData["hover"]      is bool hv && !hv);
-    var bordered     = ViewData["bordered"]     is bool bo && bo;
-    var small        = ViewData["small"]        is bool sm && sm;
-    var responsive   = !(ViewData["responsive"] is bool rp && !rp);
-    var mensajeVacio = ViewData["mensajeVacio"]?.ToString() ?? "No hay registros para mostrar.";
-    var cssClass     = ViewData["cssClass"]?.ToString() ?? "";
-    var tableId      = ViewData["id"]?.ToString() ?? "";
+    var titulo = ViewData["titulo"] != null ? ViewData["titulo"].ToString() : null;
 
-    // Construir clases de la tabla
+    var striped = !(ViewData["striped"] is bool && !(bool)ViewData["striped"]);
+    var hover = !(ViewData["hover"] is bool && !(bool)ViewData["hover"]);
+    var bordered = ViewData["bordered"] is bool && (bool)ViewData["bordered"];
+    var small = ViewData["small"] is bool && (bool)ViewData["small"];
+    var responsive = !(ViewData["responsive"] is bool && !(bool)ViewData["responsive"]);
+
+    var mensajeVacio = ViewData["mensajeVacio"] != null
+        ? ViewData["mensajeVacio"].ToString()
+        : "No hay registros para mostrar.";
+
+    var cssClass = ViewData["cssClass"] != null
+        ? ViewData["cssClass"].ToString()
+        : "";
+
+    var tableId = ViewData["id"] != null
+        ? ViewData["id"].ToString()
+        : "";
+
     var tableClasses = new System.Text.StringBuilder("table sges-tabla");
-    if (striped)  tableClasses.Append(" table-striped");
-    if (hover)    tableClasses.Append(" table-hover");
-    if (bordered) tableClasses.Append(" table-bordered");
-    if (small)    tableClasses.Append(" table-sm");
-    if (!string.IsNullOrEmpty(cssClass)) tableClasses.Append(" " + cssClass);
 
-    var totalColumnas  = columnas.Count() + acciones.Count();
-    var filasLista     = filas.ToList();
-    var accionesLista  = accionesHtml?.ToList();
+    if (striped)
+    {
+        tableClasses.Append(" table-striped");
+    }
+
+    if (hover)
+    {
+        tableClasses.Append(" table-hover");
+    }
+
+    if (bordered)
+    {
+        tableClasses.Append(" table-bordered");
+    }
+
+    if (small)
+    {
+        tableClasses.Append(" table-sm");
+    }
+
+    if (!string.IsNullOrEmpty(cssClass))
+    {
+        tableClasses.Append(" " + cssClass);
+    }
+
+    var seleccionable = ViewData["seleccionable"] is bool
+&& (bool)ViewData["seleccionable"];
+
+    var totalColumnas = columnas.Count() + acciones.Count();
+
+    if (seleccionable)
+    {
+        totalColumnas++;
+    }
+
+    var filasLista = filas.ToList();
+
+    var accionesLista = accionesHtml != null
+        ? accionesHtml.ToList()
+        : null;
+
+    var idsFila = ViewData["idFila"] as IEnumerable<object>;
+
+    var idsLista = idsFila != null
+        ? idsFila.ToList()
+        : new List<object>();
 }
 
 @if (!string.IsNullOrEmpty(titulo))
 {
     <h5 class="sges-tabla-titulo mb-2">
-        <i class="bi bi-table me-2" aria-hidden="true"></i>@titulo
+        <i class="bi bi-table me-2" aria-hidden="true"></i>
+        @titulo
     </h5>
 }
 
-@{
-    var tableWrapper = responsive ? "<div class=\"table-responsive\">" : "";
-    var tableWrapperClose = responsive ? "</div>" : "";
-}
+@Html.Raw(responsive ? "<div class='table-responsive'>" : "")
 
-@if (responsive) { <div class="table-responsive"> }
+<table class="@tableClasses.ToString()" id="@tableId">
 
 <table class="@tableClasses.ToString()"
        @(!string.IsNullOrEmpty(tableId) ? $"id=\"{tableId}\"" : "")>
 
     <thead class="sges-tabla-thead">
         <tr>
+
+            @if (seleccionable)
+            {
+                <th style="width:40px;"></th>
+            }
+
             @foreach (var col in columnas)
             {
                 <th scope="col">@col</th>
             }
+
             @foreach (var acc in acciones)
             {
-                <th scope="col" class="text-center sges-col-acciones">@acc</th>
+                <th scope="col" class="text-center sges-col-acciones">
+                    @acc
+                </th>
             }
+
         </tr>
     </thead>
 
@@ -95,8 +151,12 @@
         @if (!filasLista.Any())
         {
             <tr>
-                <td colspan="@totalColumnas" class="text-center text-muted py-4 sges-tabla-vacia">
-                    <i class="bi bi-inbox fs-4 d-block mb-2" aria-hidden="true"></i>
+                <td colspan="@totalColumnas"
+                    class="text-center text-muted py-4 sges-tabla-vacia">
+
+                    <i class="bi bi-inbox fs-4 d-block mb-2"
+                       aria-hidden="true"></i>
+
                     @mensajeVacio
                 </td>
             </tr>
@@ -104,9 +164,20 @@
         else
         {
             var filaIndex = 0;
+
             foreach (var fila in filasLista)
             {
                 <tr>
+
+                    @if (seleccionable)
+                    {
+                        <td>
+                            <input type="radio"
+                                   name="filaSeleccionada"
+                                   value="@(filaIndex < idsLista.Count ? idsLista[filaIndex] : "")" />
+                        </td>
+                    }
+
                     @foreach (var celda in fila)
                     {
                         <td>@celda</td>
@@ -115,18 +186,22 @@
                     @if (accionesLista != null && filaIndex < accionesLista.Count)
                     {
                         var accionFila = accionesLista[filaIndex].ToList();
+
                         foreach (var accionBtn in accionFila)
                         {
                             <td class="text-center sges-col-acciones">
-                                @Html.Raw(accionBtn?.ToString())
+                                @Html.Raw(accionBtn != null ? accionBtn.ToString() : "")
                             </td>
                         }
                     }
+
                 </tr>
+
                 filaIndex++;
             }
         }
     </tbody>
-</table>
 
-@if (responsive) { </div> }
+</table>
+          
+@Html.Raw(responsive ? "</div>" : "")

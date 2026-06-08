@@ -47,7 +47,7 @@
     var shadow     = ViewData["shadow"]?.ToString() ?? "sm";
     var color      = ViewData["color"]?.ToString() ?? "";
     var cardId     = ViewData["id"]?.ToString() ?? "";
-    var sinBorde   = ViewData["sinBorde"] is bool sb && sb;
+    var sinBorde = ViewData["sinBorde"] is bool && (bool)ViewData["sinBorde"];
 
     // Construir clases de la card
     var shadowClass = shadow == "lg" ? "shadow-lg" : shadow == "sm" ? "shadow-sm" : "shadow";
