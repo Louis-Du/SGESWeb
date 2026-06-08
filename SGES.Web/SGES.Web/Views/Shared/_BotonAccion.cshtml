@@ -1,0 +1,114 @@
+﻿@*
+        _BotonAccion.cshtml — Botón reutilizable para ejecutar acciones
+
+    Permite reutilizar el mismo componente para:
+        - Eliminar
+        - Actualizar
+        - Consultar
+        - Inscribir
+        - Aprobar
+        - Exportar
+        - Cualquier otra acción
+
+    Parámetros (vía ViewData al invocar el partial):
+
+        "texto"      : string — Texto visible del botón (requerido)
+        "icono"      : string — Clase Bootstrap Icons (opcional)
+        "cssClass"   : string — Clases CSS adicionales (opcional)
+        "id"         : string — Id HTML del botón (opcional)
+        "disabled"   : bool   — Deshabilitar botón (default: false)
+        "type"       : string — submit | button (default: button)
+        "confirm"    : string — Mensaje de confirmación (opcional)
+        "requireSelection": bool   — Valida que haya un radio seleccionado antes de continuar (default: false)
+
+    Uso básico:
+
+        @Html.Partial("_BotonAccion", null,
+            new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Eliminar" },
+                { "icono", "bi-trash3" },
+                { "cssClass", "btn-danger" }
+            })
+
+    Uso con confirmación:
+
+        @Html.Partial("_BotonAccion", null,
+            new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Eliminar" },
+                { "icono", "bi-trash3" },
+                { "cssClass", "btn-danger" },
+                { "confirm", "¿Está seguro que desea eliminar este registro?" }
+            })
+
+    Uso como submit:
+
+        @Html.Partial("_BotonAccion", null,
+            new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Guardar" },
+                { "icono", "bi-floppy" },
+                { "cssClass", "btn-primary" },
+                { "type", "submit" }
+            })
+*@
+
+@{
+    var texto = ViewData["texto"]?.ToString() ?? "Acción";
+    var icono = ViewData["icono"]?.ToString() ?? "";
+    var cssClass = ViewData["cssClass"]?.ToString() ?? "btn-primary";
+    var id = ViewData["id"]?.ToString() ?? "";
+    var type = ViewData["type"]?.ToString() ?? "button";
+    var confirm = ViewData["confirm"]?.ToString() ?? "";
+    var requireSelection = ViewData["requireSelection"] is bool && (bool)ViewData["requireSelection"];
+    var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
+    var btnClass = "btn sges-btn-accion " + cssClass;
+
+    string onclickValue;
+
+    if (requireSelection && !string.IsNullOrEmpty(confirm))
+    {
+        onclickValue = "var s=document.querySelector('input[name=filaSeleccionada]:checked'); if(!s){alert('Debe seleccionar un registro.');return false;} document.getElementById('idEvento').value=s.value; return confirm('" + confirm + "');";
+    }
+    else if (requireSelection)
+    {
+        onclickValue = "var s=document.querySelector('input[name=filaSeleccionada]:checked'); if(!s){alert('Debe seleccionar un registro.');return false;} document.getElementById('idEvento').value=s.value; return true;";
+    }
+    else if (!string.IsNullOrEmpty(confirm))
+    {
+        onclickValue = "return confirm('" + confirm + "');";
+    }
+    else
+    {
+        onclickValue = "";
+    }
+}
+
+@if (string.IsNullOrEmpty(onclickValue))
+{
+    <button type="@type"
+            class="@btnClass"
+            @(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "")
+            @(disabled ? "disabled" : "")>
+        @if (!string.IsNullOrEmpty(icono))
+        {
+            <i class="bi @icono me-1" aria-hidden="true"></i>
+        }
+        @texto
+    </button>
+}
+else
+{
+    <button type="@type"
+            class="@btnClass"
+            @(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "")
+            @(disabled ? "disabled" : "")
+            onclick="@onclickValue">
+        @if (!string.IsNullOrEmpty(icono))
+        {
+            <i class="bi @icono me-1" aria-hidden="true"></i>
+        }
+        @texto
+    </button>
+}
