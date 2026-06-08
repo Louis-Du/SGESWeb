@@ -87,10 +87,21 @@
                 return true;
             }
 
+            // Bloquea caracteres no numéricos y muestra error inmediato
             id.addEventListener("keydown", function (e) {
                 var permitidos = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
                 if (permitidos.includes(e.key)) return;
-                if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+                if (!/^[0-9]$/.test(e.key)) {
+                    e.preventDefault();
+                    mostrarError(id, getSpan("Id"), "Solo se permiten números.");
+                }
+            });
+
+            // Limpia el error cuando el valor es válido
+            id.addEventListener("keyup", function () {
+                if (/^[0-9]+$/.test(id.value)) {
+                    limpiar(id, getSpan("Id"));
+                }
             });
 
             function validarContrasena() {
