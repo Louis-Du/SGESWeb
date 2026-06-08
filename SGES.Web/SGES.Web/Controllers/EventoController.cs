@@ -91,7 +91,7 @@ namespace SGES.Web.Controllers
             {
                 _dao.InsertarEvento(evento);
                 TempData["Success"] = "Evento creado correctamente.";
-                return RedirectToAction("CrearEvento");
+                return RedirectToAction("InicioAdmin");
             }
             catch (Exception ex)
             {
@@ -99,8 +99,6 @@ namespace SGES.Web.Controllers
                 return View(evento);
             }
         }
-
-
 
         [HttpGet]
         public ActionResult InicioAprendiz()
