@@ -77,7 +77,7 @@
     })
     @Html.ValidationMessage("Modalidad", "", new { @class = "text-danger small" })
 
-    @* Botones: Guardar envía el formulario, Cancelar vuelve al listado. *@
+    @* Botones: Guardar envía el formulario, Cancelar vuelve al InicioAprendiz. *@
     <div class="mt-3">
         @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
         {
@@ -87,7 +87,7 @@
         @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
         {
             { "texto", "Volver al listado" },
-            { "url",   Url.Action("Listado", "Evento") }
+            { "url",   Url.Action("InicioAprendiz", "Evento") }
         })
     </div>
 }

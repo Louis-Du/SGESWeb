@@ -101,7 +101,7 @@ namespace SGES.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult Listado()
+        public ActionResult InicioAprendiz()
         {
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
@@ -131,11 +131,21 @@ namespace SGES.Web.Controllers
             //se busca el evento por su id en la lista completa de eventos.
             var evento = _dao.ObtenerEventos().FirstOrDefault(e => e.IdEvento == id);
 
-            // si el evento no existe, redirigir al listado con mensaje de error.
+            // si el evento no existe, redirigir al InicioAprendiz con mensaje de error.
             if (evento == null)
             {
                 TempData["Error"] = "Evento no encontrado.";
-                return RedirectToAction("Listado");
+                return RedirectToAction("InicioAprendiz");
+            }
+
+
+            // VALIDACIÓN: si el aprendiz ya está inscrito en este evento,
+            // no tiene sentido mostrar el formulario — lo devolvemos al inicio
+            // con un mensaje informativo.
+            if (_inscripcionDao.YaInscrito(UsuarioActual.Id, id))
+            {
+                TempData["Error"] = "Ya estás inscrito en este evento.";
+                return RedirectToAction("InicioAprendiz");
             }
 
             // pasamos la lista de modalidades al combobox de la vista.
@@ -187,6 +197,7 @@ namespace SGES.Web.Controllers
                 return View(inscripcion);
             }
 
+
             // --- VALIDACIÓN 3: ModelState (campos requeridos, etc.) -------------
             if (!ModelState.IsValid)
             {
@@ -199,13 +210,14 @@ namespace SGES.Web.Controllers
                 _inscripcionDao.Inscribir(inscripcion);
                 // TempData persiste solo hasta la siguiente petición (el redirect).
                 TempData["Success"] = "Inscripción realizada correctamente.";
-                return RedirectToAction("Listado");
+                return RedirectToAction("InicioAprendiz");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, "Error al inscribirse: " + ex.Message);
                 return View(inscripcion);
             }
+
         }
     }
 }
