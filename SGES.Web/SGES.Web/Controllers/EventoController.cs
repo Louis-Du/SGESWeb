@@ -149,21 +149,21 @@ namespace SGES.Web.Controllers
                     TempData["Mensaje"] =
                         "Este evento tiene aprendices inscritos. ¿Desea eliminarlos también?";
 
-                    return RedirectToAction("Listado");
+                    return RedirectToAction("InicioAdmin");
                 }
 
                 _dao.EliminarEventos(idEvento);
 
                 TempData["Success"] = "Evento eliminado correctamente.";
 
-                return RedirectToAction("Listado");
+                return RedirectToAction("InicioAdmin");
             }
             catch (Exception ex)
             {
                 TempData["Error"] =
                     "Error al eliminar el evento: " + ex.Message;
 
-                return RedirectToAction("Listado");
+                return RedirectToAction("InicioAdmin");
             }
         }
 
@@ -182,14 +182,14 @@ namespace SGES.Web.Controllers
                 TempData["Success"] =
                     "Evento e inscripciones eliminados correctamente.";
 
-                return RedirectToAction("Listado");
+                return RedirectToAction("InicioAdmin");
             }
             catch (Exception ex)
             {
                 TempData["Error"] =
                     "Error al eliminar el evento: " + ex.Message;
 
-                return RedirectToAction("Listado");
+                return RedirectToAction("InicioAdmin");
             }
         }
     }

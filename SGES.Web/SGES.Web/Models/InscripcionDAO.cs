@@ -97,23 +97,25 @@ namespace SGES.Web.Models
 
         public int VerificarInscritos(int idEvento)
         {
-            int count = 0;
-            string verificarInscripciones = "SELECT COUNT(1) FROM Inscripciones WHERE idEvento = @idEvento";
-            using (SqlCommand con = new SqlCommand(verificarInscripciones, cn.ObtenerConexion()))
+            using (SqlConnection con = cn.ObtenerConexion())
             {
-                con.Parameters.AddWithValue("@idEvento", idEvento);
-                count = Convert.ToInt32(con.ExecuteScalar());
+                string sql = "SELECT COUNT(1) FROM Inscripciones WHERE idEvento = @idEvento";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idEvento", idEvento);
+                con.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
-            return count;
         }
 
         public void EliminarInscritos(int idEvento)
         {
-            string eliminarInscripcion = "DELETE FROM Inscripciones WHERE idEvento = @idEvento";
-            using (SqlCommand con = new SqlCommand(eliminarInscripcion, cn.ObtenerConexion()))
+            using (SqlConnection con = cn.ObtenerConexion())
             {
-                con.Parameters.AddWithValue("@idEvento", idEvento);
-                con.ExecuteNonQuery();
+                string sql = "DELETE FROM Inscripciones WHERE idEvento = @idEvento";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idEvento", idEvento);
+                con.Open();
+                cmd.ExecuteNonQuery();
             }
         }
     }

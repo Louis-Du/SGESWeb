@@ -120,6 +120,8 @@
     </Compile>
     <Compile Include="Models\EventoDAO.cs" />
     <Compile Include="Models\EventoModel.cs" />
+    <Compile Include="Models\InscripcionDAO.cs" />
+    <Compile Include="Models\InscripcionModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\UsuarioSesion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -192,6 +194,7 @@
     <Content Include="Views\Auth\Login.cshtml" />
     <Content Include="Views\Evento\InicioAdmin.cshtml" />
     <Content Include="Views\Shared\_BotonIr.cshtml" />
+    <Content Include="Views\Shared\_BotonAccion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

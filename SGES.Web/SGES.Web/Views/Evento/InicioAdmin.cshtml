@@ -1,8 +1,31 @@
-﻿@using System.Web.Mvc
-@model IEnumerable<SGES.Web.Models.EventoModel>
+﻿@model IEnumerable<SGES.Web.Models.EventoModel>
+@using System.Linq
+@using System.Collections.Generic
+@using SGES.Web.Models
 
 @{
     ViewBag.Title = "MenuInicioAdmin";
+
+    var columnas = new[] { "ID", "Nombre", "Tipo", "Inicio", "Fin" };
+    var filas = Model?.Select(e => new object[]
+    {
+        e.IdEvento,
+        e.NombreEvento,
+        e.TipoEvento,
+        e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
+        e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
+                                    }) ?? Enumerable.Empty<object[]>();
+
+    var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
+
+    var tablaViewData = new ViewDataDictionary(ViewData)
+{
+        { "columnas",      columnas },
+        { "filas",         filas },
+        { "mensajeVacio",  "No hay eventos disponibles en este momento." },
+        { "seleccionable", true },
+        { "idFila",        ids }
+    };
 }
 
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
@@ -12,37 +35,29 @@
     { "subtitulo", "Elija una acción" }
 })
 
-@Html.Partial("_TablaBasica", null, new ViewDataDictionary(ViewData)
+@using (Html.BeginForm("Eliminar", "Evento", FormMethod.Post))
 {
-    { "titulo", "Listado de Eventos" },
-    { "mensajeVacio", "No hay eventos disponibles en este momento." },
-    { "seleccionable", true },
-    { "idFila", Model.Select(e => e.IdEvento) },
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="idEvento" name="idEvento" value="" />
 
-    { "columnas", new[]
-    {
-            "ID",
-            "Nombre",
-            "Tipo",
-            "Inicio",
-            "Fin"
-        }
-    },
+    @Html.Partial("_TablaBasica", null, tablaViewData)
 
-    { "filas", Model.Select(e => new object[]
-    {
-            e.IdEvento,
-            e.NombreEvento,
-            e.TipoEvento,
-            e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
-            e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
+    <div class="mt-3 d-flex gap-2">
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Crear Evento" },
+            { "icono", "bi-plus-circle" },
+            { "url",   Url.Action("CrearEvento", "Evento") }
         })
-    }
-})
 
-@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-{
-    { "texto", "Crear Evento" },
-    { "icono", "bi-plus-circle" },
-    { "url", Url.Action("CrearEvento", "Evento") }
-})
+        @Html.Partial("_BotonAccion", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto",            "Eliminar Evento" },
+            { "icono",            "bi-trash3" },
+            { "cssClass",         "btn-danger" },
+            { "type",             "submit" },
+            { "confirm",          "¿Desea eliminar el evento seleccionado?" },
+            { "requireSelection", true }
+        })
+    </div>
+}

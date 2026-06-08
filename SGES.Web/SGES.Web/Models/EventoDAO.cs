@@ -63,11 +63,13 @@ namespace SGES.Web.Models
 
         public void EliminarEventos(int idEvento)
         {
-            string eliminarEvento = "DELETE FROM Eventos WHERE idEvento = @idEvento";
-            using (SqlCommand con = new SqlCommand(eliminarEvento, cn.ObtenerConexion()))
+            using (SqlConnection con = cn.ObtenerConexion())
             {
-                con.Parameters.AddWithValue("@idEvento", idEvento);
-                con.ExecuteNonQuery();
+                string sql = "DELETE FROM Eventos WHERE idEvento = @idEvento";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idEvento", idEvento);
+                con.Open();
+                cmd.ExecuteNonQuery();
             }
         }
     }
