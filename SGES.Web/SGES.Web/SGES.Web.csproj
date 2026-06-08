@@ -206,6 +206,7 @@
     <Content Include="Views\Evento\Listado.cshtml" />
     <Content Include="Views\Auth\Login.cshtml" />
     <Content Include="Views\Evento\Details.cshtml" />
+    <Content Include="Views\Shared\_BotonIr.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
