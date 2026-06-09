@@ -1,5 +1,7 @@
-﻿@using System.Linq
 @model IEnumerable<SGES.Web.Models.EventoModel>
+@using System.Linq
+@using System.Collections.Generic
+@using SGES.Web.Models
 
 @{
     ViewBag.Title = "MenuInicioAdmin";
@@ -29,88 +31,105 @@
         e.TipoEvento,
         e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
         e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
-                                                    }) ?? Enumerable.Empty<object[]>();
+    }) ?? Enumerable.Empty<object[]>();
 
-    // ids alineadas con filas
     var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
 
     var tablaViewData = new ViewDataDictionary(ViewData)
-{
-        { "columnas", columnas },
-        { "filas", filas },
-        { "mensajeVacio", "No hay eventos disponibles en este momento." },
+    {
+        { "columnas",      columnas },
+        { "filas",         filas },
+        { "mensajeVacio",  "No hay eventos disponibles en este momento." },
         { "seleccionable", true },
-        { "idFila", ids }
+        { "idFila",        ids }
     };
 }
 
-@Html.Partial("_TablaSeleccion", null, tablaViewData)
-
-@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+@using (Html.BeginForm("Eliminar", "Evento", FormMethod.Post))
 {
-    { "texto", "Crear Evento" },
-    { "icono", "bi-plus-circle" },
-    { "url", Url.Action("CrearEvento", "Evento") }
-})
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="idEvento" name="idEvento" value="" />
 
-@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-{
-    { "texto", "Modificar Evento" },
-    { "icono", "bi-pencil-square" },
-    { "id",    "btnModificarEvento" }
-})
+    @Html.Partial("_TablaSeleccion", null, tablaViewData)
 
-@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-{
-    { "texto", "Ver Aprendices" },
-    { "icono", "bi-people-fill" },
-    { "id", "btnVerAprendices" } // ahora se renderiza como atributo id en el DOM
-})
+    <div class="mt-3 d-flex gap-2">
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Crear Evento" },
+            { "icono", "bi-plus-circle" },
+            { "url",   Url.Action("CrearEvento", "Evento") }
+        })
+
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Modificar Evento" },
+            { "icono", "bi-pencil-square" },
+            { "id",    "btnModificarEvento" }
+        })
+
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Ver Aprendices" },
+            { "icono", "bi-people-fill" },
+            { "id", "btnVerAprendices" }
+        })
+
+        @Html.Partial("_BotonAccion", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto",            "Eliminar Evento" },
+            { "icono",            "bi-trash3" },
+            { "cssClass",         "btn-danger" },
+            { "type",             "submit" },
+            { "confirm",          "¿Desea eliminar el evento seleccionado?" },
+            { "requireSelection", true }
+        })
+    </div>
+}
 
 @section Scripts {
     <script>
-document.addEventListener("DOMContentLoaded", function () {
-    var btn = document.getElementById("btnVerAprendices");
-    console.log('btnVerAprendices:', btn);
-    if (!btn) return;
+        document.addEventListener("DOMContentLoaded", function () {
+            // Botón Ver Aprendices
+            var btn = document.getElementById("btnVerAprendices");
+            console.log('btnVerAprendices:', btn);
+            if (btn) {
+                btn.addEventListener("click", function (e) {
+                    e.preventDefault();
 
-    btn.addEventListener("click", function (e) {
-        e.preventDefault();
+                    var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
+                    console.log('seleccionado:', seleccionado);
+                    if (!seleccionado) { alert("Seleccione un evento."); return; }
 
-        var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
-        console.log('seleccionado:', seleccionado);
-        if (!seleccionado) { alert("Seleccione un evento."); return; }
+                    var idEvento = seleccionado.value;
+                    if (!idEvento) { alert("Id inválido."); return; }
 
-        var idEvento = seleccionado.value;
-        if (!idEvento) { alert("Id inválido."); return; }
+                    var baseUrl = '@Url.Action("AprendicesRegistrados", "Evento")';
+                    var url = baseUrl + '?idEvento=' + encodeURIComponent(idEvento);
 
-        var baseUrl = '@Url.Action("AprendicesRegistrados", "Evento")';
-        var url = baseUrl + '?idEvento=' + encodeURIComponent(idEvento);
+                    // navegación segura
+                    try {
+                        window.location.href = url;
+                    } catch (ex) {
+                        console.error("Fallo al navegar:", ex);
+                        alert("No se pudo navegar. Ver consola.");
+                    }
+                });
+            }
 
-        // navegación segura
-        try {
-            window.location.href = url;
-        } catch (ex) {
-            console.error("Fallo al navegar:", ex);
-            alert("No se pudo navegar. Ver consola.");
-        }
-    });
+            // Botón Modificar Evento: navega a ModificarEvento con el id del evento seleccionado
+            var btnModificar = document.getElementById("btnModificarEvento");
+            if (btnModificar) {
+                btnModificar.addEventListener("click", function (e) {
+                    e.preventDefault();
 
-        // Botón Modificar Evento: navega a ModificarEvento con el id del evento seleccionado
-        var btnModificar = document.getElementById("btnModificarEvento");
-        if (btnModificar) {
-            btnModificar.addEventListener("click", function (e) {
-                e.preventDefault();
+                    var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
+                    if (!seleccionado) { alert("Seleccione un evento para modificar."); return; }
 
-                var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
-                if (!seleccionado) { alert("Seleccione un evento para modificar."); return; }
-
-                var idEvento = seleccionado.value;
-                var url = '@Url.Action("ModificarEvento", "Evento")' + '?id=' + encodeURIComponent(idEvento);
-                window.location.href = url;
+                    var idEvento = seleccionado.value;
+                    var url = '@Url.Action("ModificarEvento", "Evento")' + '?id=' + encodeURIComponent(idEvento);
+                    window.location.href = url;
+                });
+            }
         });
-}
-
-});
     </script>
 }

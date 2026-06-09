@@ -148,18 +148,27 @@
                 }
 
                 var ahora = new Date();
-                ahora.setSeconds(0, 0); 
+                ahora.setSeconds(0, 0);
 
                 if (new Date(fin.value) < ahora) {
                     mostrarError(fin, getSpan("FechaHoraFin"),
                         "La fecha de fin no puede ser anterior a la fecha y hora actual.");
                     return false;
                 }
+
                 if (inicio.value && new Date(fin.value) <= new Date(inicio.value)) {
                     mostrarError(fin, getSpan("FechaHoraFin"),
                         "La fecha de fin debe ser posterior a la fecha de inicio.");
                     return false;
                 }
+
+                var diferenciaMinutos = (new Date(fin.value) - new Date(inicio.value)) / 60000;
+                if (inicio.value && diferenciaMinutos < 30) {
+                    mostrarError(fin, getSpan("FechaHoraFin"),
+                        "La duración del evento debe ser de al menos 30 minutos.");
+                    return false;
+                }
+
                 limpiar(fin, getSpan("FechaHoraFin"));
                 return true;
             }
