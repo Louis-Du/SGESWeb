@@ -32,3 +32,14 @@
             }
                     })
 
+
+@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+{
+    { "texto", "Regresar" },
+    { "icono", "bi-arrow-left" },
+    { "id", "btnRegresar" },
+    { "url", Url.Action("InicioAdmin", "Evento") } // fallback si no hay historial
+})
+
+
+

@@ -87,8 +87,8 @@ namespace SGES.Web.Models
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@fechaInscrip", inscripcion.FechaInscrip);
                 cmd.Parameters.AddWithValue("@modalidadInscrip", inscripcion.Modalidad);
-                cmd.Parameters.AddWithValue("@idApr", inscripcion.idApr);
-                cmd.Parameters.AddWithValue("@idEvento", inscripcion.idEvento);
+                cmd.Parameters.AddWithValue("@idApr", inscripcion.IdApr);
+                cmd.Parameters.AddWithValue("@idEvento", inscripcion.IdEvento);
 
                 con.Open();
                 cmd.ExecuteNonQuery();

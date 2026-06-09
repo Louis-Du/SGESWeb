@@ -1,31 +1,17 @@
-﻿@model IEnumerable<SGES.Web.Models.EventoModel>
+@model IEnumerable<SGES.Web.Models.EventoModel>
 @using System.Linq
 @using System.Collections.Generic
 @using SGES.Web.Models
 
 @{
     ViewBag.Title = "MenuInicioAdmin";
+}
 
-    var columnas = new[] { "ID", "Nombre", "Tipo", "Inicio", "Fin" };
-    var filas = Model?.Select(e => new object[]
-    {
-        e.IdEvento,
-        e.NombreEvento,
-        e.TipoEvento,
-        e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
-        e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
-            }) ?? Enumerable.Empty<object[]>();
-
-    var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
-
-    var tablaViewData = new ViewDataDictionary(ViewData)
+@if (TempData["Success"] != null)
 {
-        { "columnas",      columnas },
-        { "filas",         filas },
-        { "mensajeVacio",  "No hay eventos disponibles en este momento." },
-        { "seleccionable", true },
-        { "idFila",        ids }
-    };
+    <script>
+        alert("@TempData["Success"]");
+    </script>
 }
 
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
@@ -34,6 +20,30 @@
     { "icono",     "house-door-fill" },
     { "subtitulo", "Elija una acción" }
 })
+
+@{
+    // Preparar datos para la tabla: columnas y filas
+    var columnas = new[] { "ID", "Nombre", "Tipo", "Inicio", "Fin" };
+    var filas = Model?.Select(e => new object[]
+    {
+        e.IdEvento,
+        e.NombreEvento,
+        e.TipoEvento,
+        e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
+        e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
+    }) ?? Enumerable.Empty<object[]>();
+
+    var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
+
+    var tablaViewData = new ViewDataDictionary(ViewData)
+    {
+        { "columnas",      columnas },
+        { "filas",         filas },
+        { "mensajeVacio",  "No hay eventos disponibles en este momento." },
+        { "seleccionable", true },
+        { "idFila",        ids }
+    };
+}
 
 @using (Html.BeginForm("Eliminar", "Evento", FormMethod.Post))
 {
@@ -48,6 +58,13 @@
             { "texto", "Crear Evento" },
             { "icono", "bi-plus-circle" },
             { "url",   Url.Action("CrearEvento", "Evento") }
+        })
+
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Modificar Evento" },
+            { "icono", "bi-pencil-square" },
+            { "id",    "btnModificarEvento" }
         })
 
         @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
@@ -72,31 +89,47 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // Botón Ver Aprendices
             var btn = document.getElementById("btnVerAprendices");
             console.log('btnVerAprendices:', btn);
-            if (!btn) return;
+            if (btn) {
+                btn.addEventListener("click", function (e) {
+                    e.preventDefault();
 
-            btn.addEventListener("click", function (e) {
-                e.preventDefault();
+                    var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
+                    console.log('seleccionado:', seleccionado);
+                    if (!seleccionado) { alert("Seleccione un evento."); return; }
 
-                var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
-                console.log('seleccionado:', seleccionado);
-                if (!seleccionado) { alert("Seleccione un evento."); return; }
+                    var idEvento = seleccionado.value;
+                    if (!idEvento) { alert("Id inválido."); return; }
 
-                var idEvento = seleccionado.value;
-                if (!idEvento) { alert("Id inválido."); return; }
+                    var baseUrl = '@Url.Action("AprendicesRegistrados", "Evento")';
+                    var url = baseUrl + '?idEvento=' + encodeURIComponent(idEvento);
 
-                var baseUrl = '@Url.Action("AprendicesRegistrados", "Evento")';
-                var url = baseUrl + '?idEvento=' + encodeURIComponent(idEvento);
+                    // navegación segura
+                    try {
+                        window.location.href = url;
+                    } catch (ex) {
+                        console.error("Fallo al navegar:", ex);
+                        alert("No se pudo navegar. Ver consola.");
+                    }
+                });
+            }
 
-                // navegación segura
-                try {
+            // Botón Modificar Evento: navega a ModificarEvento con el id del evento seleccionado
+            var btnModificar = document.getElementById("btnModificarEvento");
+            if (btnModificar) {
+                btnModificar.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
+                    if (!seleccionado) { alert("Seleccione un evento para modificar."); return; }
+
+                    var idEvento = seleccionado.value;
+                    var url = '@Url.Action("ModificarEvento", "Evento")' + '?id=' + encodeURIComponent(idEvento);
                     window.location.href = url;
-                } catch (ex) {
-                    console.error("Fallo al navegar:", ex);
-                    alert("No se pudo navegar. Ver consola.");
-                }
-            });
+                });
+            }
         });
     </script>
 }
