@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace SGES.Web.Models
 {
     public class InscripcionModel
     {
-        public int idInscrip { get; set; }
+        public int IdInscrip { get; set; }
 
-        public int idEvento { get; set; }
+        public int IdEvento { get; set; }
 
-        public int idApr { get; set; }
+        public int IdApr { get; set; }
 
         public DateTime FechaInscrip { get; set; }
 
-        // Modalidad elegida por el aprendiz: Presencial o Virtual.
         [Required(ErrorMessage = "Seleccionar la modalidad es obligatorio.")]
         public string Modalidad { get; set; }
     }
