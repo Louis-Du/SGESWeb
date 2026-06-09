@@ -211,6 +211,7 @@
     <Content Include="Views\Evento\InicioAdmin.cshtml" />
     <Content Include="Views\Evento\AprendicesRegistrados.cshtml" />
     <Content Include="Views\Shared\_BotonIr.cshtml" />
+    <Content Include="Views\Evento\ModificarEvento.cshtml" />
     <Content Include="Views\Shared\_BotonAccion.cshtml" />
     <Content Include="Views\Shared\_TablaSeleccion.cshtml" />
     <Content Include="Views\Shared\_TablaBasica.cshtml" />
