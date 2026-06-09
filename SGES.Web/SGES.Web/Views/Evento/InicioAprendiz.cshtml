@@ -5,6 +5,20 @@
     ViewBag.Title = "Eventos Disponibles";
 }
 
+@* Mensaje de éxito después de inscribirse exitosamente *@
+@if (TempData["Success"] != null)
+{
+    <script>
+        alert("@TempData["Success"]");
+    </script>
+}
+
+@if (TempData["Error"] != null)
+{
+    <script>
+        alert("@TempData["Error"]");
+    </script>
+}
 
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
@@ -15,19 +29,10 @@
 
 @Html.Partial("_TablaSeleccion", null, new ViewDataDictionary(ViewData)
 {
-    { "titulo", "Listado de Eventos" },
+    { "titulo",       "Listado de Eventos" },
     { "seleccionable", true },
-    { "idFila", Model.Select(e => e.IdEvento) },
-
-    { "columnas", new[]
-        {
-            "Nombre",
-            "Tipo",
-            "Inicio",
-            "Fin"
-        }
-    },
-
+    { "idFila", Model.Select(e => (object)e.IdEvento) },
+    { "columnas", new[] { "Nombre", "Tipo", "Inicio", "Fin" } },
     { "filas", Model.Select(e => new object[]
         {
             e.NombreEvento,
@@ -36,5 +41,35 @@
             e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
         })
     }
-
 })
+
+@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+{
+    { "texto", "Ver / Inscribirse" },
+    { "icono", "bi-box-arrow-in-right" },
+    { "id",    "btnVerInscribirse" }
+})
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var btn = document.getElementById("btnVerInscribirse");
+            if (!btn) return;
+
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
+
+                // Si no seleccionó ningún evento, mostrar alerta y no navegar
+                if (!seleccionado || !seleccionado.value) {
+                    alert("Debe seleccionar un evento antes de continuar.");
+                    return;
+                }
+
+                var url = '@Url.Action("Details", "Evento")' + '?id=' + encodeURIComponent(seleccionado.value);
+                window.location.href = url;
+            });
+        });
+    </script>
+}

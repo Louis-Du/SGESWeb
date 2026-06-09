@@ -15,6 +15,8 @@ namespace SGES.Web.Models
 
         public DateTime FechaInscrip { get; set; }
 
+        // Modalidad elegida por el aprendiz: Presencial o Virtual.
+        [Required(ErrorMessage = "Seleccionar la modalidad es obligatorio.")]
         public string Modalidad { get; set; }
     }
 }

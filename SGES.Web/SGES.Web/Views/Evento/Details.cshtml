@@ -1,0 +1,140 @@
+﻿@* Indicamos que el modelo de esta vista es InscripcionModel.
+    Razor lo usa para saber qué propiedades puede recibir del controlador. *@
+@model SGES.Web.Models.InscripcionModel
+
+@{
+    ViewBag.Title = "Detalle del Evento";
+    @* Recuperamos el evento que el controlador envió en ViewBag *@
+    var evento = ViewBag.Evento as SGES.Web.Models.EventoModel;
+}
+
+@* ── ENCABEZADO ────────────────────────────────────────────────────────────
+    _Card aquí actúa solo como encabezado visual con título e ícono.
+    El formulario va suelto debajo, igual que en CrearEvento.cshtml. *@
+@Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+{
+    { "titulo",    evento != null ? evento.NombreEvento : "Detalle del Evento" },
+    { "icono",     "bi-calendar-event" },
+    { "subtitulo", "Información del evento e inscripción" }
+})
+
+@* ── DATOS DEL EVENTO ──────────────────────────────────────────────────────
+    Mostramos la info del evento en campos de solo lectura usando _TextBox
+    con readonly:true para que el aprendiz vea los datos pero no los edite. *@
+@if (evento != null)
+{
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id",       "TipoEvento" },
+        { "label",    "Tipo de Evento" },
+        { "value",    evento.TipoEvento },
+        { "readonly", true }
+    })
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id",       "FechaInicio" },
+        { "label",    "Fecha y Hora de Inicio" },
+        { "value",    evento.FechaHoraInicio.ToString("dddd dd/MM/yyyy HH:mm") },
+        { "readonly", true }
+    })
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id",       "FechaFin" },
+        { "label",    "Fecha y Hora de Fin" },
+        { "value",    evento.FechaHoraFin.ToString("dddd dd/MM/yyyy HH:mm") },
+        { "readonly", true }
+    })
+}
+
+@* ── ERRORES DEL SERVIDOR ─────────────────────────────────────────────────
+    ValidationSummary muestra los errores que el controlador agrega con
+    ModelState.AddModelError, como "Ya estás inscrito" o "cruce de horario". *@
+@Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
+
+@* ── FORMULARIO DE INSCRIPCIÓN ────────────────────────────────────────────
+    Html.BeginForm genera un <form> que hace POST a /Evento/Details.
+    El using garantiza que el </form> se cierre automáticamente al final. *@
+@using (Html.BeginForm("Details", "Evento", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    @* Campo oculto: transporta el IdEvento al servidor sin que el usuario
+        lo vea ni lo pueda modificar desde la interfaz. *@
+    @Html.HiddenFor(m => m.IdEvento)
+
+    @* ComboBox de modalidad usando el mismo componente que CrearEvento.
+        Le pasamos la lista de opciones que el controlador dejó en ViewBag. *@
+    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id",            "Modalidad" },
+        { "label",         "Modalidad de asistencia" },
+        { "items",         ViewBag.Modalidades },
+        { "selectedValue", Model != null ? Model.Modalidad : "" },
+        { "defaultOption", "-- Seleccione --" },
+        { "required",      true }
+    })
+    @Html.ValidationMessage("Modalidad", "", new { @class = "text-danger small" })
+
+    @* Botones: Guardar envía el formulario, Cancelar vuelve al InicioAprendiz. *@
+    <div class="mt-3">
+        @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Registrarme al evento" },
+            { "icono", "bi-person-check" }
+        })
+        @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Volver al listado" },
+            { "url",   Url.Action("InicioAprendiz", "Evento") }
+        })
+    </div>
+}
+
+@* ── VALIDACIÓN EN TIEMPO REAL (JavaScript) ───────────────────────────────
+    Esta sección se inyecta en el _Layout donde dice @RenderSection("scripts").
+    Solo valida en el cliente antes de enviar; el servidor valida igual después. *@
+@section scripts {
+    <script>
+        (function () {
+            // Mismo patrón de funciones que en CrearEvento.cshtml
+            var modalidad = document.getElementById("Modalidad");
+
+            function getSpan(fieldId) {
+                return document.querySelector('[data-valmsg-for="' + fieldId + '"]');
+            }
+
+            function mostrarError(campo, span, mensaje) {
+                campo.classList.add("is-invalid");
+                campo.classList.remove("is-valid");
+                if (span) { span.textContent = mensaje; }
+            }
+
+            function limpiar(campo, span) {
+                campo.classList.remove("is-invalid");
+                campo.classList.add("is-valid");
+                if (span) { span.textContent = ""; }
+            }
+
+            // Valida que se haya elegido una modalidad
+            function validarModalidad() {
+                if (!modalidad.value) {
+                    mostrarError(modalidad, getSpan("Modalidad"),
+                        "Debe seleccionar una modalidad.");
+                    return false;
+                }
+                limpiar(modalidad, getSpan("Modalidad"));
+                return true;
+            }
+
+            // Valida en tiempo real al cambiar el combo
+            modalidad.addEventListener("change", validarModalidad);
+
+            // Bloquea el envío si hay errores de validación en cliente
+            document.querySelector("form").addEventListener("submit", function (e) {
+                if (!validarModalidad()) e.preventDefault();
+            });
+        }());
+    </script>
+}
