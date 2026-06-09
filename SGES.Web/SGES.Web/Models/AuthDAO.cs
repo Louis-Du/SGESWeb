@@ -6,23 +6,18 @@ namespace SGES.Web.Models
     {
         private readonly Conexion cn = new Conexion();
 
-        /// <summary>
-        /// Busca el usuario primero en la tabla Usuario (admin),
-        /// luego en Aprendiz. Devuelve null si no existe o la
-        /// contraseña no coincide.
-        /// </summary>
         public UsuarioSesion Login(int id, string contrasena)
         {
-            // Buscar en tabla Usuario (Administrador)
+            // 1. Buscar en Usuario (Administrador)
             using (SqlConnection con = cn.ObtenerConexion())
             {
                 string sql = @"SELECT idUser, nombreUser, tipoUser
                                FROM Usuario
                                WHERE idUser = @id
-                                 AND contraseñaUser COLLATE Latin1_General_CS_AS = @pass";
+                                 AND passwordHash = @pass";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@id",   id);
+                cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@pass", contrasena);
 
                 con.Open();
@@ -32,23 +27,24 @@ namespace SGES.Web.Models
                 {
                     return new UsuarioSesion
                     {
-                        Id     = (int)dr["idUser"],
+                        Id = (int)dr["idUser"],
                         Nombre = dr["nombreUser"].ToString(),
-                        Tipo   = dr["tipoUser"].ToString()
+                        Tipo = dr["tipoUser"].ToString()
                     };
                 }
             }
 
-            // Buscar en tabla Aprendiz
+            // 2. Buscar en Aprendiz (join con Usuario para obtener passwordHash y tipoUser)
             using (SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = @"SELECT idApr, nombreApr, tipoUser
-                               FROM Aprendiz
-                               WHERE idApr = @id
-                                 AND contraseñaUser COLLATE Latin1_General_CS_AS = @pass";
+                string sql = @"SELECT A.idApr, A.nombreApr, U.tipoUser
+                               FROM Aprendiz A
+                               JOIN Usuario U ON A.idUser = U.idUser
+                               WHERE A.idApr = @id
+                                 AND U.passwordHash = @pass";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@id",   id);
+                cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@pass", contrasena);
 
                 con.Open();
@@ -58,9 +54,9 @@ namespace SGES.Web.Models
                 {
                     return new UsuarioSesion
                     {
-                        Id     = (int)dr["idApr"],
+                        Id = (int)dr["idApr"],
                         Nombre = dr["nombreApr"].ToString(),
-                        Tipo   = dr["tipoUser"].ToString()
+                        Tipo = dr["tipoUser"].ToString()
                     };
                 }
             }
