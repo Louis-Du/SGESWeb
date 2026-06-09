@@ -84,6 +84,17 @@ namespace SGES.Web.Controllers
                 );
             }
 
+            if (evento.FechaHoraFin != default(DateTime)
+                && evento.FechaHoraInicio != default(DateTime)
+                && evento.FechaHoraFin > evento.FechaHoraInicio
+                && (evento.FechaHoraFin - evento.FechaHoraInicio).TotalMinutes < 30)
+            {
+                ModelState.AddModelError(
+                    "FechaHoraFin",
+                    "La duración del evento debe ser de al menos 30 minutos."
+                );
+            }
+
             if (!ModelState.IsValid)
                 return View(evento);
 
@@ -91,7 +102,7 @@ namespace SGES.Web.Controllers
             {
                 _dao.InsertarEvento(evento);
                 TempData["Success"] = "Evento creado correctamente.";
-                return RedirectToAction("CrearEvento");
+                return RedirectToAction("InicioAdmin");
             }
             catch (Exception ex)
             {
@@ -102,6 +113,22 @@ namespace SGES.Web.Controllers
 
         [HttpGet]
         public ActionResult InicioAprendiz()
+        {
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+
+            var eventos = _dao.ObtenerEventos() ?? new List<EventoModel>();
+
+            var disponibles = eventos
+                .Where(e => e.FechaHoraInicio >= DateTime.Now)
+                .OrderBy(e => e.FechaHoraInicio)
+                .ToList();
+
+            return View(disponibles);
+        }
+
+        [HttpGet]
+        public ActionResult InicioAdmin()
         {
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
@@ -138,7 +165,6 @@ namespace SGES.Web.Controllers
                 return RedirectToAction("InicioAprendiz");
             }
 
-
             // VALIDACIÓN: si el aprendiz ya está inscrito en este evento,
             // no tiene sentido mostrar el formulario — lo devolvemos al inicio
             // con un mensaje informativo.
@@ -160,7 +186,7 @@ namespace SGES.Web.Controllers
         // ───────────────────────────────────────────────────────────────────
         // POST: /Evento/Details
         // Procesa el formulario de inscripción enviado por el aprendiz.
-        // ────────────────────────────────────────────────────────────────────-
+        // ────────────────────────────────────────────────────────────────────
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Details(InscripcionModel inscripcion)
@@ -197,7 +223,6 @@ namespace SGES.Web.Controllers
                 return View(inscripcion);
             }
 
-
             // --- VALIDACIÓN 3: ModelState (campos requeridos, etc.) -------------
             if (!ModelState.IsValid)
             {
@@ -217,7 +242,86 @@ namespace SGES.Web.Controllers
                 ModelState.AddModelError(string.Empty, "Error al inscribirse: " + ex.Message);
                 return View(inscripcion);
             }
+        }
 
+        [HttpPost]
+        public ActionResult Eliminar(int idEvento)
+        {
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+
+            try
+            {
+                int cantidadInscritos = _inscripcionDao.VerificarInscritos(idEvento);
+
+                if (cantidadInscritos > 0)
+                {
+                    TempData["ConfirmarEliminar"] = true;
+                    TempData["EventoId"] = idEvento;
+                    TempData["Mensaje"] =
+                        "Este evento tiene aprendices inscritos. ¿Desea eliminarlos también?";
+
+                    return RedirectToAction("InicioAdmin");
+                }
+
+                _dao.EliminarEventos(idEvento);
+
+                TempData["Success"] = "Evento eliminado correctamente.";
+
+                return RedirectToAction("InicioAdmin");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    "Error al eliminar el evento: " + ex.Message;
+
+                return RedirectToAction("InicioAdmin");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EliminarConfirmado(int idEvento)
+        {
+            try
+            {
+                if (UsuarioActual == null)
+                    return RedirectToAction("Login", "Auth");
+
+                _inscripcionDao.EliminarInscritos(idEvento);
+
+                _dao.EliminarEventos(idEvento);
+
+                TempData["Success"] =
+                    "Evento e inscripciones eliminados correctamente.";
+
+                return RedirectToAction("InicioAdmin");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    "Error al eliminar el evento: " + ex.Message;
+
+                return RedirectToAction("InicioAdmin");
+            }
+        }
+
+        // GET: /Evento/AprendicesRegistrados?idEvento=5
+        public ActionResult AprendicesRegistrados(int? idEvento)
+        {
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+            if (idEvento == null)
+                return new HttpStatusCodeResult(400, "idEvento requerido");
+
+            try
+            {
+                List<AprendizModel> inscritos = _dao.ObtenerAprendicesPorEvento(idEvento.Value);
+                return View(inscritos ?? new List<AprendizModel>());
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(500, "Error al consultar aprendices: " + ex.Message);
+            }
         }
     }
 }

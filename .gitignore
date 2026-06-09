@@ -427,3 +427,14 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# NuGet Package Restore - archivos copiados a Content/ por Bootstrap
+# Se regeneran automáticamente, no deben subirse al repositorio
+SGES.Web/Content/bootstrap*.css
+SGES.Web/Content/bootstrap*.css.map
+SGES.Web/Content/bootstrap*.min.css
+SGES.Web/Content/bootstrap*.min.css.map
+SGES.Web/Content/bootstrap*.rtl.css
+SGES.Web/Content/bootstrap*.rtl.css.map
+SGES.Web/Content/bootstrap*.rtl.min.css
+SGES.Web/Content/bootstrap*.rtl.min.css.map

@@ -94,5 +94,29 @@ namespace SGES.Web.Models
                 cmd.ExecuteNonQuery();
             }
         }
+
+        public int VerificarInscritos(int idEvento)
+        {
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                string sql = "SELECT COUNT(1) FROM Inscripciones WHERE idEvento = @idEvento";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idEvento", idEvento);
+                con.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
+        public void EliminarInscritos(int idEvento)
+        {
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                string sql = "DELETE FROM Inscripciones WHERE idEvento = @idEvento";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idEvento", idEvento);
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

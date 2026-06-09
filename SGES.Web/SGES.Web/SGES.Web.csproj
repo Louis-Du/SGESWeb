@@ -126,6 +126,8 @@
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\EventoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Models\AprendizDAO.cs" />
+    <Compile Include="Models\AprendizModel.cs" />
     <Compile Include="Models\AuthDAO.cs" />
     <Compile Include="Models\Conexión.cs" />
     <Compile Include="Global.asax.cs">
@@ -198,7 +200,7 @@
     <Content Include="Views\Shared\_BotonGuardar.cshtml" />
     <Content Include="Views\Shared\_Card.cshtml" />
     <Content Include="Views\Shared\_ComboBox.cshtml" />
-    <Content Include="Views\Shared\_TablaBasica.cshtml" />
+    <Content Include="Views\Shared\_TablaSeleccion.cshtml" />
     <Content Include="Views\Shared\_TextArea.cshtml" />
     <Content Include="Views\Shared\_TextBox.cshtml" />
     <Content Include="Views\Shared\COMPONENTES.md" />
@@ -206,11 +208,16 @@
     <Content Include="Views\Evento\InicioAprendiz.cshtml" />
     <Content Include="Views\Auth\Login.cshtml" />
     <Content Include="Views\Evento\Details.cshtml" />
+    <Content Include="Views\Evento\InicioAdmin.cshtml" />
+    <Content Include="Views\Evento\AprendicesRegistrados.cshtml" />
     <Content Include="Views\Shared\_BotonIr.cshtml" />
+    <Content Include="Views\Shared\_BotonAccion.cshtml" />
     <Content Include="Views\Shared\_TablaSeleccion.cshtml" />
+    <Content Include="Views\Shared\_TablaBasica.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Usuarios\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

@@ -45,3 +45,6 @@ VALUES
 (GETDATE(), 'Presencial', 1, 1, 1),
 (GETDATE(), 'Virtual', 2, 2, 2);
 GO
+
+select * from Aprendiz
+select * from Usuario
