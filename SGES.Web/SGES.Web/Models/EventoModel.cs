@@ -10,8 +10,6 @@ namespace SGES.Web.Models
 
         public string TipoEvento { get; set; }
 
-        public DateTime DiaEvento { get; set; }
-
         public DateTime FechaHoraInicio { get; set; }
 
         public DateTime FechaHoraFin { get; set; }
