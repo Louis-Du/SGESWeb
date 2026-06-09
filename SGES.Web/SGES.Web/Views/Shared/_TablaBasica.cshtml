@@ -121,9 +121,6 @@
 
 <table class="@tableClasses.ToString()" id="@tableId">
 
-<table class="@tableClasses.ToString()"
-       @(!string.IsNullOrEmpty(tableId) ? $"id=\"{tableId}\"" : "")>
-
     <thead class="sges-tabla-thead">
         <tr>
 
@@ -203,5 +200,5 @@
     </tbody>
 
 </table>
-          
+
 @Html.Raw(responsive ? "</div>" : "")

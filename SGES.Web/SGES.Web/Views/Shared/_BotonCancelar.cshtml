@@ -35,12 +35,6 @@
     var id = ViewData["id"]?.ToString() ?? "";
     var confirm = ViewData["confirm"]?.ToString() ?? "";
     var btnClass = "btn btn-secondary sges-btn-cancelar " + cssClass;
-
-    // Si hay mensaje de confirmación, el href se maneja via onclick
-    var href    = string.IsNullOrEmpty(confirm) ? url : "#";
-    var onclick = string.IsNullOrEmpty(confirm)
-        ? ""
-        : $"return confirm('{confirm}') ? (window.location='{url}', true) : false;";
 }
 
 @if (string.IsNullOrEmpty(confirm))

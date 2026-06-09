@@ -36,17 +36,17 @@
         @* El contenido se coloca dentro del card-body en la vista que llama *@
 
 @{
-    var titulo     = ViewData["titulo"]?.ToString();
-    var subtitulo  = ViewData["subtitulo"]?.ToString();
-    var icono      = ViewData["icono"]?.ToString();
-    var footer     = ViewData["footer"]?.ToString();
+    var titulo = ViewData["titulo"]?.ToString();
+    var subtitulo = ViewData["subtitulo"]?.ToString();
+    var icono = ViewData["icono"]?.ToString();
+    var footer = ViewData["footer"]?.ToString();
     var cuerpoHtml = ViewData["cuerpoHtml"]?.ToString();
-    var cssClass   = ViewData["cssClass"]?.ToString() ?? "";
-    var headerCss  = ViewData["headerCss"]?.ToString() ?? "";
-    var bodyCss    = ViewData["bodyCss"]?.ToString() ?? "";
-    var shadow     = ViewData["shadow"]?.ToString() ?? "sm";
-    var color      = ViewData["color"]?.ToString() ?? "";
-    var cardId     = ViewData["id"]?.ToString() ?? "";
+    var cssClass = ViewData["cssClass"]?.ToString() ?? "";
+    var headerCss = ViewData["headerCss"]?.ToString() ?? "";
+    var bodyCss = ViewData["bodyCss"]?.ToString() ?? "";
+    var shadow = ViewData["shadow"]?.ToString() ?? "sm";
+    var color = ViewData["color"]?.ToString() ?? "";
+    var cardId = ViewData["id"]?.ToString() ?? "";
     var sinBorde = ViewData["sinBorde"] is bool && (bool)ViewData["sinBorde"];
 
     // Construir clases de la card

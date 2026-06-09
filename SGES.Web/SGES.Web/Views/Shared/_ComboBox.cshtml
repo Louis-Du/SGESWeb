@@ -27,19 +27,19 @@
 @using System.Web.Mvc.Html
 
 @{
-    var id            = ViewData["id"]?.ToString() ?? "select";
-    var label         = ViewData["label"]?.ToString() ?? "Campo";
-    var items         = ViewData["items"] as SelectList;
+    var id = ViewData["id"]?.ToString() ?? "select";
+    var label = ViewData["label"]?.ToString() ?? "Campo";
+    var items = ViewData["items"] as SelectList;
     var selectedValue = ViewData["selectedValue"];
     var defaultOption = ViewData["defaultOption"]?.ToString();
     var required = ViewData["required"] is bool && (bool)ViewData["required"];
     var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
-    var cssClass      = ViewData["cssClass"]?.ToString() ?? "";
-    var helpText      = ViewData["helpText"]?.ToString();
-    var onchange      = ViewData["onchange"]?.ToString() ?? "";
+    var cssClass = ViewData["cssClass"]?.ToString() ?? "";
+    var helpText = ViewData["helpText"]?.ToString();
+    var onchange = ViewData["onchange"]?.ToString() ?? "";
 
     var selectClass = "form-select sges-select " + cssClass;
-    var helpId      = id + "Help";
+    var helpId = id + "Help";
 
     // Reconstruir la SelectList con el valor seleccionado si se proporcionó
     if (items != null && selectedValue != null)

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
@@ -7,31 +7,458 @@
     <title>@ViewBag.Title - SGES</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+
+    <style>
+        /* ═══════════════════════════════════════════
+           SGES — Variables de diseño
+        ═══════════════════════════════════════════ */
+        :root {
+            --sges-bg: #f4f6f8;
+            --sges-surface: #ffffff;
+            --sges-border: #dde2e8;
+            --sges-text: #1e2a38;
+            --sges-text-muted: #6b7a8d;
+            --sges-primary: #2c6e91; /* azul pizarra */
+            --sges-primary-dk: #1f5070;
+            --sges-primary-lt: #e8f3f9;
+            --sges-accent: #2a9d8f; /* teal suave */
+            --sges-accent-lt: #e4f5f3;
+            --sges-danger: #c0392b;
+            --sges-danger-lt: #fdecea;
+            --sges-success: #217a57;
+            --sges-success-lt: #e6f5ef;
+            --sges-warning: #b7791f;
+            --sges-warning-lt: #fef3cd;
+            --sges-nav-bg: #1e2a38;
+            --sges-nav-border: #2c3e50;
+            --sges-radius: 8px;
+            --sges-radius-sm: 5px;
+            --sges-shadow-sm: 0 1px 4px rgba(30,42,56,.08);
+            --sges-shadow: 0 3px 12px rgba(30,42,56,.10);
+            --sges-shadow-lg: 0 8px 28px rgba(30,42,56,.13);
+            --sges-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --sges-transition: .18s ease;
+        }
+
+        /* ── Base ── */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--sges-bg);
+            color: var(--sges-text);
+            font-family: var(--sges-font);
+            font-size: .9375rem;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ── Navbar ── */
+        .sges-navbar {
+            background: var(--sges-nav-bg);
+            border-bottom: 1px solid var(--sges-nav-border);
+            padding: .6rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,.18);
+        }
+
+            .sges-navbar .navbar-brand {
+                font-weight: 700;
+                font-size: 1.15rem;
+                letter-spacing: .5px;
+                color: #e8f3f9 !important;
+                display: flex;
+                align-items: center;
+                gap: .45rem;
+            }
+
+                .sges-navbar .navbar-brand::before {
+                    content: '';
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    background: var(--sges-accent);
+                    border-radius: 50%;
+                }
+
+            .sges-navbar .nav-link {
+                color: #adbdcc !important;
+                font-size: .875rem;
+                transition: color var(--sges-transition);
+                padding: .3rem .7rem !important;
+                border-radius: var(--sges-radius-sm);
+            }
+
+                .sges-navbar .nav-link:hover {
+                    color: #e8f3f9 !important;
+                    background: rgba(255,255,255,.06);
+                }
+
+            .sges-navbar .sges-user-name {
+                color: #cdd8e3 !important;
+                font-size: .875rem;
+                font-weight: 500;
+            }
+
+            .sges-navbar .sges-logout {
+                color: #adbdcc !important;
+                font-size: .875rem;
+                border: 1px solid #3a4f63;
+                border-radius: var(--sges-radius-sm);
+                padding: .25rem .75rem !important;
+                transition: all var(--sges-transition);
+            }
+
+                .sges-navbar .sges-logout:hover {
+                    background: var(--sges-danger);
+                    border-color: var(--sges-danger);
+                    color: #fff !important;
+                }
+
+        /* ── Contenedor principal ── */
+        .sges-body {
+            padding: 2rem 0 3rem;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* ── Footer ── */
+        .sges-footer {
+            border-top: 1px solid var(--sges-border);
+            padding: 1rem 0;
+            color: var(--sges-text-muted);
+            font-size: .8125rem;
+            text-align: center;
+        }
+
+        /* ── Card ── */
+        .sges-card {
+            background: var(--sges-surface);
+            border: 1px solid var(--sges-border);
+            border-radius: var(--sges-radius);
+            box-shadow: var(--sges-shadow-sm);
+            overflow: hidden;
+        }
+
+            .sges-card.shadow-sm {
+                box-shadow: var(--sges-shadow-sm);
+            }
+
+            .sges-card.shadow {
+                box-shadow: var(--sges-shadow);
+            }
+
+            .sges-card.shadow-lg {
+                box-shadow: var(--sges-shadow-lg);
+            }
+
+        .sges-card-header {
+            background: var(--sges-primary);
+            color: #fff;
+            padding: .85rem 1.25rem;
+            border-bottom: none;
+        }
+
+        .sges-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+            color: #fff;
+        }
+
+        .sges-card-subtitle {
+            font-size: .8rem;
+            color: rgba(255,255,255,.72);
+            display: block;
+            margin-top: .15rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* ── Inputs ── */
+        .sges-label {
+            font-size: .8375rem;
+            font-weight: 600;
+            color: var(--sges-text);
+            margin-bottom: .35rem;
+            letter-spacing: .01em;
+        }
+
+        .sges-input,
+        .sges-textarea,
+        .sges-select {
+            border: 1.5px solid var(--sges-border);
+            border-radius: var(--sges-radius-sm);
+            background: var(--sges-surface);
+            color: var(--sges-text);
+            font-size: .9rem;
+            padding: .5rem .75rem;
+            transition: border-color var(--sges-transition), box-shadow var(--sges-transition);
+            width: 100%;
+        }
+
+            .sges-input:focus,
+            .sges-textarea:focus,
+            .sges-select:focus {
+                border-color: var(--sges-primary);
+                box-shadow: 0 0 0 3px var(--sges-primary-lt);
+                outline: none;
+            }
+
+            .sges-input.is-valid,
+            .sges-textarea.is-valid,
+            .sges-select.is-valid {
+                border-color: var(--sges-accent);
+                box-shadow: 0 0 0 3px var(--sges-accent-lt);
+            }
+
+            .sges-input.is-invalid,
+            .sges-textarea.is-invalid,
+            .sges-select.is-invalid {
+                border-color: var(--sges-danger);
+                box-shadow: 0 0 0 3px var(--sges-danger-lt);
+            }
+
+            .sges-input::placeholder,
+            .sges-textarea::placeholder {
+                color: #a0adb9;
+                font-size: .875rem;
+            }
+
+        .sges-help-text {
+            font-size: .8rem;
+            color: var(--sges-text-muted);
+            margin-top: .3rem;
+        }
+
+        .invalid-feedback, [data-valmsg-for] {
+            font-size: .8rem;
+            color: var(--sges-danger);
+            margin-top: .3rem;
+        }
+
+        /* ── Botones ── */
+        .btn {
+            font-size: .875rem;
+            font-weight: 500;
+            border-radius: var(--sges-radius-sm);
+            padding: .48rem 1.1rem;
+            transition: all var(--sges-transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            letter-spacing: .01em;
+        }
+
+            .btn:active {
+                transform: translateY(1px);
+            }
+
+        .sges-btn-guardar,
+        .btn-primary {
+            background: var(--sges-primary);
+            border-color: var(--sges-primary);
+            color: #fff;
+        }
+
+            .sges-btn-guardar:hover,
+            .btn-primary:hover {
+                background: var(--sges-primary-dk);
+                border-color: var(--sges-primary-dk);
+                color: #fff;
+            }
+
+        .sges-btn-cancelar,
+        .btn-secondary {
+            background: transparent;
+            border-color: var(--sges-border);
+            color: var(--sges-text-muted);
+        }
+
+            .sges-btn-cancelar:hover,
+            .btn-secondary:hover {
+                background: var(--sges-bg);
+                border-color: #b0bcc9;
+                color: var(--sges-text);
+            }
+
+        .sges-btn-eliminar,
+        .btn-danger {
+            background: var(--sges-danger);
+            border-color: var(--sges-danger);
+            color: #fff;
+        }
+
+            .sges-btn-eliminar:hover,
+            .btn-danger:hover {
+                background: #a93226;
+                border-color: #a93226;
+                color: #fff;
+            }
+
+        .btn-outline-danger {
+            background: transparent;
+            border-color: var(--sges-danger);
+            color: var(--sges-danger);
+        }
+
+            .btn-outline-danger:hover {
+                background: var(--sges-danger-lt);
+            }
+
+        .btn-sm {
+            font-size: .8rem;
+            padding: .28rem .75rem;
+        }
+
+        /* ── Tabla ── */
+        .sges-tabla {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: .875rem;
+        }
+
+            .sges-tabla-thead th,
+            .sges-tabla thead th {
+                background: var(--sges-primary);
+                color: #fff;
+                font-weight: 600;
+                font-size: .8rem;
+                text-transform: uppercase;
+                letter-spacing: .05em;
+                padding: .65rem 1rem;
+                border: none;
+                white-space: nowrap;
+            }
+
+                .sges-tabla-thead th:first-child,
+                .sges-tabla thead th:first-child {
+                    border-radius: var(--sges-radius-sm) 0 0 0;
+                }
+
+                .sges-tabla-thead th:last-child,
+                .sges-tabla thead th:last-child {
+                    border-radius: 0 var(--sges-radius-sm) 0 0;
+                }
+
+            .sges-tabla tbody tr {
+                border-bottom: 1px solid var(--sges-border);
+                transition: background var(--sges-transition);
+            }
+
+            .sges-tabla tbody td {
+                padding: .65rem 1rem;
+                color: var(--sges-text);
+                vertical-align: middle;
+            }
+
+            .sges-tabla.table-striped tbody tr:nth-child(even) {
+                background: #f8fafc;
+            }
+
+            .sges-tabla.table-hover tbody tr:hover {
+                background: var(--sges-primary-lt);
+            }
+
+        .sges-tabla-vacia {
+            color: var(--sges-text-muted);
+            font-size: .9rem;
+        }
+
+        .sges-tabla-titulo {
+            font-size: .95rem;
+            font-weight: 600;
+            color: var(--sges-text);
+        }
+
+        /* Radio en tabla */
+        .sges-tabla input[type="radio"] {
+            width: 1.05rem;
+            height: 1.05rem;
+            accent-color: var(--sges-primary);
+            cursor: pointer;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            border-radius: var(--sges-radius);
+            font-size: .875rem;
+        }
+
+        .text-bg-success {
+            background: var(--sges-success) !important;
+        }
+
+        .text-bg-danger {
+            background: var(--sges-danger) !important;
+        }
+
+        /* ── Modal ── */
+        .modal-content {
+            border: none;
+            border-radius: var(--sges-radius);
+            box-shadow: var(--sges-shadow-lg);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--sges-border);
+            padding: 1rem 1.25rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--sges-border);
+            padding: .85rem 1.25rem;
+            gap: .5rem;
+        }
+
+        .modal-header.bg-warning {
+            background: var(--sges-warning-lt) !important;
+            color: var(--sges-warning);
+        }
+
+        .modal-title {
+            font-size: .95rem;
+            font-weight: 600;
+        }
+
+        /* ── Validación resumen ── */
+        .alert-danger {
+            background: var(--sges-danger-lt);
+            border: 1px solid #f5c6cb;
+            border-radius: var(--sges-radius-sm);
+            color: var(--sges-danger);
+            font-size: .875rem;
+            padding: .75rem 1rem;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-sm sges-navbar">
         <div class="container">
             @Html.ActionLink("SGES", "Login", "Auth", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+            <button type="button" class="navbar-toggler border-secondary" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                </ul>
+                <ul class="navbar-nav flex-grow-1"></ul>
                 @if (Session["Usuario"] != null)
                 {
                     var u = (SGES.Web.Models.UsuarioSesion)Session["Usuario"];
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav align-items-center gap-2">
                         <li class="nav-item">
-                            <span class="nav-link text-white-50">
+                            <span class="nav-link sges-user-name">
                                 <i class="bi bi-person-circle me-1"></i>@u.Nombre
                             </span>
                         </li>
                         <li class="nav-item">
-                            <a href="@Url.Action("Logout", "Auth")" class="nav-link"
+                            <a href="@Url.Action("Logout", "Auth")" class="nav-link sges-logout"
                                onclick="return confirm('¿Está seguro que desea cerrar la sesión?');">
-                                Cerrar sesión
+                                <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión
                             </a>
                         </li>
                     </ul>
@@ -40,13 +467,15 @@
         </div>
     </nav>
 
-    <div class="container body-content mt-4">
+    <div class="container sges-body">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - SGES</p>
-        </footer>
     </div>
+
+    <footer class="sges-footer">
+        <div class="container">
+            &copy; @DateTime.Now.Year &mdash; Sistema de Gestión de Eventos SGES
+        </div>
+    </footer>
 
     @* ── Toast flotante: Éxito / Error ── *@
     @if (TempData["Success"] != null || TempData["Error"] != null)
@@ -73,7 +502,7 @@
         </div>
     }
 
-    @* ── Modal flotante: Confirmación con inscritos ── *@
+    @* ── Modal: Confirmación con inscritos ── *@
     @if (TempData["ConfirmarEliminar"] != null)
     {
         var eventoId = TempData["EventoId"];
@@ -88,7 +517,7 @@
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar eliminación
                         </h5>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" style="font-size:.9rem; color:var(--sges-text)">
                         @mensajeConf
                     </div>
                     <div class="modal-footer">
@@ -96,11 +525,11 @@
                         {
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="idEvento" value="@eventoId" />
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash3 me-1"></i>Sí, eliminar todo
+                            <button type="submit" class="btn sges-btn-eliminar">
+                                <i class="bi bi-trash3"></i>Sí, eliminar todo
                             </button>
                         }
-                        <a href="@Url.Action("InicioAdmin", "Evento")" class="btn btn-secondary">
+                        <a href="@Url.Action("InicioAdmin", "Evento")" class="btn sges-btn-cancelar">
                             Cancelar
                         </a>
                     </div>
@@ -113,7 +542,6 @@
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 
-    @* ── Activar Toast y Modal automáticamente ── *@
     @if (TempData["Success"] != null || TempData["Error"] != null)
     {
         <script>
