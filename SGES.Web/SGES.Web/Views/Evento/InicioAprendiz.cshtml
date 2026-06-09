@@ -1,39 +1,24 @@
-﻿@using System.Web.Mvc
+@using System.Web.Mvc
 @model IEnumerable<SGES.Web.Models.EventoModel>
 
 @{
     ViewBag.Title = "Eventos Disponibles";
 }
 
-@* Mensaje de éxito después de inscribirse exitosamente *@
-@if (TempData["Success"] != null)
-{
-    <script>
-        alert("@TempData["Success"]");
-    </script>
-}
-
-@if (TempData["Error"] != null)
-{
-    <script>
-        alert("@TempData["Error"]");
-    </script>
-}
-
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
     { "titulo",    "Menú de inicio para el aprendiz" },
-    { "icono",     "house-door-fill" },
+    { "icono",     "bi-house-door-fill" },
     { "subtitulo", "Elija una acción" }
 })
 
 @Html.Partial("_TablaSeleccion", null, new ViewDataDictionary(ViewData)
 {
-    { "titulo",       "Listado de Eventos" },
+    { "titulo",        "Listado de Eventos" },
     { "seleccionable", true },
-    { "idFila", Model.Select(e => (object)e.IdEvento) },
-    { "columnas", new[] { "Nombre", "Tipo", "Inicio", "Fin" } },
-    { "filas", Model.Select(e => new object[]
+    { "idFila",        Model.Select(e => (object)e.IdEvento) },
+    { "columnas",      new[] { "Nombre", "Tipo", "Inicio", "Fin" } },
+    { "filas",         Model.Select(e => new object[]
         {
             e.NombreEvento,
             e.TipoEvento,
@@ -58,17 +43,12 @@
 
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
-
-                var seleccionado = document.querySelector('input[name="filaSeleccionada"]:checked');
-
-                // Si no seleccionó ningún evento, mostrar alerta y no navegar
-                if (!seleccionado || !seleccionado.value) {
+                var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
+                if (!sel || !sel.value) {
                     alert("Debe seleccionar un evento antes de continuar.");
                     return;
                 }
-
-                var url = '@Url.Action("Details", "Evento")' + '?id=' + encodeURIComponent(seleccionado.value);
-                window.location.href = url;
+                window.location.href = '@Url.Action("Details", "Evento")' + '?id=' + encodeURIComponent(sel.value);
             });
         });
     </script>

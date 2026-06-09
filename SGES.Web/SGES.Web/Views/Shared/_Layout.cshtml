@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -478,10 +478,15 @@
     </footer>
 
     @* ── Toast flotante: Éxito / Error ── *@
-    @if (TempData["Success"] != null || TempData["Error"] != null)
+    @{
+        var _hasNotif = TempData["Success"] != null || TempData["Error"] != null;
+        var _esExito  = TempData["Success"] != null;
+        var _mensaje  = _esExito ? TempData["Success"]?.ToString() : TempData["Error"]?.ToString();
+    }
+    @if (_hasNotif)
     {
-        var esExito = TempData["Success"] != null;
-        var mensaje = esExito ? TempData["Success"].ToString() : TempData["Error"].ToString();
+        var esExito = _esExito;
+        var mensaje = _mensaje;
         var bgClass = esExito ? "text-bg-success" : "text-bg-danger";
         var icono = esExito ? "bi-check-circle-fill" : "bi-x-circle-fill";
 
@@ -503,10 +508,15 @@
     }
 
     @* ── Modal: Confirmación con inscritos ── *@
-    @if (TempData["ConfirmarEliminar"] != null)
+    @{
+        var _hasConfirm  = TempData["ConfirmarEliminar"] != null;
+        var _eventoId    = TempData["EventoId"];
+        var _mensajeConf = TempData["Mensaje"]?.ToString() ?? "¿Desea eliminar este evento?";
+    }
+    @if (_hasConfirm)
     {
-        var eventoId = TempData["EventoId"];
-        var mensajeConf = TempData["Mensaje"]?.ToString() ?? "¿Desea eliminar este evento?";
+        var eventoId    = _eventoId;
+        var mensajeConf = _mensajeConf;
 
         <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1"
              aria-labelledby="modalConfirmarLabel" aria-hidden="true" data-bs-backdrop="static">
@@ -542,7 +552,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 
-    @if (TempData["Success"] != null || TempData["Error"] != null)
+    @if (_hasNotif)
     {
         <script>
             document.addEventListener("DOMContentLoaded", function () {
@@ -551,7 +561,7 @@
             });
         </script>
     }
-    @if (TempData["ConfirmarEliminar"] != null)
+    @if (_hasConfirm)
     {
         <script>
             document.addEventListener("DOMContentLoaded", function () {
