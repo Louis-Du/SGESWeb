@@ -1,4 +1,4 @@
-@*
+﻿@*
     _ComboBox.cshtml — Componente reutilizable de lista desplegable (select)
 
     Parámetros (vía ViewData al invocar el partial):
@@ -48,7 +48,7 @@
         if (primeraOpcion is string)
         {
             // Lista de strings simples — Value y Text son el mismo valor
-            items = new SelectList(items.Items, selectedValue);
+            items = new SelectList(items.Items, selectedValue?.ToString());
         }
         else
         {

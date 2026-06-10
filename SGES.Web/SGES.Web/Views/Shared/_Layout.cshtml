@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -433,6 +433,11 @@
             color: var(--sges-danger);
             font-size: .875rem;
             padding: .75rem 1rem;
+        }
+        /* ── Fix: evita ícono de validación repetido en select ── */
+        .sges-select.is-valid,
+        select.is-valid {
+            background-image: none !important;
         }
     </style>
 </head>
