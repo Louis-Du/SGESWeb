@@ -134,10 +134,10 @@ TABLA: GRUPOS
 
 CREATE TABLE Grupos
 (
-    idGrupo INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-
-    nombreGrupo VARCHAR(20) NOT NULL
-
+    idGrupo      INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    nombreGrupo  VARCHAR(20)  NOT NULL,
+    descripcion  VARCHAR(100) NULL,
+    cupoMaximo   INT          NULL
 );
 GO
 
@@ -147,33 +147,28 @@ TABLA: INSCRIPCIONES
 
 CREATE TABLE Inscripciones
 (
-    idInscrip INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-
-    fechaInscrip DATE NOT NULL,
-
+    idInscrip        INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    fechaInscrip     DATE NOT NULL,
     modalidadInscrip VARCHAR(15) NOT NULL,
+    tipoInscrip      VARCHAR(10) NOT NULL,   -- 'Individual' o 'Grupal'
+    idApr            INT NOT NULL,
+    idEvento         INT NOT NULL,
+    idGrupo          INT NULL,
 
-    idApr INT NOT NULL,
+    CONSTRAINT FK_Inscripciones_Aprendiz FOREIGN KEY(idApr)     REFERENCES Aprendiz(idApr),
+    CONSTRAINT FK_Inscripciones_Eventos  FOREIGN KEY(idEvento)  REFERENCES Eventos(idEvento),
+    CONSTRAINT FK_Inscripciones_Grupos   FOREIGN KEY(idGrupo)   REFERENCES Grupos(idGrupo),
 
-    idEvento INT NOT NULL,
+    CONSTRAINT CK_Inscripciones_Modalidad CHECK(modalidadInscrip IN ('Virtual', 'Presencial')),
+    CONSTRAINT CK_Inscripciones_Tipo      CHECK(tipoInscrip IN ('Individual', 'Grupal')),
 
-    idGrupo INT NULL,
-
-    CONSTRAINT FK_Inscripciones_Aprendiz FOREIGN KEY(idApr) REFERENCES Aprendiz(idApr),
-
-    CONSTRAINT FK_Inscripciones_Eventos FOREIGN KEY(idEvento) REFERENCES Eventos(idEvento),
-
-    CONSTRAINT FK_Inscripciones_Grupos FOREIGN KEY(idGrupo) REFERENCES Grupos(idGrupo),
-
-    CONSTRAINT CK_Inscripciones_Modalidad CHECK ( 
-    modalidadInscrip IN (
-                'Virtual',
-                'Presencial'
-            )
-        ),
+    -- Si es Grupal, idGrupo no puede ser NULL
+    CONSTRAINT CK_Inscripciones_Grupo CHECK(
+        (tipoInscrip = 'Grupal'     AND idGrupo IS NOT NULL) OR
+        (tipoInscrip = 'Individual' AND idGrupo IS NULL)
+    ),
 
     CONSTRAINT UQ_Inscripcion_Aprendiz_Evento UNIQUE(idApr, idEvento)
-
 );
 GO
 
@@ -192,3 +187,5 @@ GO
 CREATE INDEX IX_Inscripciones_Aprendiz
 ON Inscripciones(idApr);
 GO
+
+

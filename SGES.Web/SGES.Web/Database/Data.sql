@@ -10,12 +10,14 @@ INSERT INTO Programas VALUES (103, 'Ciberseguridad',         '2024-03-10', 12, '
 GO
 
 /*==================================================
-  FICHAS (depende de Programas)
+  FICHAS (sin hora, ahora son DATE))
 ==================================================*/
+
 INSERT INTO Fichas VALUES (26701, '2024-01-20', '2026-01-20', 101);
 INSERT INTO Fichas VALUES (26702, '2024-02-05', '2026-08-05', 102);
 INSERT INTO Fichas VALUES (26703, '2024-03-15', '2026-03-15', 103);
 GO
+
 
 /*==================================================
   USUARIOS — Administradores
@@ -63,6 +65,28 @@ VALUES
 ('Feria de Empleo',   'Social',    '2026-10-20 10:00:00', '2026-10-20 13:00:00', 1),
 ('Torneo de Futbol',  'Deportivo', '2026-11-05 14:00:00', '2026-11-05 17:00:00', 3),
 ('Festival Cultural', 'Cultural',  '2026-12-01 10:00:00', '2026-12-01 18:00:00', 2);
+GO
+
+-- GRUPOS
+INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo Alpha');
+INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo Beta');
+INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo Gamma');
+GO
+
+-- INSCRIPCIONES
+-- Individuales (idGrupo NULL)
+INSERT INTO Inscripciones (fechaInscrip, modalidadInscrip, tipoInscrip, idApr, idEvento, idGrupo)
+VALUES
+('2026-07-01', 'Presencial', 'Individual', 4, 1, NULL),
+('2026-07-02', 'Virtual',    'Individual', 5, 2, NULL),
+('2026-07-03', 'Presencial', 'Individual', 6, 3, NULL);
+
+-- Grupales (idGrupo asignado)
+INSERT INTO Inscripciones (fechaInscrip, modalidadInscrip, tipoInscrip, idApr, idEvento, idGrupo)
+VALUES
+('2026-07-04', 'Virtual',    'Grupal', 7, 4, 1),
+('2026-07-05', 'Presencial', 'Grupal', 8, 5, 2),
+('2026-07-06', 'Virtual',    'Grupal', 9, 1, 3);
 GO
 
 /*==================================================

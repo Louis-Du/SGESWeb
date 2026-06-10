@@ -9,7 +9,11 @@ namespace SGES.Web.Models
 
         public int IdEvento { get; set; }
 
+        public string TipoInscrip { get; set; }  // "Individual" o "Grupal"
+
         public int IdApr { get; set; }
+
+        public int? IdGrupo { get; set; } // nullable, igual que en la BD
 
         public DateTime FechaInscrip { get; set; }
 
