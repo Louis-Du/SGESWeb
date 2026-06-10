@@ -21,12 +21,12 @@
 *@
 
 @{
-    var texto    = ViewData["texto"]?.ToString() ?? "Guardar";
-    var icono    = ViewData["icono"]?.ToString() ?? "bi-floppy";
+    var texto = ViewData["texto"]?.ToString() ?? "Guardar";
+    var icono = ViewData["icono"]?.ToString() ?? "bi-floppy";
     var cssClass = ViewData["cssClass"]?.ToString() ?? "";
     var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
-    var id       = ViewData["id"]?.ToString() ?? "";
-    var form     = ViewData["form"]?.ToString() ?? "";
+    var id = ViewData["id"]?.ToString() ?? "";
+    var form = ViewData["form"]?.ToString() ?? "";
 
     var btnClass = "btn btn-primary sges-btn-guardar " + cssClass;
 }
@@ -34,7 +34,7 @@
 <button type="submit"
         class="@btnClass"
         @(disabled ? "disabled" : "")
-        @(!string.IsNullOrEmpty(id)   ? $"id=\"{id}\""     : "")
+        @(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "")
         @(!string.IsNullOrEmpty(form) ? $"form=\"{form}\"" : "")>
     <i class="bi @icono me-1" aria-hidden="true"></i>
     @texto

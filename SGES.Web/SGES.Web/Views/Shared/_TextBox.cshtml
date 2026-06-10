@@ -1,6 +1,6 @@
 @*
     _TextBox.cshtml — Componente reutilizable de campo de texto
-    
+
     Parámetros (vía ViewData al invocar el partial):
         "id"          : string  — Atributo id/name del input (requerido)
         "label"       : string  — Etiqueta visible del campo (requerido)
@@ -25,20 +25,20 @@
 *@
 
 @{
-    var id          = ViewData["id"]?.ToString() ?? "campo";
-    var label       = ViewData["label"]?.ToString() ?? "Campo";
-    var value       = ViewData["value"];
+    var id = ViewData["id"]?.ToString() ?? "campo";
+    var label = ViewData["label"]?.ToString() ?? "Campo";
+    var value = ViewData["value"];
     var placeholder = ViewData["placeholder"]?.ToString() ?? "";
-    var type        = ViewData["type"]?.ToString() ?? "text";
+    var type = ViewData["type"]?.ToString() ?? "text";
     var required = ViewData["required"] is bool && (bool)ViewData["required"];
     var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
     var readOnly = ViewData["readonly"] is bool && (bool)ViewData["readonly"];
-    var cssClass    = ViewData["cssClass"]?.ToString() ?? "";
-    var helpText    = ViewData["helpText"]?.ToString();
-    var maxLength   = ViewData["maxLength"];
+    var cssClass = ViewData["cssClass"]?.ToString() ?? "";
+    var helpText = ViewData["helpText"]?.ToString();
+    var maxLength = ViewData["maxLength"];
 
-    var inputClass  = "form-control sges-input " + cssClass;
-    var helpId      = id + "Help";
+    var inputClass = "form-control sges-input " + cssClass;
+    var helpId = id + "Help";
 }
 
 <div class="mb-3">

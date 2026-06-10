@@ -27,22 +27,22 @@
 *@
 
 @{
-    var id          = ViewData["id"]?.ToString() ?? "textarea";
-    var label       = ViewData["label"]?.ToString() ?? "Campo";
-    var value       = ViewData["value"]?.ToString() ?? "";
+    var id = ViewData["id"]?.ToString() ?? "textarea";
+    var label = ViewData["label"]?.ToString() ?? "Campo";
+    var value = ViewData["value"]?.ToString() ?? "";
     var placeholder = ViewData["placeholder"]?.ToString() ?? "";
     var rows = ViewData["rows"] is int ? (int)ViewData["rows"] : 4;
     var required = ViewData["required"] is bool && (bool)ViewData["required"];
     var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
     var readOnly = ViewData["readonly"] is bool && (bool)ViewData["readonly"];
-    var maxLength   = ViewData["maxLength"];
-    var helpText    = ViewData["helpText"]?.ToString();
-    var cssClass    = ViewData["cssClass"]?.ToString() ?? "";
-    var resize      = ViewData["resize"]?.ToString() ?? "vertical";
+    var maxLength = ViewData["maxLength"];
+    var helpText = ViewData["helpText"]?.ToString();
+    var cssClass = ViewData["cssClass"]?.ToString() ?? "";
+    var resize = ViewData["resize"]?.ToString() ?? "vertical";
 
     var textareaClass = "form-control sges-textarea " + cssClass;
-    var helpId        = id + "Help";
-    var resizeStyle   = $"resize:{resize};";
+    var helpId = id + "Help";
+    var resizeStyle = $"resize:{resize};";
 }
 
 <div class="mb-3">
