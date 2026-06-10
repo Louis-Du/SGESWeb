@@ -428,8 +428,13 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# NuGet - archivos generados automáticamente
-SGES.Web/SGES.Web/Content/bootstrap*
-SGES.Web/SGES.Web/Scripts/bootstrap*
-SGES.Web/SGES.Web/Scripts/jquery*
-SGES.Web/SGES.Web/Scripts/modernizr*
+# NuGet Package Restore - archivos copiados a Content/ por Bootstrap
+# Se regeneran automáticamente, no deben subirse al repositorio
+SGES.Web/Content/bootstrap*.css
+SGES.Web/Content/bootstrap*.css.map
+SGES.Web/Content/bootstrap*.min.css
+SGES.Web/Content/bootstrap*.min.css.map
+SGES.Web/Content/bootstrap*.rtl.css
+SGES.Web/Content/bootstrap*.rtl.css.map
+SGES.Web/Content/bootstrap*.rtl.min.css
+SGES.Web/Content/bootstrap*.rtl.min.css.map
