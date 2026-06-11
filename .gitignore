@@ -428,7 +428,10 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# NuGet - archivos generados automáticamente
+# Visual Studio 2022 Solution XML (formato moderno - no usar en este proyecto)
+*.slnx
+
+# Bootstrap y jQuery generados por NuGet (no trackear)
 SGES.Web/SGES.Web/Content/bootstrap*
 SGES.Web/SGES.Web/Scripts/bootstrap*
 SGES.Web/SGES.Web/Scripts/jquery*
