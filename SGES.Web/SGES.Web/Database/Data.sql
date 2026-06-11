@@ -58,36 +58,35 @@ GO
   - fechas en 2026 para que el programa las acepte
   - tipoEvento solo acepta: Educativo, Deportivo, Social, Cultural
 ==================================================*/
-INSERT INTO Eventos (nombreEvento, tipoEvento, fechaHoraInicio,          fechaHoraFin,             idUser)
+INSERT INTO Eventos (nombreEvento, tipoEvento, modalidadEvento, tipoInscrip, fechaHoraInicio, fechaHoraFin, idUser)
 VALUES
-('Conferencia Tech',  'Educativo', '2026-08-10 09:00:00', '2026-08-10 10:30:00', 1),
-('Hackathon SENA',    'Educativo', '2026-09-15 08:00:00', '2026-09-15 20:00:00', 2),
-('Feria de Empleo',   'Social',    '2026-10-20 10:00:00', '2026-10-20 13:00:00', 1),
-('Torneo de Futbol',  'Deportivo', '2026-11-05 14:00:00', '2026-11-05 17:00:00', 3),
-('Festival Cultural', 'Cultural',  '2026-12-01 10:00:00', '2026-12-01 18:00:00', 2);
+('Conferencia Tech',  'Educativo', 'Virtual',    'Individual', '2026-08-10 09:00:00', '2026-08-10 10:30:00', 1),
+('Hackathon SENA',    'Educativo', 'Presencial', 'Grupal',     '2026-09-15 08:00:00', '2026-09-15 20:00:00', 2),
+('Feria de Empleo',   'Social',    'Presencial', 'Individual', '2026-10-20 10:00:00', '2026-10-20 13:00:00', 1),
+('Torneo de Futbol',  'Deportivo', 'Presencial', 'Grupal',     '2026-11-05 14:00:00', '2026-11-05 17:00:00', 3),
+('Festival Cultural', 'Cultural',  'Presencial', 'Individual', '2026-12-01 10:00:00', '2026-12-01 18:00:00', 2);
 GO
 
 -- GRUPOS
-INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo Alpha');
-INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo Beta');
-INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo Gamma');
+INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo 1');
+INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo 2');
+INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo 3');
 GO
 
--- INSCRIPCIONES
--- Individuales (idGrupo NULL)
-INSERT INTO Inscripciones (fechaInscrip, modalidadInscrip, tipoInscrip, idApr, idEvento, idGrupo)
+-- Eventos 1,3,5 son Individual → idGrupo NULL
+-- Eventos 2,4   son Grupal     → idGrupo asignado
+INSERT INTO Inscripciones (fechaInscrip, idApr, idEvento, idGrupo)
 VALUES
-('2026-07-01', 'Presencial', 'Individual', 4, 1, NULL),
-('2026-07-02', 'Virtual',    'Individual', 5, 2, NULL),
-('2026-07-03', 'Presencial', 'Individual', 6, 3, NULL);
-
--- Grupales (idGrupo asignado)
-INSERT INTO Inscripciones (fechaInscrip, modalidadInscrip, tipoInscrip, idApr, idEvento, idGrupo)
-VALUES
-('2026-07-04', 'Virtual',    'Grupal', 7, 4, 1),
-('2026-07-05', 'Presencial', 'Grupal', 8, 5, 2),
-('2026-07-06', 'Virtual',    'Grupal', 9, 1, 3);
+('2026-07-01', 4, 1, NULL),
+('2026-07-02', 5, 2, 1),
+('2026-07-03', 6, 3, NULL),
+('2026-07-04', 7, 4, 2),
+('2026-07-05', 8, 5, NULL),
+('2026-07-06', 9, 2, 1);
 GO
+
+/*RESETEAR IDENTITY DE EVENTOS PARA QUE EMPIECE EN 1*/
+DBCC CHECKIDENT ('Eventos', RESEED, 0);
 
 /*==================================================
   VERIFICACIÓN
