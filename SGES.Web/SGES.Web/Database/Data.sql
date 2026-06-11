@@ -68,9 +68,9 @@ VALUES
 GO
 
 -- GRUPOS
-INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo Alpha');
-INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo Beta');
-INSERT INTO Grupos (nombreGrupo) VALUES ('Grupo Gamma');
+INSERT INTO Grupos (nombreGrupo, descripcion, cupoMaximo) VALUES ('Grupo 1', 'Descripción del Grupo 1', 20);
+INSERT INTO Grupos (nombreGrupo, descripcion, cupoMaximo) VALUES ('Grupo 2', 'Descripción del Grupo 2', 20);
+INSERT INTO Grupos (nombreGrupo, descripcion, cupoMaximo) VALUES ('Grupo 3', 'Descripción del Grupo 3', 20);
 GO
 
 -- INSCRIPCIONES

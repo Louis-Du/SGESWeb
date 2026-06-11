@@ -1,4 +1,4 @@
-using SGES.Web.Models;
+﻿using SGES.Web.Models;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -39,6 +39,24 @@ namespace SGES.Web.Controllers
             });
         }
 
+        private SelectList ObtenerModalidades()
+        {
+            return new SelectList(new List<string>
+            {
+                "Presencial",
+                "Virtual"
+            });
+        }
+
+        private SelectList ObtenerTiposInscripcion()
+        {
+            return new SelectList(new List<string>
+            {
+               "Individual",
+               "Grupal"
+            });
+        }
+
         [HttpGet]
         public ActionResult CrearEvento()
         {
@@ -46,6 +64,9 @@ namespace SGES.Web.Controllers
                 return RedirectToAction("Login", "Auth");
 
             ViewBag.TiposEvento = ObtenerTiposEvento();
+            ViewBag.Modalidades = ObtenerModalidades();
+            ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
+
             return View(new EventoModel());
         }
 
@@ -57,6 +78,8 @@ namespace SGES.Web.Controllers
                 return RedirectToAction("Login", "Auth");
 
             ViewBag.TiposEvento = ObtenerTiposEvento();
+            ViewBag.Modalidades = ObtenerModalidades();       
+            ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
 
             // Asignar el idUser desde la sesión
             evento.IdUser = UsuarioActual.Id;
@@ -136,9 +159,9 @@ namespace SGES.Web.Controllers
             var eventos = _dao.ObtenerEventos() ?? new List<EventoModel>();
 
             var disponibles = eventos
-                .Where(e => e.FechaHoraInicio >= DateTime.Now)
-                .OrderBy(e => e.FechaHoraInicio)
-                .ToList();
+            .OrderBy(e => e.FechaHoraInicio < DateTime.Now) // pasados al final
+            .ThenBy(e => e.FechaHoraInicio)
+            .ToList();
 
             return View(disponibles);
         }
@@ -175,7 +198,8 @@ namespace SGES.Web.Controllers
             }
 
             // pasamos la lista de modalidades al combobox de la vista.
-            ViewBag.Modalidades = new SelectList(new List<string> { "Presencial", "Virtual" });
+            ViewBag.Modalidades = ObtenerModalidades();
+            ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
             ViewBag.Evento = evento;
 
             // preparamos el modelo para el formulario de inscripción con el id del evento ya cargado.
@@ -209,7 +233,8 @@ namespace SGES.Web.Controllers
                 ModelState.AddModelError(string.Empty,
                     "Ya estás inscrito en este evento.");
 
-                ViewBag.Modalidades = new SelectList(new List<string> { "Presencial", "Virtual" });
+                ViewBag.Modalidades = ObtenerModalidades();
+                ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
                 ViewBag.Evento = evento;
 
                 return View(inscripcion);
@@ -355,6 +380,8 @@ namespace SGES.Web.Controllers
 
             // Cargamos los tipos de evento para el ComboBox
             ViewBag.TiposEvento = ObtenerTiposEvento();
+            ViewBag.Modalidades = ObtenerModalidades();
+            ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
 
             // Enviamos el evento a la vista con sus datos actuales precargados
             return View(evento);
@@ -374,6 +401,8 @@ namespace SGES.Web.Controllers
 
             // Siempre recargamos el ComboBox antes de cualquier return View()
             ViewBag.TiposEvento = ObtenerTiposEvento();
+            ViewBag.Modalidades = ObtenerModalidades();
+            ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
 
             // ── VALIDACIÓN 1: Fecha de inicio no puede ser en el pasado ──────────
             var ahora = new DateTime(

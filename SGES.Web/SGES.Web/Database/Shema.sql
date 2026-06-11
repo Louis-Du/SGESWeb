@@ -167,3 +167,4 @@ ON Inscripciones(idApr);
 GO
 
 
+DELETE FROM Grupo;

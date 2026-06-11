@@ -14,7 +14,7 @@ namespace SGES.Web.Models
 
             using (SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = "SELECT idEvento, nombreEvento, tipoEvento, fechaHoraInicio, fechaHoraFin, idUser FROM Eventos";
+                string sql = "SELECT idEvento, nombreEvento, tipoEvento, modalidadEvento, tipoInscrip, fechaHoraInicio, fechaHoraFin, idUser FROM Eventos";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 con.Open();
@@ -27,6 +27,8 @@ namespace SGES.Web.Models
                         IdEvento = Convert.ToInt32(dr["idEvento"]),
                         NombreEvento = dr["nombreEvento"].ToString(),
                         TipoEvento = dr["tipoEvento"].ToString(),
+                        ModalidadEvento = dr["modalidadEvento"].ToString(),  // NUEVO
+                        TipoInscrip = dr["tipoInscrip"].ToString(),       // NUEVO
                         FechaHoraInicio = Convert.ToDateTime(dr["fechaHoraInicio"]),
                         FechaHoraFin = Convert.ToDateTime(dr["fechaHoraFin"]),
                         IdUser = Convert.ToInt32(dr["idUser"])
@@ -41,12 +43,14 @@ namespace SGES.Web.Models
         {
             using (SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = @"INSERT INTO Eventos (nombreEvento, tipoEvento, fechaHoraInicio, fechaHoraFin, idUser)
-                               VALUES (@nombreEvento, @tipoEvento, @fechaHoraInicio, @fechaHoraFin, @idUser)";
+                string sql = @"INSERT INTO Eventos (nombreEvento, tipoEvento, modalidadEvento, tipoInscrip, fechaHoraInicio, fechaHoraFin, idUser)
+                             VALUES (@nombreEvento, @tipoEvento, @modalidadEvento, @tipoInscrip, @fechaHoraInicio, @fechaHoraFin, @idUser)";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@nombreEvento", evento.NombreEvento);
                 cmd.Parameters.AddWithValue("@tipoEvento", evento.TipoEvento);
+                cmd.Parameters.AddWithValue("@modalidadEvento", evento.ModalidadEvento);  // NUEVO
+                cmd.Parameters.AddWithValue("@tipoInscrip", evento.TipoInscrip);       // NUEVO
                 cmd.Parameters.AddWithValue("@fechaHoraInicio", evento.FechaHoraInicio);
                 cmd.Parameters.AddWithValue("@fechaHoraFin", evento.FechaHoraFin);
                 cmd.Parameters.AddWithValue("@idUser", evento.IdUser);
@@ -61,15 +65,19 @@ namespace SGES.Web.Models
             using (SqlConnection con = cn.ObtenerConexion())
             {
                 string sql = @"UPDATE Eventos
-                               SET nombreEvento    = @nombreEvento,
-                                   tipoEvento      = @tipoEvento,
-                                   fechaHoraInicio = @fechaHoraInicio,
-                                   fechaHoraFin    = @fechaHoraFin
-                               WHERE idEvento = @idEvento";
+                             SET nombreEvento    = @nombreEvento,
+                             tipoEvento      = @tipoEvento,
+                             modalidadEvento = @modalidadEvento,
+                             tipoInscrip     = @tipoInscrip,
+                             fechaHoraInicio = @fechaHoraInicio,
+                             fechaHoraFin    = @fechaHoraFin
+                             WHERE idEvento = @idEvento";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@nombreEvento", evento.NombreEvento);
                 cmd.Parameters.AddWithValue("@tipoEvento", evento.TipoEvento);
+                cmd.Parameters.AddWithValue("@modalidadEvento", evento.ModalidadEvento);  // NUEVO
+                cmd.Parameters.AddWithValue("@tipoInscrip", evento.TipoInscrip);       // NUEVO
                 cmd.Parameters.AddWithValue("@fechaHoraInicio", evento.FechaHoraInicio);
                 cmd.Parameters.AddWithValue("@fechaHoraFin", evento.FechaHoraFin);
                 cmd.Parameters.AddWithValue("@idEvento", evento.IdEvento);

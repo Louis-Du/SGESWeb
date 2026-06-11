@@ -47,6 +47,30 @@
                          ? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
         { "required", true }
     })
+
+    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+{
+    { "id",            "ModalidadEvento" },
+    { "label",         "Modalidad" },
+    { "items",         ViewBag.Modalidades },
+    { "selectedValue", Model != null ? Model.ModalidadEvento : "" },
+    { "defaultOption", "-- Seleccione --" },
+    { "required",      true }
+})
+    @Html.ValidationMessage("ModalidadEvento", "", new { @class = "text-danger small" })
+
+    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id",            "TipoInscrip" },
+        { "label",         "Tipo de Inscripción" },
+        { "items",         ViewBag.TiposInscripcion },
+        { "selectedValue", Model != null ? Model.TipoInscrip : "" },
+        { "defaultOption", "-- Seleccione --" },
+        { "required",      true }
+    })
+
+    @Html.ValidationMessage("TipoInscrip", "", new { @class = "text-danger small" })
+
     @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
@@ -173,6 +197,33 @@
                 return true;
             }
 
+            var modalidad = document.getElementById("ModalidadEvento");
+            var tipoInscrip = document.getElementById("TipoInscrip");
+
+            function validarModalidad() {
+                if (!modalidad.value) {
+                    mostrarError(modalidad, getSpan("ModalidadEvento"),
+                        "Debe seleccionar una modalidad.");
+                    return false;
+                }
+                limpiar(modalidad, getSpan("ModalidadEvento"));
+                return true;
+            }
+
+            function validarTipoInscrip() {
+                if (!tipoInscrip.value) {
+                    mostrarError(tipoInscrip, getSpan("TipoInscrip"),
+                        "Debe seleccionar un tipo de inscripción.");
+                    return false;
+                }
+                limpiar(tipoInscrip, getSpan("TipoInscrip"));
+                return true;
+            }
+
+            // Agregar listeners
+            modalidad.addEventListener("change", validarModalidad);
+            tipoInscrip.addEventListener("change", validarTipoInscrip);
+
             // Feedback en tiempo real al salir de cada campo
             nombre.addEventListener("blur", validarNombre);
             tipo.addEventListener("change", validarTipo);
@@ -181,7 +232,7 @@
 
             // Seguro extra: bloquear submit si JS detecta algún error
             document.querySelector("form").addEventListener("submit", function (e) {
-                var ok = validarNombre() & validarTipo() & validarInicio() & validarFin();
+                var ok = validarNombre() & validarTipo() & validarModalidad() & validarTipoInscrip() & validarInicio() & validarFin();
                 if (!ok) e.preventDefault();
             });
         }());
