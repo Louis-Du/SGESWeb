@@ -32,30 +32,20 @@ TABLA: EVENTOS
 
 CREATE TABLE Eventos
 (
-    idEvento INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    idEvento         INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    nombreEvento     VARCHAR(100) NOT NULL,
+    tipoEvento       VARCHAR(20)  NOT NULL,
+    modalidadEvento  VARCHAR(15)  NOT NULL,  -- 'Virtual' o 'Presencial'
+    tipoInscrip      VARCHAR(10)  NOT NULL,  -- 'Individual' o 'Grupal'
+    fechaHoraInicio  DATETIME2(0) NOT NULL,
+    fechaHoraFin     DATETIME2(0) NOT NULL,
+    idUser           INT NOT NULL,
 
-    nombreEvento VARCHAR(100) NOT NULL,
-
-    tipoEvento VARCHAR(20) NOT NULL,
-
-    fechaHoraInicio DATETIME2(0) NOT NULL,
-
-    fechaHoraFin DATETIME2(0) NOT NULL,
-
-    idUser INT NOT NULL,
-
-    CONSTRAINT FK_Eventos_Usuario FOREIGN KEY(idUser) REFERENCES Usuario(idUser),
-
-    CONSTRAINT CK_Eventos_Fechas CHECK(fechaHoraFin > fechaHoraInicio),
-
-    CONSTRAINT CK_Eventos_Tipo CHECK ( 
-    tipoEvento IN (
-            'Educativo',
-            'Deportivo',
-            'Social',
-            'Cultural'
-        )
-    )
+    CONSTRAINT FK_Eventos_Usuario    FOREIGN KEY(idUser) REFERENCES Usuario(idUser),
+    CONSTRAINT CK_Eventos_Fechas     CHECK(fechaHoraFin > fechaHoraInicio),
+    CONSTRAINT CK_Eventos_Tipo       CHECK(tipoEvento IN ('Educativo','Deportivo','Social','Cultural')),
+    CONSTRAINT CK_Eventos_Modalidad  CHECK(modalidadEvento IN ('Virtual','Presencial')),
+    CONSTRAINT CK_Eventos_TipoInscrip CHECK(tipoInscrip IN ('Individual','Grupal'))
 );
 GO
 
@@ -149,25 +139,13 @@ CREATE TABLE Inscripciones
 (
     idInscrip        INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     fechaInscrip     DATE NOT NULL,
-    modalidadInscrip VARCHAR(15) NOT NULL,
-    tipoInscrip      VARCHAR(10) NOT NULL,   -- 'Individual' o 'Grupal'
     idApr            INT NOT NULL,
     idEvento         INT NOT NULL,
     idGrupo          INT NULL,
 
-    CONSTRAINT FK_Inscripciones_Aprendiz FOREIGN KEY(idApr)     REFERENCES Aprendiz(idApr),
-    CONSTRAINT FK_Inscripciones_Eventos  FOREIGN KEY(idEvento)  REFERENCES Eventos(idEvento),
-    CONSTRAINT FK_Inscripciones_Grupos   FOREIGN KEY(idGrupo)   REFERENCES Grupos(idGrupo),
-
-    CONSTRAINT CK_Inscripciones_Modalidad CHECK(modalidadInscrip IN ('Virtual', 'Presencial')),
-    CONSTRAINT CK_Inscripciones_Tipo      CHECK(tipoInscrip IN ('Individual', 'Grupal')),
-
-    -- Si es Grupal, idGrupo no puede ser NULL
-    CONSTRAINT CK_Inscripciones_Grupo CHECK(
-        (tipoInscrip = 'Grupal'     AND idGrupo IS NOT NULL) OR
-        (tipoInscrip = 'Individual' AND idGrupo IS NULL)
-    ),
-
+    CONSTRAINT FK_Inscripciones_Aprendiz FOREIGN KEY(idApr)    REFERENCES Aprendiz(idApr),
+    CONSTRAINT FK_Inscripciones_Eventos  FOREIGN KEY(idEvento) REFERENCES Eventos(idEvento),
+    CONSTRAINT FK_Inscripciones_Grupos   FOREIGN KEY(idGrupo)  REFERENCES Grupos(idGrupo),
     CONSTRAINT UQ_Inscripcion_Aprendiz_Evento UNIQUE(idApr, idEvento)
 );
 GO
