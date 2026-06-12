@@ -47,6 +47,7 @@
                          ? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
         { "required", true }
     })
+    @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
 
     @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
 {
@@ -57,6 +58,18 @@
     { "defaultOption", "-- Seleccione --" },
     { "required",      true }
 })
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+{
+    { "id",      "FechaHoraFin" },
+    { "label",   "Fecha y Hora de Fin" },
+    { "type",    "datetime-local" },
+    { "value",   Model != null && Model.FechaHoraFin != DateTime.MinValue
+                     ? Model.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm") : "" },
+    { "required", true }
+})
+    @Html.ValidationMessage("FechaHoraFin", "", new { @class = "text-danger small" })
+
     @Html.ValidationMessage("ModalidadEvento", "", new { @class = "text-danger small" })
 
     @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
@@ -82,19 +95,6 @@
 })
     @Html.ValidationMessage("CupoMaximo", "", new { @class = "text-danger small" })
 
-    @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
-
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",      "FechaHoraFin" },
-        { "label",   "Fecha y Hora de Fin" },
-        { "type",    "datetime-local" },
-        { "value",   Model != null && Model.FechaHoraFin != DateTime.MinValue
-                         ? Model.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm") : "" },
-        { "required", true }
-    })
-    @Html.ValidationMessage("FechaHoraFin", "", new { @class = "text-danger small" })
-
     <div class="mt-3">
         @Html.Partial("_BotonGuardar")
         @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData) {
@@ -108,178 +108,492 @@
 @section scripts {
     <script>
         (function () {
+
+            var form = document.querySelector("form");
+
             var nombre = document.getElementById("NombreEvento");
             var tipo = document.getElementById("TipoEvento");
+
             var inicio = document.getElementById("FechaHoraInicio");
             var fin = document.getElementById("FechaHoraFin");
-            // Cupo máximo — mostrar/ocultar según tipo de inscripción
-            var tipoInscrip = document.getElementById("TipoInscrip");
-            var campoCupo = document.getElementById("CupoMaximo");
-            // Contenedor del campo (el div mb-3 que envuelve el textbox)
-            var divCupo = campoCupo ? campoCupo.closest(".mb-3") : null;
-
-            function mostrarError(campo, spanValidation, mensaje) {
-                campo.classList.add("is-invalid");
-                campo.classList.remove("is-valid");
-                if (spanValidation) {
-                    spanValidation.textContent = mensaje;
-                    spanValidation.style.display = "block";
-                }
-            }
-
-            function limpiar(campo, spanValidation) {
-                campo.classList.remove("is-invalid");
-                campo.classList.add("is-valid");
-                if (spanValidation) {
-                    spanValidation.textContent = "";
-                    spanValidation.style.display = "none";
-                }
-            }
-
-            function validarCupo() {
-                if (tipoInscrip.value === "Grupal") {
-                    if (!campoCupo.value || parseInt(campoCupo.value) <= 0) {
-                        mostrarError(campoCupo, getSpan("CupoMaximo"),
-                            "Debe indicar un cupo máximo mayor a cero.");
-                        return false;
-                    }
-                }
-                limpiar(campoCupo, getSpan("CupoMaximo"));
-                return true;
-            }
-
-            var ok = validarNombre() & validarTipo() & validarModalidad() & validarTipoInscrip() & validarCupo() & validarInicio() & validarFin();
-
-            function getSpan(fieldId) {
-                return document.querySelector('[data-valmsg-for="' + fieldId + '"]');
-            }
-
-            function validarNombre() {
-                if (!nombre.value || !nombre.value.trim()) {
-                    mostrarError(nombre, getSpan("NombreEvento"),
-                        "El nombre del evento no puede estar vacío.");
-                    return false;
-                }
-                limpiar(nombre, getSpan("NombreEvento"));
-                return true;
-            }
-
-            function validarTipo() {
-                if (!tipo.value) {
-                    mostrarError(tipo, getSpan("TipoEvento"),
-                        "Debe seleccionar un tipo de evento.");
-                    return false;
-                }
-                limpiar(tipo, getSpan("TipoEvento"));
-                return true;
-            }
-
-            function toggleCupo() {
-                if (!divCupo) return;
-                if (tipoInscrip.value === "Grupal") {
-                    divCupo.style.display = "";
-                } else {
-                    divCupo.style.display = "none";
-                    campoCupo.value = "0";
-                }
-            }
-
-            // Ejecutar al cargar (por si ya hay un valor precargado en modificar)
-            toggleCupo();
-
-            // Ejecutar al cambiar
-            tipoInscrip.addEventListener("change", toggleCupo);
-
-            function validarInicio() {
-                if (!inicio.value) {
-                    mostrarError(inicio, getSpan("FechaHoraInicio"),
-                        "La fecha de inicio es obligatoria.");
-                    return false;
-                }
-
-                var ahora = new Date();
-                ahora.setSeconds(0, 0);
-
-                if (new Date(inicio.value) < ahora) {
-                    mostrarError(inicio, getSpan("FechaHoraInicio"),
-                        "La fecha de inicio no puede ser anterior a la fecha y hora actual.");
-                    return false;
-                }
-                limpiar(inicio, getSpan("FechaHoraInicio"));
-                if (fin.value) validarFin();
-                return true;
-            }
-
-            function validarFin() {
-                if (!fin.value) {
-                    mostrarError(fin, getSpan("FechaHoraFin"),
-                        "La fecha de fin es obligatoria.");
-                    return false;
-                }
-
-                var ahora = new Date();
-                ahora.setSeconds(0, 0);
-
-                if (new Date(fin.value) < ahora) {
-                    mostrarError(fin, getSpan("FechaHoraFin"),
-                        "La fecha de fin no puede ser anterior a la fecha y hora actual.");
-                    return false;
-                }
-
-                if (inicio.value && new Date(fin.value) <= new Date(inicio.value)) {
-                    mostrarError(fin, getSpan("FechaHoraFin"),
-                        "La fecha de fin debe ser posterior a la fecha de inicio.");
-                    return false;
-                }
-
-                var diferenciaMinutos = (new Date(fin.value) - new Date(inicio.value)) / 60000;
-                if (inicio.value && diferenciaMinutos < 30) {
-                    mostrarError(fin, getSpan("FechaHoraFin"),
-                        "La duración del evento debe ser de al menos 30 minutos.");
-                    return false;
-                }
-
-                limpiar(fin, getSpan("FechaHoraFin"));
-                return true;
-            }
 
             var modalidad = document.getElementById("ModalidadEvento");
 
+            var tipoInscrip = document.getElementById("TipoInscrip");
+
+            var campoCupo = document.getElementById("CupoMaximo");
+
+            var divCupo = campoCupo
+                ? campoCupo.closest(".mb-3")
+                : null;
+
+
+            function getSpan(fieldId) {
+
+                return document.querySelector(
+                    '[data-valmsg-for="' + fieldId + '"]'
+                );
+            }
+
+
+            function mostrarError(campo, span, mensaje) {
+
+                if (!campo) return;
+
+                campo.classList.add("is-invalid");
+                campo.classList.remove("is-valid");
+
+                if (span) {
+                    span.textContent = mensaje;
+                    span.style.display = "block";
+                }
+            }
+
+
+            function limpiar(campo, span) {
+
+                if (!campo) return;
+
+                campo.classList.remove("is-invalid");
+                campo.classList.add("is-valid");
+
+                if (span) {
+                    span.textContent = "";
+                    span.style.display = "none";
+                }
+            }
+
+
+
+            function validarNombre() {
+
+                if (!nombre) return true;
+
+                if (!nombre.value.trim()) {
+
+                    mostrarError(
+                        nombre,
+                        getSpan("NombreEvento"),
+                        "El nombre del evento no puede estar vacío."
+                    );
+
+                    return false;
+                }
+
+
+                limpiar(
+                    nombre,
+                    getSpan("NombreEvento")
+                );
+
+                return true;
+            }
+
+
+
+            function validarTipo() {
+
+                if (!tipo) return true;
+
+                if (!tipo.value) {
+
+                    mostrarError(
+                        tipo,
+                        getSpan("TipoEvento"),
+                        "Debe seleccionar un tipo de evento."
+                    );
+
+                    return false;
+                }
+
+
+                limpiar(
+                    tipo,
+                    getSpan("TipoEvento")
+                );
+
+                return true;
+            }
+
+
+
             function validarModalidad() {
+
+                if (!modalidad) return true;
+
+
                 if (!modalidad.value) {
-                    mostrarError(modalidad, getSpan("ModalidadEvento"),
-                        "Debe seleccionar una modalidad.");
+
+                    mostrarError(
+                        modalidad,
+                        getSpan("ModalidadEvento"),
+                        "Debe seleccionar una modalidad."
+                    );
+
                     return false;
                 }
-                limpiar(modalidad, getSpan("ModalidadEvento"));
+
+
+                limpiar(
+                    modalidad,
+                    getSpan("ModalidadEvento")
+                );
+
                 return true;
             }
 
-            function validarTipoInscrip() {
+
+
+            function validarTipoInscripcion() {
+
+                if (!tipoInscrip) return true;
+
+
                 if (!tipoInscrip.value) {
-                    mostrarError(tipoInscrip, getSpan("TipoInscrip"),
-                        "Debe seleccionar un tipo de inscripción.");
+
+                    mostrarError(
+                        tipoInscrip,
+                        getSpan("TipoInscrip"),
+                        "Debe seleccionar el tipo de inscripción."
+                    );
+
                     return false;
                 }
-                limpiar(tipoInscrip, getSpan("TipoInscrip"));
+
+
+                limpiar(
+                    tipoInscrip,
+                    getSpan("TipoInscrip")
+                );
+
                 return true;
             }
 
-            // Agregar listeners
-            modalidad.addEventListener("change", validarModalidad);
-            tipoInscrip.addEventListener("change", validarTipoInscrip);
 
-            // Feedback en tiempo real al salir de cada campo
-            nombre.addEventListener("blur", validarNombre);
-            tipo.addEventListener("change", validarTipo);
-            inicio.addEventListener("change", validarInicio);
-            fin.addEventListener("change", validarFin);
 
-            // Seguro extra: bloquear submit si JS detecta algún error
-            document.querySelector("form").addEventListener("submit", function (e) {
-                var ok = validarNombre() & validarTipo() & validarModalidad() & validarTipoInscrip() & validarInicio() & validarFin();
-                if (!ok) e.preventDefault();
-            });
-        }());
+
+            function validarCupo() {
+
+
+                if (!campoCupo || !tipoInscrip)
+                    return true;
+
+
+
+                if (tipoInscrip.value === "Grupal") {
+
+
+                    if (!campoCupo.value ||
+                        parseInt(campoCupo.value) <= 0) {
+
+
+                        mostrarError(
+                            campoCupo,
+                            getSpan("CupoMaximo"),
+                            "Debe indicar un cupo mayor a cero."
+                        );
+
+
+                        return false;
+                    }
+
+                }
+
+
+                limpiar(
+                    campoCupo,
+                    getSpan("CupoMaximo")
+                );
+
+
+                return true;
+            }
+
+
+
+
+            function toggleCupo() {
+
+
+                if (!divCupo || !tipoInscrip)
+                    return;
+
+
+
+                if (tipoInscrip.value === "Grupal") {
+
+                    divCupo.style.display = "";
+
+                }
+                else {
+
+                    divCupo.style.display = "none";
+
+                    if (campoCupo)
+                        campoCupo.value = "0";
+                }
+
+            }
+
+
+
+
+
+            function validarInicio() {
+
+
+                if (!inicio) return true;
+
+
+                if (!inicio.value) {
+
+                    mostrarError(
+                        inicio,
+                        getSpan("FechaHoraInicio"),
+                        "La fecha de inicio es obligatoria."
+                    );
+
+                    return false;
+                }
+
+
+
+                var ahora = new Date();
+
+                ahora.setSeconds(0, 0);
+
+
+
+                if (new Date(inicio.value) < ahora) {
+
+
+                    mostrarError(
+                        inicio,
+                        getSpan("FechaHoraInicio"),
+                        "La fecha no puede ser anterior a la actual."
+                    );
+
+
+                    return false;
+                }
+
+
+
+                limpiar(
+                    inicio,
+                    getSpan("FechaHoraInicio")
+                );
+
+
+                return true;
+            }
+
+
+
+
+
+            function validarFin() {
+
+
+                if (!fin) return true;
+
+
+
+                if (!fin.value) {
+
+
+                    mostrarError(
+                        fin,
+                        getSpan("FechaHoraFin"),
+                        "La fecha de fin es obligatoria."
+                    );
+
+
+                    return false;
+                }
+
+
+
+                var ahora = new Date();
+
+                ahora.setSeconds(0, 0);
+
+
+
+                var fechaFin = new Date(fin.value);
+
+
+
+                if (fechaFin < ahora) {
+
+
+                    mostrarError(
+                        fin,
+                        getSpan("FechaHoraFin"),
+                        "La fecha no puede ser anterior a la actual."
+                    );
+
+
+                    return false;
+                }
+
+
+
+                if (inicio &&
+                    inicio.value &&
+                    fechaFin <= new Date(inicio.value)) {
+
+
+                    mostrarError(
+                        fin,
+                        getSpan("FechaHoraFin"),
+                        "Debe ser posterior al inicio."
+                    );
+
+
+                    return false;
+                }
+
+
+
+
+                if (inicio && inicio.value) {
+
+
+                    var minutos =
+                        (fechaFin - new Date(inicio.value))
+                        / 60000;
+
+
+
+                    if (minutos < 30) {
+
+
+                        mostrarError(
+                            fin,
+                            getSpan("FechaHoraFin"),
+                            "El evento debe durar mínimo 30 minutos."
+                        );
+
+
+                        return false;
+                    }
+
+                }
+
+
+
+                limpiar(
+                    fin,
+                    getSpan("FechaHoraFin")
+                );
+
+
+                return true;
+            }
+
+
+
+
+
+
+            // ==========================
+            // Eventos del formulario
+            // ==========================
+
+
+            toggleCupo();
+
+
+
+            if (tipoInscrip) {
+
+                tipoInscrip.addEventListener(
+                    "change",
+                    function () {
+
+                        toggleCupo();
+                        validarCupo();
+
+                    }
+                );
+
+            }
+
+
+
+            if (nombre)
+                nombre.addEventListener("blur", validarNombre);
+
+
+
+            if (tipo)
+                tipo.addEventListener("change", validarTipo);
+
+
+
+            if (modalidad)
+                modalidad.addEventListener(
+                    "change",
+                    validarModalidad
+                );
+
+
+
+            if (inicio)
+                inicio.addEventListener(
+                    "change",
+                    validarInicio
+                );
+
+
+
+            if (fin)
+                fin.addEventListener(
+                    "change",
+                    validarFin
+                );
+
+
+
+            if (form) {
+
+                form.addEventListener(
+                    "submit",
+                    function (e) {
+
+
+                        var correcto =
+
+                            validarNombre()
+                            &&
+                            validarTipo()
+                            &&
+                            validarModalidad()
+                            &&
+                            validarTipoInscripcion()
+                            &&
+                            validarCupo()
+                            &&
+                            validarInicio()
+                            &&
+                            validarFin();
+
+
+
+                        if (!correcto) {
+
+                            e.preventDefault();
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+
+        })();
     </script>
 }

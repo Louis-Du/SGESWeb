@@ -74,17 +74,6 @@ namespace SGES.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CrearEvento(EventoModel evento)
         {
-            // Validación cupo máximo
-            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 0)
-            {
-                ModelState.AddModelError("CupoMaximo",
-                    "Para eventos grupales debe indicar un cupo máximo mayor a cero.");
-            }
-            if (evento.TipoInscrip == "Individual")
-            {
-                evento.CupoMaximo = 0; // forzar a 0 por si el JS falló
-            }
-
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
 
@@ -127,6 +116,17 @@ namespace SGES.Web.Controllers
                     "FechaHoraFin",
                     "La duración del evento debe ser de al menos 30 minutos."
                 );
+            }
+
+            // Validación cupo máximo
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 0)
+            {
+                ModelState.AddModelError("CupoMaximo",
+                    "Para eventos grupales debe indicar un cupo máximo mayor a cero.");
+            }
+            if (evento.TipoInscrip == "Individual")
+            {
+                evento.CupoMaximo = 0; // forzar a 0 por si el JS falló
             }
 
             if (!ModelState.IsValid)
@@ -421,17 +421,6 @@ namespace SGES.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ModificarEvento(EventoModel evento)
         {
-            // Validación cupo máximo
-            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 0)
-            {
-                ModelState.AddModelError("CupoMaximo",
-                    "Para eventos grupales debe indicar un cupo máximo mayor a cero.");
-            }
-            if (evento.TipoInscrip == "Individual")
-            {
-                evento.CupoMaximo = 0; // forzar a 0 por si el JS falló
-            }
-
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
 
@@ -469,6 +458,18 @@ namespace SGES.Web.Controllers
                 ModelState.AddModelError("FechaHoraFin",
                     "La duración del evento debe ser de al menos 30 minutos.");
             }
+
+            // Validación cupo máximo
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 0)
+            {
+                ModelState.AddModelError("CupoMaximo",
+                    "Para eventos grupales debe indicar un cupo máximo mayor a cero.");
+            }
+            if (evento.TipoInscrip == "Individual")
+            {
+                evento.CupoMaximo = 0; // forzar a 0 por si el JS falló
+            }
+
 
             // Si alguna validación falló, devolvemos la vista con los errores
             if (!ModelState.IsValid)
