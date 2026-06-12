@@ -2,99 +2,213 @@
 GO
 
 /*==================================================
-  PROGRAMAS
-==================================================*/
-INSERT INTO Programas VALUES (101, 'Análisis de Datos',      '2024-01-15', 24, 'Tecnólogo');
-INSERT INTO Programas VALUES (102, 'Desarrollo de Software', '2024-02-01', 18, 'Técnico');
-INSERT INTO Programas VALUES (103, 'Ciberseguridad',         '2024-03-10', 12, 'Especialización');
-GO
-
-/*==================================================
-  FICHAS (sin hora, ahora son DATE))
+ USUARIOS
 ==================================================*/
 
-INSERT INTO Fichas VALUES (26701, '2024-01-20', '2026-01-20', 101);
-INSERT INTO Fichas VALUES (26702, '2024-02-05', '2026-08-05', 102);
-INSERT INTO Fichas VALUES (26703, '2024-03-15', '2026-03-15', 103);
-GO
-
-
-/*==================================================
-  USUARIOS — Administradores
-==================================================*/
-INSERT INTO Usuario VALUES (1, 'Carlos Ruiz',   'carlosruiz@gmail.com', 'Admin12*', 'Administrador');
-INSERT INTO Usuario VALUES (2, 'Ana Martínez',  'anamartines@gmail.com','Pass789#', 'Administrador');
-INSERT INTO Usuario VALUES (3, 'Luis Peña',     'luispena@gmail.com',   'Sena2024', 'Administrador');
-GO
-
-/*==================================================
-  USUARIOS — Aprendices
-  (cada aprendiz necesita un registro en Usuario)
-==================================================*/
-INSERT INTO Usuario VALUES (4, 'Carlos Ramirez',  'carlosr@gmail.com',   'pass123',  'Aprendiz');
-INSERT INTO Usuario VALUES (5, 'Laura Gomez',     'laurag@gmail.com',    'clave456', 'Aprendiz');
-INSERT INTO Usuario VALUES (6, 'Andres Torres',   'andrest@gmail.com',   'abc789',   'Aprendiz');
-INSERT INTO Usuario VALUES (7, 'Sofia Martinez',  'sofijd@gmail.com',    'xyz123',   'Aprendiz');
-INSERT INTO Usuario VALUES (8, 'Diego Fernandez', 'diegdx@outlook.com',  'pass789',  'Aprendiz');
-INSERT INTO Usuario VALUES (9, 'Valentina Lopez', 'vale2d9@outlook.com', 'clave321', 'Aprendiz');
-GO
-
-/*==================================================
-  APRENDIZ (depende de Fichas y Usuario)
-  Columnas: idApr, nombreApr, edadApr, emailApr,
-            contactoApr, generoApr, codigoFic, idUser
-==================================================*/
-INSERT INTO Aprendiz VALUES (4, 'Carlos Ramirez',  20, 'carlosr@gmail.com',   '3001234567', 'M', 26701, 4);
-INSERT INTO Aprendiz VALUES (5, 'Laura Gomez',     22, 'laurag@gmail.com',    '3019876543', 'F', 26702, 5);
-INSERT INTO Aprendiz VALUES (6, 'Andres Torres',   19, 'andrest@gmail.com',   '3024567890', 'M', 26703, 6);
-INSERT INTO Aprendiz VALUES (7, 'Sofia Martinez',  21, 'sofijd@gmail.com',    '3031234567', 'F', 26701, 7);
-INSERT INTO Aprendiz VALUES (8, 'Diego Fernandez', 23, 'diegdx@outlook.com',  '3049876543', 'M', 26702, 8);
-INSERT INTO Aprendiz VALUES (9, 'Valentina Lopez', 20, 'vale2d9@outlook.com', '3054567890', 'F', 26703, 9);
-GO
-
-/*==================================================
-  EVENTOS (depende de Usuario)
-  - idEvento es IDENTITY, no se inserta manual
-  - fechas en 2026 para que el programa las acepte
-  - tipoEvento solo acepta: Educativo, Deportivo, Social, Cultural
-==================================================*/
-INSERT INTO Eventos (nombreEvento, tipoEvento, fechaHoraInicio,          fechaHoraFin,             idUser)
+INSERT INTO Usuario
+(
+    idUser,
+    nombreUser,
+    emailUser,
+    passwordHash,
+    tipoUser
+)
 VALUES
-('Conferencia Tech',  'Educativo', '2026-08-10 09:00:00', '2026-08-10 10:30:00', 1),
-('Hackathon SENA',    'Educativo', '2026-09-15 08:00:00', '2026-09-15 20:00:00', 2),
-('Feria de Empleo',   'Social',    '2026-10-20 10:00:00', '2026-10-20 13:00:00', 1),
-('Torneo de Futbol',  'Deportivo', '2026-11-05 14:00:00', '2026-11-05 17:00:00', 3),
-('Festival Cultural', 'Cultural',  '2026-12-01 10:00:00', '2026-12-01 18:00:00', 2);
+(1, 'Admin Principal', 'admin@sges.com', '123456', 'Administrador'),
+(2, 'Carlos Perez', 'carlos@sges.com', '123456', 'Aprendiz'),
+(3, 'Maria Lopez', 'maria@sges.com', '123456', 'Aprendiz'),
+(4, 'Juan Torres', 'juan@sges.com', '123456', 'Aprendiz');
+
 GO
 
--- GRUPOS
-INSERT INTO Grupos (nombreGrupo, descripcion, cupoMaximo) VALUES ('Grupo 1', 'Descripción del Grupo 1', 20);
-INSERT INTO Grupos (nombreGrupo, descripcion, cupoMaximo) VALUES ('Grupo 2', 'Descripción del Grupo 2', 20);
-INSERT INTO Grupos (nombreGrupo, descripcion, cupoMaximo) VALUES ('Grupo 3', 'Descripción del Grupo 3', 20);
-GO
-
--- INSCRIPCIONES
--- Individuales (idGrupo NULL)
-INSERT INTO Inscripciones (fechaInscrip, modalidadInscrip, tipoInscrip, idApr, idEvento, idGrupo)
-VALUES
-('2026-07-01', 'Presencial', 'Individual', 4, 1, NULL),
-('2026-07-02', 'Virtual',    'Individual', 5, 2, NULL),
-('2026-07-03', 'Presencial', 'Individual', 6, 3, NULL);
-
--- Grupales (idGrupo asignado)
-INSERT INTO Inscripciones (fechaInscrip, modalidadInscrip, tipoInscrip, idApr, idEvento, idGrupo)
-VALUES
-('2026-07-04', 'Virtual',    'Grupal', 7, 4, 1),
-('2026-07-05', 'Presencial', 'Grupal', 8, 5, 2),
-('2026-07-06', 'Virtual',    'Grupal', 9, 1, 3);
-GO
 
 /*==================================================
-  VERIFICACIÓN
+ PROGRAMAS
 ==================================================*/
-SELECT * FROM Programas;
-SELECT * FROM Fichas;
-SELECT * FROM Usuario;
-SELECT * FROM Aprendiz;
-SELECT * FROM Eventos;
+
+INSERT INTO Programas
+(
+    codigoProg,
+    nombreProg,
+    fechaIniProg,
+    duracionProg,
+    nivelProg
+)
+VALUES
+(1001,'ADSO','2026-01-15',24,'Tecnologo'),
+(1002,'Multimedia','2026-02-01',18,'Tecnico');
+
+GO
+
+
+/*==================================================
+ FICHAS
+==================================================*/
+
+INSERT INTO Fichas
+(
+    codigoFic,
+    fechaIniFic,
+    fechaFinFic,
+    codigoProg
+)
+VALUES
+(2678901,'2026-01-15','2028-01-15',1001),
+(2678902,'2026-02-01','2027-08-01',1002);
+
+GO
+
+
+/*==================================================
+ APRENDICES
+==================================================*/
+
+INSERT INTO Aprendiz
+(
+    idApr,
+    nombreApr,
+    edadApr,
+    emailApr,
+    contactoApr,
+    generoApr,
+    codigoFic,
+    idUser
+)
+VALUES
+(
+    1,
+    'Carlos Perez',
+    20,
+    'carlos@sges.com',
+    '3001112233',
+    'M',
+    2678901,
+    2
+),
+(
+    2,
+    'Maria Lopez',
+    22,
+    'maria@sges.com',
+    '3004445566',
+    'F',
+    2678901,
+    3
+),
+(
+    3,
+    'Juan Torres',
+    19,
+    'juan@sges.com',
+    '3017778899',
+    'M',
+    2678902,
+    4
+);
+
+GO
+
+
+/*==================================================
+ GRUPOS
+==================================================*/
+
+INSERT INTO Grupos
+(
+    nombreGrupo,
+    descripcion,
+    cupoMaximo
+)
+VALUES
+(
+    'Grupo A',
+    'Aprendices ADSO mañana',
+    30
+),
+(
+    'Grupo B',
+    'Aprendices ADSO tarde',
+    25
+);
+
+GO
+
+
+/*==================================================
+ EVENTOS
+==================================================*/
+
+INSERT INTO Eventos
+(
+    nombreEvento,
+    tipoEvento,
+    modalidadEvento,
+    tipoInscrip,
+    fechaHoraInicio,
+    fechaHoraFin,
+    idUser
+)
+VALUES
+(
+    'Introduccion a SQL Server',
+    'Educativo',
+    'Presencial',
+    'Grupal',
+    '2026-07-10 08:00',
+    '2026-07-10 12:00',
+    1
+),
+(
+    'Torneo Deportivo SENA',
+    'Deportivo',
+    'Presencial',
+    'Grupal',
+    '2026-07-15 14:00',
+    '2026-07-15 17:00',
+    1
+),
+(
+    'Charla de Inteligencia Artificial',
+    'Educativo',
+    'Virtual',
+    'Individual',
+    '2026-07-20 09:00',
+    '2026-07-20 11:00',
+    1
+);
+
+GO
+
+
+/*==================================================
+ INSCRIPCIONES
+==================================================*/
+
+INSERT INTO Inscripciones
+(
+    fechaInscrip,
+    idApr,
+    idEvento,
+    idGrupo
+)
+VALUES
+(
+    GETDATE(),
+    1,
+    1,
+    1
+),
+(
+    GETDATE(),
+    2,
+    1,
+    1
+),
+(
+    GETDATE(),
+    3,
+    2,
+    2
+);
+
 GO

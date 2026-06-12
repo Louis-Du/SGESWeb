@@ -37,6 +37,7 @@ CREATE TABLE Eventos
     tipoEvento       VARCHAR(20)  NOT NULL,
     modalidadEvento  VARCHAR(15)  NOT NULL,  -- 'Virtual' o 'Presencial'
     tipoInscrip      VARCHAR(10)  NOT NULL,  -- 'Individual' o 'Grupal'
+    cupoMaximo       INT NOT NULL DEFAULT 0,
     fechaHoraInicio  DATETIME2(0) NOT NULL,
     fechaHoraFin     DATETIME2(0) NOT NULL,
     idUser           INT NOT NULL,

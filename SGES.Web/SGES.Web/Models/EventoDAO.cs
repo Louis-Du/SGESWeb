@@ -14,7 +14,7 @@ namespace SGES.Web.Models
 
             using (SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = "SELECT idEvento, nombreEvento, tipoEvento, modalidadEvento, tipoInscrip, fechaHoraInicio, fechaHoraFin, idUser FROM Eventos";
+                string sql = "SELECT idEvento, nombreEvento, tipoEvento, modalidadEvento, tipoInscrip, cupoMaximo, fechaHoraInicio, fechaHoraFin, idUser FROM Eventos";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 con.Open();
@@ -29,6 +29,7 @@ namespace SGES.Web.Models
                         TipoEvento = dr["tipoEvento"].ToString(),
                         ModalidadEvento = dr["modalidadEvento"].ToString(),  // NUEVO
                         TipoInscrip = dr["tipoInscrip"].ToString(),       // NUEVO
+                        CupoMaximo = Convert.ToInt32(dr["cupoMaximo"]),
                         FechaHoraInicio = Convert.ToDateTime(dr["fechaHoraInicio"]),
                         FechaHoraFin = Convert.ToDateTime(dr["fechaHoraFin"]),
                         IdUser = Convert.ToInt32(dr["idUser"])
@@ -43,14 +44,15 @@ namespace SGES.Web.Models
         {
             using (SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = @"INSERT INTO Eventos (nombreEvento, tipoEvento, modalidadEvento, tipoInscrip, fechaHoraInicio, fechaHoraFin, idUser)
-                             VALUES (@nombreEvento, @tipoEvento, @modalidadEvento, @tipoInscrip, @fechaHoraInicio, @fechaHoraFin, @idUser)";
+                string sql = @"INSERT INTO Eventos (nombreEvento, tipoEvento, modalidadEvento, tipoInscrip, cupoMaximo, fechaHoraInicio, fechaHoraFin, idUser)
+                             VALUES (@nombreEvento, @tipoEvento, @modalidadEvento, @tipoInscrip, @cupoMaximo, @fechaHoraInicio, @fechaHoraFin, @idUser)";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@nombreEvento", evento.NombreEvento);
                 cmd.Parameters.AddWithValue("@tipoEvento", evento.TipoEvento);
                 cmd.Parameters.AddWithValue("@modalidadEvento", evento.ModalidadEvento);  // NUEVO
                 cmd.Parameters.AddWithValue("@tipoInscrip", evento.TipoInscrip);       // NUEVO
+                cmd.Parameters.AddWithValue("@cupoMaximo", evento.CupoMaximo);
                 cmd.Parameters.AddWithValue("@fechaHoraInicio", evento.FechaHoraInicio);
                 cmd.Parameters.AddWithValue("@fechaHoraFin", evento.FechaHoraFin);
                 cmd.Parameters.AddWithValue("@idUser", evento.IdUser);
@@ -69,6 +71,7 @@ namespace SGES.Web.Models
                              tipoEvento      = @tipoEvento,
                              modalidadEvento = @modalidadEvento,
                              tipoInscrip     = @tipoInscrip,
+                             cupoMaximo = @cupoMaximo,
                              fechaHoraInicio = @fechaHoraInicio,
                              fechaHoraFin    = @fechaHoraFin
                              WHERE idEvento = @idEvento";
@@ -78,6 +81,7 @@ namespace SGES.Web.Models
                 cmd.Parameters.AddWithValue("@tipoEvento", evento.TipoEvento);
                 cmd.Parameters.AddWithValue("@modalidadEvento", evento.ModalidadEvento);  // NUEVO
                 cmd.Parameters.AddWithValue("@tipoInscrip", evento.TipoInscrip);       // NUEVO
+                cmd.Parameters.AddWithValue("@cupoMaximo", evento.CupoMaximo);
                 cmd.Parameters.AddWithValue("@fechaHoraInicio", evento.FechaHoraInicio);
                 cmd.Parameters.AddWithValue("@fechaHoraFin", evento.FechaHoraFin);
                 cmd.Parameters.AddWithValue("@idEvento", evento.IdEvento);

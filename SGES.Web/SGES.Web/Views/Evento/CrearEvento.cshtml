@@ -71,6 +71,17 @@
 
     @Html.ValidationMessage("TipoInscrip", "", new { @class = "text-danger small" })
 
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+{
+    { "id",          "CupoMaximo" },
+    { "label",       "Cupo Máximo" },
+    { "type",        "number" },
+    { "value",       Model != null ? Model.CupoMaximo.ToString() : "0" },
+    { "placeholder", "Ej: 30" },
+    { "required",    true }
+})
+    @Html.ValidationMessage("CupoMaximo", "", new { @class = "text-danger small" })
+
     @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
@@ -101,6 +112,11 @@
             var tipo = document.getElementById("TipoEvento");
             var inicio = document.getElementById("FechaHoraInicio");
             var fin = document.getElementById("FechaHoraFin");
+            // Cupo máximo — mostrar/ocultar según tipo de inscripción
+            var tipoInscrip = document.getElementById("TipoInscrip");
+            var campoCupo = document.getElementById("CupoMaximo");
+            // Contenedor del campo (el div mb-3 que envuelve el textbox)
+            var divCupo = campoCupo ? campoCupo.closest(".mb-3") : null;
 
             function mostrarError(campo, spanValidation, mensaje) {
                 campo.classList.add("is-invalid");
@@ -143,6 +159,22 @@
                 limpiar(tipo, getSpan("TipoEvento"));
                 return true;
             }
+
+            function toggleCupo() {
+                if (!divCupo) return;
+                if (tipoInscrip.value === "Grupal") {
+                    divCupo.style.display = "";
+                } else {
+                    divCupo.style.display = "none";
+                    campoCupo.value = "0";
+                }
+            }
+
+            // Ejecutar al cargar (por si ya hay un valor precargado en modificar)
+            toggleCupo();
+
+            // Ejecutar al cambiar
+            tipoInscrip.addEventListener("change", toggleCupo);
 
             function validarInicio() {
                 if (!inicio.value) {
@@ -198,7 +230,6 @@
             }
 
             var modalidad = document.getElementById("ModalidadEvento");
-            var tipoInscrip = document.getElementById("TipoInscrip");
 
             function validarModalidad() {
                 if (!modalidad.value) {

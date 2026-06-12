@@ -81,12 +81,11 @@ namespace SGES.Web.Models
         {
             using (SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = @"INSERT INTO Inscripciones (fechaInscrip, modalidadInscrip, idApr, idEvento, idGrupo)
-                           VALUES (@fechaInscrip, @modalidadInscrip, @idApr, @idEvento, NULL)";
+                string sql = @"INSERT INTO Inscripciones (fechaInscrip, idApr, idEvento, idGrupo)
+               VALUES (@fechaInscrip, @idApr, @idEvento, NULL)";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@fechaInscrip", inscripcion.FechaInscrip);
-                cmd.Parameters.AddWithValue("@modalidadInscrip", inscripcion.Modalidad);
+                cmd.Parameters.AddWithValue("@fechaInscrip", inscripcion.FechaInscrip);    
                 cmd.Parameters.AddWithValue("@idApr", inscripcion.IdApr);
                 cmd.Parameters.AddWithValue("@idEvento", inscripcion.IdEvento);
 
