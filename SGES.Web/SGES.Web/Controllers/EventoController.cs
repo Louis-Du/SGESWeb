@@ -74,6 +74,17 @@ namespace SGES.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CrearEvento(EventoModel evento)
         {
+            // Validación cupo máximo
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 0)
+            {
+                ModelState.AddModelError("CupoMaximo",
+                    "Para eventos grupales debe indicar un cupo máximo mayor a cero.");
+            }
+            if (evento.TipoInscrip == "Individual")
+            {
+                evento.CupoMaximo = 0; // forzar a 0 por si el JS falló
+            }
+
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
 
@@ -220,6 +231,20 @@ namespace SGES.Web.Controllers
 
             // Recuperamos el evento para mostrarlo de nuevo si hay error.
             var evento = _dao.ObtenerEventos().FirstOrDefault(e => e.IdEvento == inscripcion.IdEvento);
+
+            if (evento.CupoMaximo > 0)
+            {
+                int inscritos = _inscripcionDao.ContarInscritos(inscripcion.IdEvento);
+                if (inscritos >= evento.CupoMaximo)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Este evento ya no tiene cupos disponibles.");
+                    ViewBag.Modalidades = ObtenerModalidades();
+                    ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
+                    ViewBag.Evento = evento;
+                    return View(inscripcion);
+                }
+            }
 
             // tomamos el ID del aprendiz desde la sesión, no del formulario (para evitar manipulación).
             inscripcion.IdApr = UsuarioActual.Id;
@@ -396,6 +421,17 @@ namespace SGES.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ModificarEvento(EventoModel evento)
         {
+            // Validación cupo máximo
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 0)
+            {
+                ModelState.AddModelError("CupoMaximo",
+                    "Para eventos grupales debe indicar un cupo máximo mayor a cero.");
+            }
+            if (evento.TipoInscrip == "Individual")
+            {
+                evento.CupoMaximo = 0; // forzar a 0 por si el JS falló
+            }
+
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
 

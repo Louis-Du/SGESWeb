@@ -1,4 +1,4 @@
-﻿
+﻿select * from Usuario
 CREATE DATABASE SGES;
 GO
 
@@ -46,7 +46,8 @@ CREATE TABLE Eventos
     CONSTRAINT CK_Eventos_Fechas     CHECK(fechaHoraFin > fechaHoraInicio),
     CONSTRAINT CK_Eventos_Tipo       CHECK(tipoEvento IN ('Educativo','Deportivo','Social','Cultural')),
     CONSTRAINT CK_Eventos_Modalidad  CHECK(modalidadEvento IN ('Virtual','Presencial')),
-    CONSTRAINT CK_Eventos_TipoInscrip CHECK(tipoInscrip IN ('Individual','Grupal'))
+    CONSTRAINT CK_Eventos_TipoInscrip CHECK(tipoInscrip IN ('Individual','Grupal')),
+    CONSTRAINT CK_Eventos_CupoGrupal CHECK (tipoInscrip = 'Individual' OR (tipoInscrip = 'Grupal' AND cupoMaximo > 0))
 );
 GO
 
@@ -127,8 +128,7 @@ CREATE TABLE Grupos
 (
     idGrupo      INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     nombreGrupo  VARCHAR(20)  NOT NULL,
-    descripcion  VARCHAR(100) NULL,
-    cupoMaximo   INT          NULL
+    descripcion  VARCHAR(100) NULL
 );
 GO
 
@@ -166,6 +166,3 @@ GO
 CREATE INDEX IX_Inscripciones_Aprendiz
 ON Inscripciones(idApr);
 GO
-
-
-DELETE FROM Grupo;

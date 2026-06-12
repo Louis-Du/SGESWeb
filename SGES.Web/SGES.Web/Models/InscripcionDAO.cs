@@ -72,6 +72,18 @@ namespace SGES.Web.Models
             }
         }
 
+        public int ContarInscritos(int idEvento)
+        {
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                string sql = "SELECT COUNT(*) FROM Inscripciones WHERE idEvento = @idEvento";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@idEvento", idEvento);
+                con.Open();
+                return (int)cmd.ExecuteScalar();
+            }
+        }
+
         // ─────────────────────────────────────────────────────────────
         // GUARDAR: Inserta la inscripción en la tabla Inscripciones.
         // Solo se llama después de pasar las dos validaciones anteriores.

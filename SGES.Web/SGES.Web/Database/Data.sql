@@ -116,19 +116,16 @@ GO
 INSERT INTO Grupos
 (
     nombreGrupo,
-    descripcion,
-    cupoMaximo
+    descripcion
 )
 VALUES
 (
     'Grupo A',
-    'Aprendices ADSO mañana',
-    30
+    'Aprendices ADSO mañana'
 ),
 (
     'Grupo B',
-    'Aprendices ADSO tarde',
-    25
+    'Aprendices ADSO tarde'
 );
 
 GO

@@ -136,6 +136,20 @@
                 }
             }
 
+            function validarCupo() {
+                if (tipoInscrip.value === "Grupal") {
+                    if (!campoCupo.value || parseInt(campoCupo.value) <= 0) {
+                        mostrarError(campoCupo, getSpan("CupoMaximo"),
+                            "Debe indicar un cupo máximo mayor a cero.");
+                        return false;
+                    }
+                }
+                limpiar(campoCupo, getSpan("CupoMaximo"));
+                return true;
+            }
+
+            var ok = validarNombre() & validarTipo() & validarModalidad() & validarTipoInscrip() & validarCupo() & validarInicio() & validarFin();
+
             function getSpan(fieldId) {
                 return document.querySelector('[data-valmsg-for="' + fieldId + '"]');
             }
