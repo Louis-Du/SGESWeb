@@ -1,4 +1,4 @@
-@model IEnumerable<SGES.Web.Models.EventoModel>
+﻿@model IEnumerable<SGES.Web.Models.EventoModel>
 @using System.Linq
 @using System.Collections.Generic
 @using SGES.Web.Models
@@ -6,12 +6,13 @@
 @{
     ViewBag.Title = "Inicio Administrador";
 
-    var columnas = new[] { "ID", "Nombre", "Tipo", "Inicio", "Fin" };
+    var columnas = new[] { "Nombre", "Tipo", "Modalidad", "Tipo de inscripcion", "Inicio", "Fin" };
     var filas = Model?.Select(e => new object[]
     {
-        e.IdEvento,
         e.NombreEvento,
         e.TipoEvento,
+        e.ModalidadEvento,
+        e.TipoInscrip,
         e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
         e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
     }) ?? Enumerable.Empty<object[]>();

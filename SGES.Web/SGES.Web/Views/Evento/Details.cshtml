@@ -48,11 +48,6 @@
     })
 }
 
-@* ── ERRORES DEL SERVIDOR ─────────────────────────────────────────────────
-    ValidationSummary muestra los errores que el controlador agrega con
-    ModelState.AddModelError, como "Ya estás inscrito" o "cruce de horario". *@
-@Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
-
 @* ── FORMULARIO DE INSCRIPCIÓN ────────────────────────────────────────────
     Html.BeginForm genera un <form> que hace POST a /Evento/Details.
     El using garantiza que el </form> se cierre automáticamente al final. *@
@@ -66,16 +61,6 @@
 
     @* ComboBox de modalidad usando el mismo componente que CrearEvento.
         Le pasamos la lista de opciones que el controlador dejó en ViewBag. *@
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "Modalidad" },
-        { "label",         "Modalidad de asistencia" },
-        { "items",         ViewBag.Modalidades },
-        { "selectedValue", Model != null ? Model.Modalidad : "" },
-        { "defaultOption", "-- Seleccione --" },
-        { "required",      true }
-    })
-    @Html.ValidationMessage("Modalidad", "", new { @class = "text-danger small" })
 
     @* Botones: Guardar envía el formulario, Cancelar vuelve al InicioAprendiz. *@
     <div class="mt-3">

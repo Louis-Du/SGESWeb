@@ -1,4 +1,4 @@
-@using System.Web.Mvc
+﻿@using System.Web.Mvc
 @model IEnumerable<SGES.Web.Models.EventoModel>
 
 @{
@@ -17,11 +17,13 @@
     { "titulo",        "Listado de Eventos" },
     { "seleccionable", true },
     { "idFila",        Model.Select(e => (object)e.IdEvento) },
-    { "columnas",      new[] { "Nombre", "Tipo", "Inicio", "Fin" } },
+    { "columnas",      new[] { "Nombre", "Tipo", "Modalidad", "Tipo de inscripcion", "Inicio", "Fin" } },
     { "filas",         Model.Select(e => new object[]
         {
             e.NombreEvento,
             e.TipoEvento,
+            e.ModalidadEvento,
+            e.TipoInscrip,
             e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
             e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
         })
