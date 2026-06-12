@@ -185,112 +185,137 @@ namespace SGES.Web.Controllers
         [HttpGet]
         public ActionResult Details(int id)
         {
-            // Si no hay sesion activa, redirigir a login.
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
 
-            //se busca el evento por su id en la lista completa de eventos.
-            var evento = _dao.ObtenerEventos().FirstOrDefault(e => e.IdEvento == id);
 
-            // si el evento no existe, redirigir al InicioAprendiz con mensaje de error.
+            var evento = _dao.ObtenerEventos()
+                .FirstOrDefault(e => e.IdEvento == id);
+
+
             if (evento == null)
             {
                 TempData["Error"] = "Evento no encontrado.";
                 return RedirectToAction("InicioAprendiz");
             }
 
-            // VALIDACIÓN: si el aprendiz ya está inscrito en este evento,
-            // no tiene sentido mostrar el formulario — lo devolvemos al inicio
-            // con un mensaje informativo.
+
             if (_inscripcionDao.YaInscrito(UsuarioActual.Id, id))
             {
-                TempData["Error"] = "Ya estas inscrito en este evento.";
+                TempData["Error"] =
+                    "Ya estás inscrito en este evento.";
+
                 return RedirectToAction("InicioAprendiz");
             }
 
-            // pasamos la lista de modalidades al combobox de la vista.
-            ViewBag.Modalidades = ObtenerModalidades();
-            ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
+
             ViewBag.Evento = evento;
 
-            // preparamos el modelo para el formulario de inscripción con el id del evento ya cargado.
-            var inscripcion = new InscripcionModel { IdEvento = id };
+
+            var inscripcion = new InscripcionModel
+            {
+                IdEvento = id,
+                IdApr = UsuarioActual.Id
+            };
+
+
             return View(inscripcion);
         }
 
         // ───────────────────────────────────────────────────────────────────
         // POST: /Evento/Details
-        // Procesa el formulario de inscripción enviado por el aprendiz.
+        // Procesa la inscripción del aprendiz.
         // ────────────────────────────────────────────────────────────────────
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Details(InscripcionModel inscripcion)
         {
+            // Verificamos sesión
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
 
-            // Recuperamos el evento para mostrarlo de nuevo si hay error.
-            var evento = _dao.ObtenerEventos().FirstOrDefault(e => e.IdEvento == inscripcion.IdEvento);
 
+            // Recuperamos el evento enviado desde el formulario
+            var evento = _dao.ObtenerEventos()
+                .FirstOrDefault(e => e.IdEvento == inscripcion.IdEvento);
+
+
+            // Si no existe el evento
+            if (evento == null)
+            {
+                TempData["Error"] = "Evento no encontrado.";
+                return RedirectToAction("InicioAprendiz");
+            }
+
+
+            // El usuario de sesión es el aprendiz que se está inscribiendo
+            inscripcion.IdApr = UsuarioActual.Id;
+
+
+            // Fecha actual de inscripción
+            inscripcion.FechaInscrip = DateTime.Now.Date;
+
+
+            // Validar inscripción duplicada
+            if (_inscripcionDao.YaInscrito(
+                inscripcion.IdApr,
+                inscripcion.IdEvento))
+            {
+                TempData["Error"] =
+                    "Ya estás inscrito en este evento.";
+
+                return RedirectToAction("InicioAprendiz");
+            }
+
+
+            // Validar cruces de horario
+            if (_inscripcionDao.TieneCruceDeHorario(
+                inscripcion.IdApr,
+                inscripcion.IdEvento))
+            {
+                TempData["Error"] =
+                    "Ya tienes otro evento en ese horario.";
+
+                return RedirectToAction("InicioAprendiz");
+            }
+
+
+            // Validar cupos
             if (evento.CupoMaximo > 0)
             {
-                int inscritos = _inscripcionDao.ContarInscritos(inscripcion.IdEvento);
+                int inscritos =
+                    _inscripcionDao.ContarInscritos(
+                        inscripcion.IdEvento);
+
+
                 if (inscritos >= evento.CupoMaximo)
                 {
-                    ModelState.AddModelError(string.Empty,
-                        "Este evento ya no tiene cupos disponibles.");
-                    ViewBag.Modalidades = ObtenerModalidades();
-                    ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
-                    ViewBag.Evento = evento;
-                    return View(inscripcion);
+                    TempData["Error"] =
+                        "El evento ya no tiene cupos disponibles.";
+
+                    return RedirectToAction("InicioAprendiz");
                 }
             }
 
-            // tomamos el ID del aprendiz desde la sesión, no del formulario (para evitar manipulación).
-            inscripcion.IdApr = UsuarioActual.Id;
 
-            // asignamos la fecha de inscripción al momento actual.
-            inscripcion.FechaInscrip = DateTime.Today;
-
-            // --- VALIDACION 1: ¿Ya está inscrito en este evento? ------------------
-            if (_inscripcionDao.YaInscrito(inscripcion.IdApr, inscripcion.IdEvento))
-            {
-                ModelState.AddModelError(string.Empty,
-                    "Ya estás inscrito en este evento.");
-
-                ViewBag.Modalidades = ObtenerModalidades();
-                ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
-                ViewBag.Evento = evento;
-
-                return View(inscripcion);
-            }
-
-            // --- VALIDACION 2: ¿hay cruce de horario con otro evento? --------------
-            if (_inscripcionDao.TieneCruceDeHorario(inscripcion.IdApr, inscripcion.IdEvento))
-            {
-                ModelState.AddModelError(string.Empty,
-                    "No puedes inscribirte porque tienes otro evento que se cruza en horario.");
-                return View(inscripcion);
-            }
-
-            // --- VALIDACIÓN 3: ModelState (campos requeridos, etc.) -------------
-            if (!ModelState.IsValid)
-            {
-                return View(inscripcion);
-            }
-
-            // Si pasó todas las validaciones, guardamos la inscripción.
             try
             {
+                // Inserta en tabla Inscripciones
                 _inscripcionDao.Inscribir(inscripcion);
-                // TempData persiste solo hasta la siguiente petición (el redirect).
-                TempData["Success"] = "Inscripción realizada correctamente.";
+
+
+                TempData["Success"] =
+                    "Te has inscrito correctamente.";
+
                 return RedirectToAction("InicioAprendiz");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Error al inscribirse: " + ex.Message);
-                return View(inscripcion);
+                TempData["Error"] =
+                    "Error al realizar inscripción: "
+                    + ex.Message;
+
+                return RedirectToAction("InicioAprendiz");
             }
         }
 
