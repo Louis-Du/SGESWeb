@@ -21,6 +21,8 @@ VALUES
 
 GO
 
+/*RESETEAR IDENTITY DE EVENTOS PARA QUE EMPIECE EN 1*/
+DBCC CHECKIDENT ('Eventos', RESEED, 0);
 
 /*==================================================
  PROGRAMAS
