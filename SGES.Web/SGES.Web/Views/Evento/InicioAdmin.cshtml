@@ -74,6 +74,13 @@
             { "confirm",          "¿Desea eliminar el evento seleccionado?" },
             { "requireSelection", true }
         })
+
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Exportar Eventos" },
+            { "icono", "bi-file-earmark-pdf" },
+            { "url",   Url.Action("ReporteEventos", "Evento") }
+        })
     </div>
 }
 

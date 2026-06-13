@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="06/12/2026" ReportInfo.Modified="06/12/2026" ReportInfo.CreatorVersion="2026.1.0">
+  <Dictionary>
+    <TableDataSource Name="Aprendices" ReferenceName="Aprendices" DataType="System.Int32" Enabled="true">
+      <Column Name="ID"       DataType="System.Int32"/>
+      <Column Name="Nombre"   DataType="System.String"/>
+      <Column Name="Email"    DataType="System.String"/>
+      <Column Name="Contacto" DataType="System.String"/>
+    </TableDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Top="0" Width="827" Height="56.7">
+      <TextObject Name="Title" Left="0" Top="0" Width="827" Height="37.8"
+        Text="Aprendices Inscritos al Evento"
+        HorzAlign="Center" VertAlign="Center"
+        Font="Arial, 13pt, style=Bold"
+        TextColor="Color [White]"
+        Fill.Color="Color [39, 174, 96]"/>
+      <TextObject Name="SubTitle" Left="0" Top="37.8" Width="827" Height="18.9"
+        Text="Generado el [Date]"
+        HorzAlign="Center"
+        Font="Arial, 8pt"
+        TextColor="Color [100, 100, 100]"/>
+    </ReportTitleBand>
+
+    <PageHeaderBand Name="PageHeader1" Top="65.7" Width="827" Height="25">
+      <TextObject Name="H_ID"       Left="0"   Top="0" Width="60"  Height="25" Text="ID"       Font="Arial, 8pt, style=Bold" TextColor="Color [White]" Fill.Color="Color [39, 174, 96]" HorzAlign="Center" VertAlign="Center" Border.Lines="All" Border.Color="Color [White]"/>
+      <TextObject Name="H_Nombre"   Left="60"  Top="0" Width="250" Height="25" Text="Nombre"   Font="Arial, 8pt, style=Bold" TextColor="Color [White]" Fill.Color="Color [39, 174, 96]" HorzAlign="Center" VertAlign="Center" Border.Lines="All" Border.Color="Color [White]"/>
+      <TextObject Name="H_Email"    Left="310" Top="0" Width="367" Height="25" Text="Email"    Font="Arial, 8pt, style=Bold" TextColor="Color [White]" Fill.Color="Color [39, 174, 96]" HorzAlign="Center" VertAlign="Center" Border.Lines="All" Border.Color="Color [White]"/>
+      <TextObject Name="H_Contacto" Left="677" Top="0" Width="150" Height="25" Text="Contacto" Font="Arial, 8pt, style=Bold" TextColor="Color [White]" Fill.Color="Color [39, 174, 96]" HorzAlign="Center" VertAlign="Center" Border.Lines="All" Border.Color="Color [White]"/>
+    </PageHeaderBand>
+
+    <DataBand Name="Data1" Top="99.7" Width="827" Height="25" DataSource="Aprendices" EvenStyle="EvenRow">
+      <TextObject Name="D_ID"       Left="0"   Top="0" Width="60"  Height="25" Text="[Aprendices.ID]"       Font="Arial, 8pt" HorzAlign="Center" VertAlign="Center" Border.Lines="All" Border.Color="Color [220, 220, 220]"/>
+      <TextObject Name="D_Nombre"   Left="60"  Top="0" Width="250" Height="25" Text="[Aprendices.Nombre]"   Font="Arial, 8pt" HorzAlign="Left"   VertAlign="Center" Border.Lines="All" Border.Color="Color [220, 220, 220]" Padding="3,0,0,0"/>
+      <TextObject Name="D_Email"    Left="310" Top="0" Width="367" Height="25" Text="[Aprendices.Email]"    Font="Arial, 8pt" HorzAlign="Left"   VertAlign="Center" Border.Lines="All" Border.Color="Color [220, 220, 220]" Padding="3,0,0,0"/>
+      <TextObject Name="D_Contacto" Left="677" Top="0" Width="150" Height="25" Text="[Aprendices.Contacto]" Font="Arial, 8pt" HorzAlign="Center" VertAlign="Center" Border.Lines="All" Border.Color="Color [220, 220, 220]"/>
+    </DataBand>
+
+    <PageFooterBand Name="PageFooter1" Top="133.7" Width="827" Height="18.9">
+      <TextObject Name="PageNum" Left="0" Top="0" Width="827" Height="18.9"
+        Text="Página [Page] de [TotalPages]"
+        HorzAlign="Right" Font="Arial, 7pt"
+        TextColor="Color [150, 150, 150]"/>
+    </PageFooterBand>
+  </ReportPage>
+  <Styles>
+    <Style Name="EvenRow" Fill.Color="Color [220, 245, 220]"/>
+  </Styles>
+</Report>

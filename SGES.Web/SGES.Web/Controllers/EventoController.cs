@@ -390,6 +390,7 @@ namespace SGES.Web.Controllers
 
             try
             {
+                ViewBag.IdEvento = idEvento.Value;
                 List<AprendizModel> inscritos = _dao.ObtenerAprendicesPorEvento(idEvento.Value);
                 return View(inscritos ?? new List<AprendizModel>());
             }
@@ -511,6 +512,102 @@ namespace SGES.Web.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Error al actualizar el evento: " + ex.Message);
                 return View(evento);
+            }
+        }
+
+        public ActionResult ReporteEventos()
+        {
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+
+            var eventos = _dao.ObtenerEventos() ?? new List<EventoModel>();
+
+            var reporte = new FastReport.Report();
+            var rutaFrx = Server.MapPath("~/Reports/ReporteEventos.frx");
+            reporte.Load(rutaFrx);
+
+            // Registrar datos
+            var tabla = new System.Data.DataTable("Eventos");
+            tabla.Columns.Add("ID", typeof(int));
+            tabla.Columns.Add("Nombre", typeof(string));
+            tabla.Columns.Add("Tipo", typeof(string));
+            tabla.Columns.Add("Modalidad", typeof(string));
+            tabla.Columns.Add("TipoInscrip", typeof(string));
+            tabla.Columns.Add("CupoMaximo", typeof(int));
+            tabla.Columns.Add("Inicio", typeof(string));
+            tabla.Columns.Add("Fin", typeof(string));
+
+            foreach (var e in eventos)
+            {
+                tabla.Rows.Add(
+                    e.IdEvento,
+                    e.NombreEvento,
+                    e.TipoEvento,
+                    e.ModalidadEvento,
+                    e.TipoInscrip,
+                    e.CupoMaximo,
+                    e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
+                    e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
+                );
+            }
+
+            reporte.RegisterData(tabla, "Eventos");
+            reporte.Prepare();
+
+            var export = new FastReport.Export.PdfSimple.PDFSimpleExport();
+            using (var ms = new System.IO.MemoryStream())
+            {
+                export.Export(reporte, ms);
+                return File(ms.ToArray(),
+                    "application/pdf",
+                    "ReporteEventos.pdf");
+            }
+        }
+
+        public ActionResult ReporteAprendices(int idEvento)
+        {
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+
+            var aprendices = _dao.ObtenerAprendicesPorEvento(idEvento)
+                            ?? new List<AprendizModel>();
+            var evento = _dao.ObtenerEventos()
+                            .FirstOrDefault(e => e.IdEvento == idEvento);
+
+            var reporte = new FastReport.Report();
+            var rutaFrx = Server.MapPath("~/Reports/ReporteAprendices.frx");
+            reporte.Load(rutaFrx);
+
+            var tabla = new System.Data.DataTable("Aprendices");
+            tabla.Columns.Add("ID", typeof(int));
+            tabla.Columns.Add("Nombre", typeof(string));
+            tabla.Columns.Add("Email", typeof(string));
+            tabla.Columns.Add("Contacto", typeof(string));
+
+            foreach (var a in aprendices)
+            {
+                tabla.Rows.Add(
+                    a.IdApr,
+                    a.NombreApr,
+                    a.EmailApr,
+                    a.ContactoApr
+                );
+            }
+
+            reporte.RegisterData(tabla, "Aprendices");
+            reporte.Prepare();
+
+            var nombreArchivo = evento != null
+                ? $"Aprendices_{evento.NombreEvento}.xlsx"
+                : "Aprendices.xlsx";
+
+            var export = new FastReport.Export.PdfSimple.PDFSimpleExport();
+            using (var ms = new System.IO.MemoryStream())
+            {
+                export.Export(reporte, ms);
+                return File(ms.ToArray(),
+                    "application/pdf",
+                    nombreArchivo.Replace(".xlsx", ".pdf"));
             }
         }
 

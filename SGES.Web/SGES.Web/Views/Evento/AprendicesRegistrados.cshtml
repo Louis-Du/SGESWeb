@@ -23,7 +23,7 @@
 
 
             { "filas", (Model ?? Enumerable.Empty<AprendizModel>()).Select(a => new List<object>
-    {
+   {
                     a.IdApr,
                     a.NombreApr,
                     a.EmailApr,
@@ -39,6 +39,13 @@
     { "icono", "bi-arrow-left" },
     { "id", "btnRegresar" },
     { "url", Url.Action("InicioAdmin", "Evento") } // fallback si no hay historial
+})
+
+@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+{
+    { "texto", "Exportar Aprendices" },
+    { "icono", "bi-file-earmark-pdf" },
+    { "url",   Url.Action("ReporteAprendices", "Evento", new { idEvento = ViewBag.IdEvento }) }
 })
 
 
