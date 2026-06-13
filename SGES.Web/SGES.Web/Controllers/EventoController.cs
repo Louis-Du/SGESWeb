@@ -408,33 +408,35 @@ namespace SGES.Web.Controllers
         [HttpGet]
         public ActionResult ModificarEvento(int? id)
         {
-            // Si no hay sesión activa, redirigir al login
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
 
-            // Si no se recibió ningún id (el admin no seleccionó evento), volver al inicio
             if (id == null)
             {
                 TempData["Error"] = "Debe seleccionar un evento para modificar.";
                 return RedirectToAction("InicioAdmin");
             }
 
-            // Buscamos el evento en la BD por su id
             var evento = _dao.ObtenerEventos().FirstOrDefault(e => e.IdEvento == id.Value);
 
-            // Si no existe el evento con ese id, volver al inicio con mensaje
             if (evento == null)
             {
                 TempData["Error"] = "El evento seleccionado no existe.";
                 return RedirectToAction("InicioAdmin");
             }
 
-            // Cargamos los tipos de evento para el ComboBox
+            // ← Nueva validación
+            int inscritos = _inscripcionDao.ContarInscritos(id.Value);
+            if (inscritos > 0)
+            {
+                TempData["Error"] = $"No se puede modificar el evento '{evento.NombreEvento}' porque tiene {inscritos} aprendiz(ces) inscrito(s).";
+                return RedirectToAction("InicioAdmin");
+            }
+
             ViewBag.TiposEvento = ObtenerTiposEvento();
             ViewBag.Modalidades = ObtenerModalidades();
             ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
 
-            // Enviamos el evento a la vista con sus datos actuales precargados
             return View(evento);
         }
 
