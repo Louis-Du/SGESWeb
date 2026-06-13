@@ -37,6 +37,43 @@
     { "id",    "btnVerInscribirse" }
 })
 
+@{ var filtro = ViewBag.Filtro as SGES.Web.Models.EventoFiltroModel; }
+
+@using (Html.BeginForm("InicioAprendiz", "Evento", FormMethod.Get))
+{
+    @Html.TextBox("Nombre", filtro != null ? filtro.Nombre : "",
+        new { @class = "form-control", placeholder = "Buscar por nombre..." })
+
+<div class="mb-3">
+    <input type="date" name="Fecha"
+           value="@(filtro != null && filtro.Fecha.HasValue ? filtro.Fecha.Value.ToString("yyyy-MM-dd") : "")"
+           class="form-control" />
+</div>
+
+    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id",            "Modalidad" },
+        { "label",         "Modalidad" },
+        { "items",         ViewBag.Modalidades },
+        { "selectedValue", filtro != null ? filtro.Modalidad : "" },
+        { "defaultOption", "Todas" },
+        { "required",      false }
+    })
+
+    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id",            "TipoInscrip" },
+        { "label",         "Tipo de Inscripción" },
+        { "items",         ViewBag.TiposInscripcion },
+        { "selectedValue", filtro != null ? filtro.TipoInscrip : "" },
+        { "defaultOption", "Todos" },
+        { "required",      false }
+    })
+
+    <button type="submit" class="btn btn-primary">Buscar</button>
+    <a href="@Url.Action("InicioAprendiz")" class="btn btn-secondary">Limpiar</a>
+}
+
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {

@@ -121,6 +121,7 @@
     <Compile Include="Models\AuthDAO.cs" />
     <Compile Include="Models\Conexión.cs" />
     <Compile Include="Models\EventoDAO.cs" />
+    <Compile Include="Models\EventoFiltroModel.cs" />
     <Compile Include="Models\EventoModel.cs" />
     <Compile Include="Models\InscripcionDAO.cs" />
     <Compile Include="Models\InscripcionModel.cs" />
