@@ -170,9 +170,9 @@ namespace SGES.Web.Controllers
             var eventos = _dao.ObtenerEventos() ?? new List<EventoModel>();
 
             var disponibles = eventos
-            .OrderBy(e => e.FechaHoraInicio < DateTime.Now) // pasados al final
-            .ThenBy(e => e.FechaHoraInicio)
-            .ToList();
+                .Where(e => e.FechaHoraInicio >= DateTime.Now)
+                .OrderBy(e => e.FechaHoraInicio)
+                .ToList();
 
             return View(disponibles);
         }
