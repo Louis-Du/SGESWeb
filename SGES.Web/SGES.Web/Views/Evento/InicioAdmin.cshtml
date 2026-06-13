@@ -141,5 +141,24 @@
                 });
             }
         });
+
+        (function () {
+            // TextBox de nombre — filtra al dejar de escribir (500ms de espera)
+            var inputNombre = document.getElementById("Nombre");
+            var timeoutNombre;
+            inputNombre.addEventListener("input", function () {
+                clearTimeout(timeoutNombre);
+                timeoutNombre = setTimeout(function () {
+                    inputNombre.closest("form").submit();
+                }, 500);
+            });
+
+            // Date — filtra al seleccionar fecha automáticamente
+            var inputFecha = document.querySelector("input[name='Fecha']");
+            inputFecha.addEventListener("change", function () {
+                inputFecha.closest("form").submit();
+            });
+        }());
+
     </script>
 }
