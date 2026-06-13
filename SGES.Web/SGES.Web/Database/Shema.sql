@@ -1,4 +1,4 @@
-﻿select * from Usuario
+﻿
 CREATE DATABASE SGES;
 GO
 
