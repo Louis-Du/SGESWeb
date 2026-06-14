@@ -90,6 +90,12 @@
         <input type="date" name="Fecha"
                value="@(filtro != null && filtro.Fecha.HasValue ? filtro.Fecha.Value.ToString("yyyy-MM-dd") : "")"
                class="form-control" />
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Exportar Eventos" },
+            { "icono", "bi-file-earmark-pdf" },
+            { "url",   Url.Action("ReporteEventos", "Evento") }
+        })
     </div>
 
     @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)

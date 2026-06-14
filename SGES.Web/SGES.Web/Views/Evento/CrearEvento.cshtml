@@ -50,24 +50,24 @@
     @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
 
     @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-{
-    { "id",            "ModalidadEvento" },
-    { "label",         "Modalidad" },
-    { "items",         ViewBag.Modalidades },
-    { "selectedValue", Model != null ? Model.ModalidadEvento : "" },
-    { "defaultOption", "-- Seleccione --" },
-    { "required",      true }
-})
+    {
+        { "id",            "ModalidadEvento" },
+        { "label",         "Modalidad" },
+        { "items",         ViewBag.Modalidades },
+        { "selectedValue", Model != null ? Model.ModalidadEvento : "" },
+        { "defaultOption", "-- Seleccione --" },
+        { "required",      true }
+    })
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-{
-    { "id",      "FechaHoraFin" },
-    { "label",   "Fecha y Hora de Fin" },
-    { "type",    "datetime-local" },
-    { "value",   Model != null && Model.FechaHoraFin != DateTime.MinValue
-                     ? Model.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm") : "" },
-    { "required", true }
-})
+    {
+        { "id",      "FechaHoraFin" },
+        { "label",   "Fecha y Hora de Fin" },
+        { "type",    "datetime-local" },
+        { "value",   Model != null && Model.FechaHoraFin != DateTime.MinValue
+                         ? Model.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm") : "" },
+        { "required", true }
+    })
     @Html.ValidationMessage("FechaHoraFin", "", new { @class = "text-danger small" })
 
     @Html.ValidationMessage("ModalidadEvento", "", new { @class = "text-danger small" })
@@ -85,14 +85,14 @@
     @Html.ValidationMessage("TipoInscrip", "", new { @class = "text-danger small" })
 
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-{
-    { "id",          "CupoMaximo" },
-    { "label",       "Cupo Máximo" },
-    { "type",        "number" },
-    { "value",       Model != null ? Model.CupoMaximo.ToString() : "0" },
-    { "placeholder", "Ej: 30" },
-    { "required",    true }
-})
+    {
+        { "id",          "CupoMaximo" },
+        { "label",       "Cupo Máximo" },
+        { "type",        "number" },
+        { "value",       Model != null ? Model.CupoMaximo.ToString() : "0" },
+        { "placeholder", "Ej: 30" },
+        { "required",    true }
+    })
     @Html.ValidationMessage("CupoMaximo", "", new { @class = "text-danger small" })
 
     <div class="mt-3">
