@@ -34,7 +34,7 @@ namespace SGES.Web.Controllers
 
             if (usuario == null)
             {
-                ModelState.AddModelError(string.Empty, "ID o contraseña incorrectos.");
+                TempData["Error"] = "ID o contraseña incorrectos.";
                 return View(model);
             }
 
@@ -87,10 +87,7 @@ namespace SGES.Web.Controllers
 
             if (usuario == null)
             {
-                ModelState.AddModelError(
-                    "",
-                    "El usuario no existe."
-                );
+                TempData["Error"] = "El usuario no existe.";
 
                 return View(model);
             }
@@ -98,14 +95,14 @@ namespace SGES.Web.Controllers
 
             if (nuevaPassword != confirmarPassword)
             {
-                ModelState.AddModelError(string.Empty, "Las contraseñas no coinciden.");
+                TempData["Error"] = "Las contraseñas no coinciden.";
                 return View(model);
             }
 
 
             if (string.IsNullOrWhiteSpace(nuevaPassword))
             {
-                ModelState.AddModelError(string.Empty, "La contraseña no puede estar vacía.");
+                TempData["Error"] = "La contraseña no puede estar vacía.";
                 return View(model);
             }
 
@@ -120,7 +117,7 @@ namespace SGES.Web.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Error al cambiar contraseña: " + ex.Message);
+                TempData["Error"] = "Error al cambiar contraseña: " + ex.Message;
 
                 return View(model);
             }
