@@ -1,4 +1,4 @@
-﻿
+
 CREATE DATABASE SGES;
 GO
 
