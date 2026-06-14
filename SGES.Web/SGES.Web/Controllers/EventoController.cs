@@ -146,33 +146,78 @@ namespace SGES.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult InicioAprendiz()
+        public ActionResult InicioAprendiz(EventoFiltroModel filtro)
         {
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
 
             var eventos = _dao.ObtenerEventos() ?? new List<EventoModel>();
 
+            // Filtros opcionales — si el campo está vacío, no filtra
+            if (!string.IsNullOrWhiteSpace(filtro.Nombre))
+                eventos = eventos.Where(e =>
+                    e.NombreEvento.IndexOf(filtro.Nombre,
+                    StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+
+            if (filtro.Fecha.HasValue)
+                eventos = eventos.Where(e =>
+                    e.FechaHoraInicio.Date == filtro.Fecha.Value.Date).ToList();
+
+            if (!string.IsNullOrWhiteSpace(filtro.Modalidad))
+                eventos = eventos.Where(e =>
+                    e.ModalidadEvento == filtro.Modalidad).ToList();
+
+            if (!string.IsNullOrWhiteSpace(filtro.TipoInscrip))
+                eventos = eventos.Where(e =>
+                    e.TipoInscrip == filtro.TipoInscrip).ToList();
+
+            // Siempre al final: solo eventos futuros y ordenados
             var disponibles = eventos
                 .Where(e => e.FechaHoraInicio >= DateTime.Now)
                 .OrderBy(e => e.FechaHoraInicio)
                 .ToList();
 
+            ViewBag.Filtro = filtro;
+            ViewBag.Modalidades = ObtenerModalidades();
+            ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
+
             return View(disponibles);
+
         }
 
         [HttpGet]
-        public ActionResult InicioAdmin()
+        public ActionResult InicioAdmin(EventoFiltroModel filtro)
         {
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
 
             var eventos = _dao.ObtenerEventos() ?? new List<EventoModel>();
 
+            if (!string.IsNullOrWhiteSpace(filtro.Nombre))
+                eventos = eventos.Where(e =>
+                    e.NombreEvento.IndexOf(filtro.Nombre,
+                    StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            
+            if (filtro.Fecha.HasValue)
+                eventos = eventos.Where(e =>
+                e.FechaHoraInicio.Date == filtro.Fecha.Value.Date).ToList();
+
+            if (!string.IsNullOrWhiteSpace(filtro.Modalidad))
+                eventos = eventos.Where(e =>
+                   e.ModalidadEvento == filtro.Modalidad).ToList();
+
+            if (!string.IsNullOrWhiteSpace(filtro.TipoInscrip))
+                eventos = eventos.Where(e =>
+                     e.TipoInscrip == filtro.TipoInscrip).ToList();
+
             var disponibles = eventos
                 .Where(e => e.FechaHoraInicio >= DateTime.Now)
                 .OrderBy(e => e.FechaHoraInicio)
                 .ToList();
+
+            ViewBag.Filtro = filtro;
+            ViewBag.Modalidades = ObtenerModalidades();
+            ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
 
             return View(disponibles);
         }
