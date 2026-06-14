@@ -1,4 +1,4 @@
-using SGES.Web.Models;
+﻿using SGES.Web.Models;
 using System;
 using System.Web.Mvc;
 
@@ -68,6 +68,71 @@ namespace SGES.Web.Controllers
                 return RedirectToAction("InicioAdmin", "Evento");
 
             return RedirectToAction("InicioAprendiz", "Evento");
+        }
+
+
+        // POST: /Auth/RestablecerPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RestablecerPassword(LoginModel model, string nuevaPassword, string confirmarPassword)
+        {
+            // Buscar usuario solo por ID
+            var usuario = _dao.ObtenerUsuarioPorId(model.Id);
+
+            if (usuario == null)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "El usuario no existe."
+                );
+
+                return View(model);
+            }
+
+
+            if (nuevaPassword != confirmarPassword)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "Las contraseñas no coinciden."
+                );
+
+                return View(model);
+            }
+
+
+            if (string.IsNullOrWhiteSpace(nuevaPassword))
+            {
+                ModelState.AddModelError(
+                    "",
+                    "La contraseña no puede estar vacía."
+                );
+
+                return View(model);
+            }
+
+
+            try
+            {
+                _dao.ActualizarPassword(
+                    usuario.Id,
+                    nuevaPassword
+                );
+
+                TempData["Success"] =
+                    "Contraseña actualizada correctamente.";
+
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "Error al cambiar contraseña: " + ex.Message
+                );
+
+                return View(model);
+            }
         }
     }
 }

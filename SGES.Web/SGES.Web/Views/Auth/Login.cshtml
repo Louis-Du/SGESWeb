@@ -48,6 +48,12 @@
             { "icono", "bi-box-arrow-in-right" }
         })
     </div>
+
+    @Html.Partial("_LinkAccion", null, new ViewDataDictionary(ViewData)
+    {
+        { "texto", "¿Quieres restablecer tu contraseña?" },
+        { "url", Url.Action("RestablecerPassword", "Auth") }
+    })
 }
 
 @section scripts {
