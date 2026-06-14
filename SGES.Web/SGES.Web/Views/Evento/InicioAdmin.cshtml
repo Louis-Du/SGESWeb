@@ -43,39 +43,46 @@
 
     @Html.Partial("_TablaSeleccion", null, tablaViewData)
 
-    <div class="mt-3 d-flex gap-2 flex-wrap">
-        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-        {
-            { "texto", "Crear Evento" },
-            { "icono", "bi-plus-circle" },
-            { "url",   Url.Action("CrearEvento", "Evento") }
-        })
+<div class="mt-3 d-flex gap-2 flex-wrap">
+    @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+    {
+        { "texto", "Crear Evento" },
+        { "icono", "bi-plus-circle" },
+        { "url",   Url.Action("CrearEvento", "Evento") }
+    })
 
-        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-        {
-            { "texto", "Modificar Evento" },
-            { "icono", "bi-pencil-square" },
-            { "id",    "btnModificarEvento" }
-        })
+    @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+    {
+        { "texto", "Modificar Evento" },
+        { "icono", "bi-pencil-square" },
+        { "id",    "btnModificarEvento" }
+    })
 
-        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-        {
-            { "texto", "Ver Aprendices" },
-            { "icono", "bi-people-fill" },
-            { "id",    "btnVerAprendices" }
-        })
+    @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+    {
+        { "texto", "Ver Aprendices" },
+        { "icono", "bi-people-fill" },
+        { "id",    "btnVerAprendices" }
+    })
 
-        @Html.Partial("_BotonAccion", null, new ViewDataDictionary(ViewData)
-        {
-            { "texto",            "Eliminar Evento" },
-            { "icono",            "bi-trash3" },
-            { "cssClass",         "btn-danger" },
-            { "type",             "submit" },
-            { "confirm",          "¿Desea eliminar el evento seleccionado?" },
-            { "requireSelection", true }
-        })
+    @Html.Partial("_BotonAccion", null, new ViewDataDictionary(ViewData)
+    {
+        { "texto",            "Eliminar Evento" },
+        { "icono",            "bi-trash3" },
+        { "cssClass",         "btn-danger" },
+        { "type",             "submit" },
+        { "confirm",          "¿Desea eliminar el evento seleccionado?" },
+        { "requireSelection", true }
+    })
 
-    </div>
+    @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+    {
+        { "texto", "Exportar Eventos" },
+        { "icono", "bi-file-earmark-pdf" },
+        { "url",   Url.Action("ReporteEventos", "Evento") }
+    })
+
+</div>
 
 }
 
@@ -90,12 +97,6 @@
         <input type="date" name="Fecha"
                value="@(filtro != null && filtro.Fecha.HasValue ? filtro.Fecha.Value.ToString("yyyy-MM-dd") : "")"
                class="form-control" />
-        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-        {
-            { "texto", "Exportar Eventos" },
-            { "icono", "bi-file-earmark-pdf" },
-            { "url",   Url.Action("ReporteEventos", "Evento") }
-        })
     </div>
 
     @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
