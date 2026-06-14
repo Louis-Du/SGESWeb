@@ -1,5 +1,4 @@
-﻿select * from Usuario
-CREATE DATABASE SGES;
+﻿CREATE DATABASE SGES;
 GO
 
 USE SGES;
