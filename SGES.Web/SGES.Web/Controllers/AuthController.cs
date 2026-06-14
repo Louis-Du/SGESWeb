@@ -70,6 +70,12 @@ namespace SGES.Web.Controllers
             return RedirectToAction("InicioAprendiz", "Evento");
         }
 
+        [HttpGet]
+        [OutputCache(NoStore = true, Duration = 0)]
+        public ActionResult RestablecerPassword()
+        {
+            return View(new LoginModel());
+        }
 
         // POST: /Auth/RestablecerPassword
         [HttpPost]
@@ -92,44 +98,29 @@ namespace SGES.Web.Controllers
 
             if (nuevaPassword != confirmarPassword)
             {
-                ModelState.AddModelError(
-                    "",
-                    "Las contraseñas no coinciden."
-                );
-
+                ModelState.AddModelError(string.Empty, "Las contraseñas no coinciden.");
                 return View(model);
             }
 
 
             if (string.IsNullOrWhiteSpace(nuevaPassword))
             {
-                ModelState.AddModelError(
-                    "",
-                    "La contraseña no puede estar vacía."
-                );
-
+                ModelState.AddModelError(string.Empty, "La contraseña no puede estar vacía.");
                 return View(model);
             }
 
 
             try
             {
-                _dao.ActualizarPassword(
-                    usuario.Id,
-                    nuevaPassword
-                );
+                _dao.ActualizarPassword(usuario.Id, nuevaPassword);
 
-                TempData["Success"] =
-                    "Contraseña actualizada correctamente.";
+                TempData["Success"] = "Contraseña actualizada correctamente.";
 
                 return RedirectToAction("Login");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(
-                    "",
-                    "Error al cambiar contraseña: " + ex.Message
-                );
+                ModelState.AddModelError(string.Empty, "Error al cambiar contraseña: " + ex.Message);
 
                 return View(model);
             }

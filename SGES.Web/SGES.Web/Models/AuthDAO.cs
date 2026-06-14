@@ -69,18 +69,11 @@ namespace SGES.Web.Models
         {
             using (SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = @"
-                    SELECT idUser, nombreUser, tipoUser
-                    FROM Usuario
-                    WHERE idUser = @id";
-
+                string sql = @"SELECT idUser, nombreUser, tipoUser FROM Usuario WHERE idUser = @id";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@id", id);
-
                 con.Open();
-
                 SqlDataReader dr = cmd.ExecuteReader();
-
                 if (dr.Read())
                 {
                     return new UsuarioSesion
@@ -90,9 +83,30 @@ namespace SGES.Web.Models
                         Tipo = dr["tipoUser"].ToString()
                     };
                 }
-
-                return null;
             }
+
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                string sql = @"SELECT A.idApr, A.nombreApr, U.tipoUser, A.idUser
+                       FROM Aprendiz A
+                       JOIN Usuario U ON A.idUser = U.idUser
+                       WHERE A.idApr = @id";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", id);
+                con.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+                if (dr.Read())
+                {
+                    return new UsuarioSesion
+                    {
+                        Id = Convert.ToInt32(dr["idApr"]),
+                        Nombre = dr["nombreApr"].ToString(),
+                        Tipo = dr["tipoUser"].ToString()
+                    };
+                }
+            }
+
+            return null;
         }
 
         public void ActualizarPassword(int id, string password)
