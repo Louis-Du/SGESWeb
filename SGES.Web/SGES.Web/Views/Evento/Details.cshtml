@@ -55,28 +55,39 @@
 }
 
 
-@using (Html.BeginForm("Details", "Evento", FormMethod.Post))
+@if (evento.TipoInscrip == "Individual")
 {
-    @Html.AntiForgeryToken()
-
-    @Html.HiddenFor(m => m.IdEvento)
-
-
+    using (Html.BeginForm("Details", "Evento", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.IdEvento)
+        <div class="mt-3">
+            @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Inscribirme al evento" },
+                { "icono", "bi-person-check" }
+            })
+            @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Volver" },
+                { "url", Url.Action("InicioAprendiz", "Evento") }
+            })
+        </div>
+    }
+}
+else
+{
     <div class="mt-3">
-
-        @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
-        {
-            { "texto", "Inscribirme al evento" },
-            { "icono", "bi-person-check" }
-        })
-
+        <a href="@Url.Action("InscribirGrupo", "Evento", new { id = evento.IdEvento })"
+           class="btn btn-primary">
+            <i class="bi bi-people"></i> Inscribir mi grupo
+        </a>
 
         @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
         {
             { "texto", "Volver" },
             { "url", Url.Action("InicioAprendiz", "Evento") }
         })
-
     </div>
 }
 
