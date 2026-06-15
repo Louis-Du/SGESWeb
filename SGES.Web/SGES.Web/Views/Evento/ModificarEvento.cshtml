@@ -20,8 +20,8 @@
     @* Campo oculto: transporta el IdEvento para que el UPDATE sepa qué fila modificar *@
     @Html.HiddenFor(m => m.IdEvento)
 
-    @* Campo oculto: conservamos el IdUser original del evento *@
-    @Html.HiddenFor(m => m.IdUser)
+    @* Campo oculto: conservamos el IdAdmin original del evento *@
+    @Html.HiddenFor(m => m.IdAdmin)
 
     @* Nombre del evento — límite de 100 caracteres igual que en CrearEvento *@
     @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)

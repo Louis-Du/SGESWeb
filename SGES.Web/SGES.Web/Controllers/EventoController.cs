@@ -82,7 +82,7 @@ namespace SGES.Web.Controllers
             ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
 
             // Asignar el idUser desde la sesión
-            evento.IdUser = UsuarioActual.Id;
+            evento.IdAdmin = UsuarioActual.Id;
 
             var ahora = new DateTime(
                 DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
