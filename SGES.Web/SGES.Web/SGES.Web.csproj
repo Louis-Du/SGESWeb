@@ -567,6 +567,7 @@
     <Content Include="Views\Shared\_TablaSeleccion.cshtml" />
     <Content Include="Views\Shared\_TextArea.cshtml" />
     <Content Include="Views\Shared\_TextBox.cshtml" />
+    <Content Include="Views\Evento\InscribirGrupo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
