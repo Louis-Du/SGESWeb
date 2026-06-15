@@ -44,7 +44,7 @@ namespace SGES.Web.Models
             return lista;
         }
 
-        public List<AprendizModel> ObtenerAprendicesDisponibles(int idEvento)
+        public List<AprendizModel> ObtenerAprendicesDisponibles(int idEvento, int idAprActual)
         {
             List<AprendizModel> lista = new List<AprendizModel>();
 
@@ -55,10 +55,12 @@ namespace SGES.Web.Models
             FROM Aprendiz
             WHERE idApr NOT IN (
                 SELECT idApr FROM Inscripciones WHERE idEvento = @idEvento
-            )";
+            )
+            AND idApr <> @idAprActual";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@idEvento", idEvento);
+                cmd.Parameters.AddWithValue("@idAprActual", idAprActual);
                 con.Open();
 
                 SqlDataReader dr = cmd.ExecuteReader();

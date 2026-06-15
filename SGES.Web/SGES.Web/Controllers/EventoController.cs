@@ -676,7 +676,7 @@ namespace SGES.Web.Controllers
 
             var aprendizDao = new AprendizDAO();
             ViewBag.Evento = evento;
-            ViewBag.Disponibles = aprendizDao.ObtenerAprendicesDisponibles(id);
+            ViewBag.Disponibles = aprendizDao.ObtenerAprendicesDisponibles(id, UsuarioActual.Id);
 
             return View();
         }
