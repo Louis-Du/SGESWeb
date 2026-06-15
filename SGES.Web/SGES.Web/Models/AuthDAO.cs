@@ -8,28 +8,25 @@ namespace SGES.Web.Models
         private readonly Conexion cn = new Conexion();
 
 
-        // =====================================================
-        // LOGIN
-        // Primero busca administrador
-        // Si no existe busca aprendiz
-        // =====================================================
-
         public UsuarioSesion Login(int id, string contrasena)
         {
 
-            // -----------------------------
-            // 1. Buscar Administrador
-            // -----------------------------
-            using (SqlConnection con = cn.ObtenerConexion())
+            // 1. Buscar administrador
+            using(SqlConnection con = cn.ObtenerConexion())
             {
+
                 string sql = @"
-                    SELECT idAdmin, nombreAdmin
-                    FROM Administrador
-                    WHERE idAdmin = @id
-                    AND passwordHash = @pass";
+                SELECT 
+                    idAdmin,
+                    nombreAdmin
+                FROM Administrador
+                WHERE idAdmin = @id
+                AND passwordHash = @pass";
 
 
-                SqlCommand cmd = new SqlCommand(sql, con);
+                SqlCommand cmd =
+                    new SqlCommand(sql, con);
+
 
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@pass", contrasena);
@@ -37,15 +34,21 @@ namespace SGES.Web.Models
 
                 con.Open();
 
-                SqlDataReader dr = cmd.ExecuteReader();
+
+                SqlDataReader dr =
+                    cmd.ExecuteReader();
 
 
-                if (dr.Read())
+                if(dr.Read())
                 {
                     return new UsuarioSesion
                     {
-                        Id = Convert.ToInt32(dr["idAdmin"]),
-                        Nombre = dr["nombreAdmin"].ToString(),
+                        Id =
+                        Convert.ToInt32(dr["idAdmin"]),
+
+                        Nombre =
+                        dr["nombreAdmin"].ToString(),
+
                         Tipo = "Administrador"
                     };
                 }
@@ -53,19 +56,22 @@ namespace SGES.Web.Models
 
 
 
-            // -----------------------------
-            // 2. Buscar Aprendiz
-            // -----------------------------
-            using (SqlConnection con = cn.ObtenerConexion())
+            // 2. Buscar aprendiz
+            using(SqlConnection con = cn.ObtenerConexion())
             {
+
                 string sql = @"
-                    SELECT idApr, nombreApr
-                    FROM Aprendiz
-                    WHERE idApr = @id
-                    AND passwordHash = @pass";
+                SELECT
+                    idApr,
+                    nombreApr
+                FROM Aprendiz
+                WHERE idApr = @id
+                AND passwordHash = @pass";
 
 
-                SqlCommand cmd = new SqlCommand(sql, con);
+                SqlCommand cmd =
+                    new SqlCommand(sql, con);
+
 
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@pass", contrasena);
@@ -73,15 +79,25 @@ namespace SGES.Web.Models
 
                 con.Open();
 
-                SqlDataReader dr = cmd.ExecuteReader();
+
+                SqlDataReader dr =
+                    cmd.ExecuteReader();
 
 
-                if (dr.Read())
+
+                if(dr.Read())
                 {
+
                     return new UsuarioSesion
                     {
-                        Id = Convert.ToInt32(dr["idApr"]),
-                        Nombre = dr["nombreApr"].ToString(),
+                        Id =
+                        Convert.ToInt32(dr["idApr"]),
+
+
+                        Nombre =
+                        dr["nombreApr"].ToString(),
+
+
                         Tipo = "Aprendiz"
                     };
                 }
@@ -93,78 +109,98 @@ namespace SGES.Web.Models
         }
 
 
-
-
-
-        // =====================================================
-        // Obtener usuario para restablecer contraseña
-        // =====================================================
 
         public UsuarioSesion ObtenerUsuarioPorId(int id)
         {
 
-            // Administrador
-            using (SqlConnection con = cn.ObtenerConexion())
+            // administrador
+            using(SqlConnection con = cn.ObtenerConexion())
             {
 
                 string sql = @"
-                    SELECT idAdmin, nombreAdmin
-                    FROM Administrador
-                    WHERE idAdmin = @id";
+                SELECT
+                    idAdmin,
+                    nombreAdmin
+                FROM Administrador
+                WHERE idAdmin=@id";
 
 
-                SqlCommand cmd = new SqlCommand(sql, con);
+                SqlCommand cmd =
+                    new SqlCommand(sql, con);
+
 
                 cmd.Parameters.AddWithValue("@id", id);
 
 
                 con.Open();
 
-                SqlDataReader dr = cmd.ExecuteReader();
+
+                SqlDataReader dr =
+                    cmd.ExecuteReader();
+
 
 
                 if(dr.Read())
                 {
                     return new UsuarioSesion
                     {
-                        Id = Convert.ToInt32(dr["idAdmin"]),
-                        Nombre = dr["nombreAdmin"].ToString(),
-                        Tipo = "Administrador"
+                        Id =
+                        Convert.ToInt32(dr["idAdmin"]),
+
+                        Nombre =
+                        dr["nombreAdmin"].ToString(),
+
+                        Tipo =
+                        "Administrador"
                     };
                 }
             }
 
 
 
-            // Aprendiz
-            using (SqlConnection con = cn.ObtenerConexion())
+            // aprendiz
+            using(SqlConnection con = cn.ObtenerConexion())
             {
 
                 string sql = @"
-                    SELECT idApr, nombreApr
-                    FROM Aprendiz
-                    WHERE idApr = @id";
+                SELECT
+                    idApr,
+                    nombreApr
+                FROM Aprendiz
+                WHERE idApr=@id";
 
 
-                SqlCommand cmd = new SqlCommand(sql, con);
+                SqlCommand cmd =
+                    new SqlCommand(sql, con);
+
 
                 cmd.Parameters.AddWithValue("@id", id);
 
 
                 con.Open();
 
-                SqlDataReader dr = cmd.ExecuteReader();
+
+                SqlDataReader dr =
+                    cmd.ExecuteReader();
 
 
                 if(dr.Read())
                 {
                     return new UsuarioSesion
                     {
-                        Id = Convert.ToInt32(dr["idApr"]),
-                        Nombre = dr["nombreApr"].ToString(),
-                        Tipo = "Aprendiz"
+                        Id =
+                        Convert.ToInt32(dr["idApr"]),
+
+
+                        Nombre =
+                        dr["nombreApr"].ToString(),
+
+
+                        Tipo =
+                        "Aprendiz"
                     };
                 }
+
             }
 
 
@@ -172,12 +208,6 @@ namespace SGES.Web.Models
         }
 
 
-
-
-
-        // =====================================================
-        // Cambiar contraseña
-        // =====================================================
 
         public void ActualizarPassword(
             int id,
@@ -185,31 +215,44 @@ namespace SGES.Web.Models
             string tipo)
         {
 
-            string tabla;
-
-
-            if(tipo == "Administrador")
-                tabla = "Administrador";
-            else
-                tabla = "Aprendiz";
-
-
-
             using(SqlConnection con = cn.ObtenerConexion())
             {
 
-                string sql = $@"
-                    UPDATE {tabla}
-                    SET passwordHash = @password
-                    WHERE {(tipo=="Administrador" ? "idAdmin" : "idApr")} = @id";
+                string sql;
+
+
+                if(tipo == "Administrador")
+                {
+                    sql = @"
+                    UPDATE Administrador
+                    SET passwordHash=@password
+                    WHERE idAdmin=@id";
+                }
+                else
+                {
+                    sql = @"
+                    UPDATE Aprendiz
+                    SET passwordHash=@password
+                    WHERE idApr=@id";
+                }
 
 
 
-                SqlCommand cmd = new SqlCommand(sql, con);
+                SqlCommand cmd =
+                    new SqlCommand(sql, con);
 
 
-                cmd.Parameters.AddWithValue("@password", password);
-                cmd.Parameters.AddWithValue("@id", id);
+
+                cmd.Parameters.AddWithValue(
+                    "@password",
+                    password
+                );
+
+
+                cmd.Parameters.AddWithValue(
+                    "@id",
+                    id
+                );
 
 
                 con.Open();

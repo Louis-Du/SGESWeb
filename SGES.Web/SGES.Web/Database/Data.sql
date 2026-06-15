@@ -21,6 +21,8 @@ VALUES
 
 GO
 
+/*RESETEAR IDENTITY DE EVENTOS PARA QUE EMPIECE EN 1*/
+DBCC CHECKIDENT ('Eventos', RESEED, 0);
 
 /*==================================================
  PROGRAMAS
@@ -135,12 +137,15 @@ GO
  EVENTOS
 ==================================================*/
 
+DBCC CHECKIDENT ('Eventos', RESEED, 0);
+
 INSERT INTO Eventos
 (
     nombreEvento,
     tipoEvento,
     modalidadEvento,
     tipoInscrip,
+    cupoMaximo,
     fechaHoraInicio,
     fechaHoraFin,
     idUser
@@ -151,6 +156,7 @@ VALUES
     'Educativo',
     'Presencial',
     'Grupal',
+    30,              -- cupoMaximo obligatorio para Grupal
     '2026-07-10 08:00',
     '2026-07-10 12:00',
     1
@@ -160,6 +166,7 @@ VALUES
     'Deportivo',
     'Presencial',
     'Grupal',
+    25,              -- cupoMaximo obligatorio para Grupal
     '2026-07-15 14:00',
     '2026-07-15 17:00',
     1
@@ -169,11 +176,11 @@ VALUES
     'Educativo',
     'Virtual',
     'Individual',
+    0,               -- Individual siempre va en 0
     '2026-07-20 09:00',
     '2026-07-20 11:00',
     1
 );
-
 GO
 
 
@@ -209,3 +216,13 @@ VALUES
 );
 
 GO
+
+SELECT * FROM Usuario;
+SELECT * FROM Programas;
+SELECT * FROM Fichas;
+SELECT * FROM Aprendiz;
+SELECT * FROM Grupos;
+SELECT * FROM Eventos;
+SELECT * FROM Inscripciones;
+
+

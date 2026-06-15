@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -439,6 +440,127 @@
         select.is-valid {
             background-image: none !important;
         }
+        /* ── Chatbot flotante ── */
+        #sges-chat-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--sges-accent);
+            color: #fff;
+            border: none;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--sges-shadow-lg);
+            z-index: 1050;
+            transition: background var(--sges-transition), transform var(--sges-transition);
+        }
+
+            #sges-chat-btn:hover {
+                background: var(--sges-primary);
+                transform: scale(1.08);
+            }
+
+        #sges-chat-box {
+            position: fixed;
+            bottom: 4.5rem;
+            right: 1.5rem;
+            width: 340px;
+            max-height: 480px;
+            background: var(--sges-surface);
+            border: 1px solid var(--sges-border);
+            border-radius: var(--sges-radius);
+            box-shadow: var(--sges-shadow-lg);
+            display: none;
+            flex-direction: column;
+            z-index: 1050;
+            overflow: hidden;
+        }
+
+        .sges-chat-header {
+            background: var(--sges-primary);
+            color: #fff;
+            padding: .7rem 1rem;
+            font-weight: 600;
+            font-size: .9rem;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        .sges-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: .75rem;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            min-height: 260px;
+            max-height: 340px;
+        }
+
+        /* Burbuja del bot */
+        .sges-msg-bot {
+            align-self: flex-start;
+            background: var(--sges-primary-lt);
+            color: var(--sges-text);
+            border-radius: 0 var(--sges-radius) var(--sges-radius) var(--sges-radius);
+            padding: .5rem .75rem;
+            font-size: .85rem;
+            max-width: 85%;
+        }
+
+        /* Burbuja del usuario */
+        .sges-msg-user {
+            align-self: flex-end;
+            background: var(--sges-accent);
+            color: #fff;
+            border-radius: var(--sges-radius) 0 var(--sges-radius) var(--sges-radius);
+            padding: .5rem .75rem;
+            font-size: .85rem;
+            max-width: 85%;
+        }
+
+        .sges-chat-footer {
+            border-top: 1px solid var(--sges-border);
+            padding: .5rem .75rem;
+            display: flex;
+            gap: .4rem;
+        }
+
+            .sges-chat-footer input {
+                flex: 1;
+                border: 1.5px solid var(--sges-border);
+                border-radius: var(--sges-radius-sm);
+                padding: .4rem .65rem;
+                font-size: .85rem;
+                outline: none;
+                transition: border-color var(--sges-transition);
+            }
+
+                .sges-chat-footer input:focus {
+                    border-color: var(--sges-primary);
+                }
+
+            .sges-chat-footer button {
+                background: var(--sges-primary);
+                color: #fff;
+                border: none;
+                border-radius: var(--sges-radius-sm);
+                padding: .4rem .75rem;
+                font-size: .85rem;
+                cursor: pointer;
+                transition: background var(--sges-transition);
+            }
+
+                .sges-chat-footer button:hover {
+                    background: var(--sges-primary-dk);
+                }
     </style>
 </head>
 <body>
@@ -462,7 +584,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="@Url.Action("Logout", "Auth")" class="nav-link sges-logout"
-                               onclick="return confirm('¿Está seguro que desea cerrar la sesión?');">
+                               onclick="if(confirm('¿Está seguro que desea cerrar la sesión?')){ sessionStorage.removeItem('sges-chat-historial'); return true; } return false;">
                                 <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión
                             </a>
                         </li>
@@ -485,8 +607,8 @@
     @* ── Toast flotante: Éxito / Error ── *@
     @{
         var _hasNotif = TempData["Success"] != null || TempData["Error"] != null;
-        var _esExito  = TempData["Success"] != null;
-        var _mensaje  = _esExito ? TempData["Success"]?.ToString() : TempData["Error"]?.ToString();
+        var _esExito = TempData["Success"] != null;
+        var _mensaje = _esExito ? TempData["Success"]?.ToString() : TempData["Error"]?.ToString();
     }
     @if (_hasNotif)
     {
@@ -514,13 +636,13 @@
 
     @* ── Modal: Confirmación con inscritos ── *@
     @{
-        var _hasConfirm  = TempData["ConfirmarEliminar"] != null;
-        var _eventoId    = TempData["EventoId"];
+        var _hasConfirm = TempData["ConfirmarEliminar"] != null;
+        var _eventoId = TempData["EventoId"];
         var _mensajeConf = TempData["Mensaje"]?.ToString() ?? "¿Desea eliminar este evento?";
     }
     @if (_hasConfirm)
     {
-        var eventoId    = _eventoId;
+        var eventoId = _eventoId;
         var mensajeConf = _mensajeConf;
 
         <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1"
@@ -553,6 +675,168 @@
         </div>
     }
 
+    @* ── Chatbot flotante (HU-11) ──────────────────────────────────────────
+        Solo se muestra si hay una sesión activa.
+        Usa la API de Gemini para responder preguntas sobre el SGES. *@
+    @if (Session["Usuario"] != null)
+    {
+        <button id="sges-chat-btn" title="Asistente SGES">
+            <i class="bi bi-robot"></i>
+        </button>
+
+        <div id="sges-chat-box">
+            <div class="sges-chat-header">
+                <i class="bi bi-robot"></i> Asistente SGES
+            </div>
+            <div class="sges-chat-messages" id="sges-chat-messages">
+                @* Mensaje de bienvenida que aparece al abrir el chat *@
+            </div>
+            <div class="sges-chat-footer">
+                <input type="text" id="sges-chat-input" placeholder="Escribe tu pregunta..." maxlength="300" />
+                <button id="sges-chat-send"><i class="bi bi-send"></i></button>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                var GEMINI_API_KEY = "AIzaSyDKqd99Z-kkqU1ioItC3rONjSRt4IBt16I";
+                var SYSTEM_CONTEXT = "Eres un asistente virtual del Sistema de Gestión de Eventos del SENA llamado SGES. " +
+    "Solo debes responder preguntas relacionadas con este sistema. " +
+    "Si te preguntan algo fuera del contexto del SGES, responde amablemente que solo puedes ayudar con temas del sistema. " +
+    "Responde siempre en español y de forma breve y clara. " +
+
+    "INFORMACIÓN EXACTA DEL SISTEMA: " +
+
+    "CREAR EVENTO (solo administradores): Los campos exactos son: " +
+    "1. Nombre del evento (texto, máximo 100 caracteres). " +
+    "2. Tipo de evento (opciones: Educativo, Deportivo, Social, Cultural). " +
+    "3. Fecha y hora de inicio (no puede ser anterior a la fecha actual). " +
+    "4. La modalidad (Virtual o Presencial). " +
+    "5. Fecha y hora de fin (debe ser posterior al inicio y con mínimo 30 minutos de diferencia). " +
+    "6. El tipo de inscripcion (grupal o individal). " +
+    "El sistema NO tiene campo de descripción ni de ubicación. " +
+
+    "INSCRIBIRSE A UN EVENTO (solo aprendices): El aprendiz selecciona un evento del listado y elige una modalidad: Presencial o Virtual. " +
+    "Validaciones: no puede inscribirse en el mismo evento dos veces, y no puede inscribirse si el horario se cruza con otro evento en el que ya está inscrito. " +
+
+    "ROLES DEL SISTEMA: Administrador (puede crear, modificar y eliminar eventos, ver aprendices registrados y generar reportes) y Aprendiz (puede ver eventos disponibles, inscribirse y consultar el chatbot). " +
+
+    "INICIO DE SESIÓN: Se ingresa con ID numérico y contraseña. La contraseña es sensible a mayúsculas y minúsculas.";
+
+                var btn = document.getElementById("sges-chat-btn");
+                var box = document.getElementById("sges-chat-box");
+                var messages = document.getElementById("sges-chat-messages");
+                var input = document.getElementById("sges-chat-input");
+                var send = document.getElementById("sges-chat-send");
+
+                // ── Cargar historial guardado en sessionStorage ────────────────────
+                // sessionStorage persiste mientras la pestaña esté abierta,
+                // así el chat no se reinicia al navegar entre páginas.
+                function cargarHistorial() {
+                    var historial = JSON.parse(sessionStorage.getItem("sges-chat-historial") || "[]");
+                    historial.forEach(function (msg) {
+                        renderMensaje(msg.texto, msg.tipo);
+                    });
+                    // Si no hay historial, mostramos el mensaje de bienvenida
+                    if (historial.length === 0) {
+                        renderMensaje("¡Hola! Soy el asistente del SGES. Puedo ayudarte con preguntas sobre eventos e inscripciones. ¿En qué te puedo ayudar?", "bot");
+                        guardarEnHistorial("¡Hola! Soy el asistente del SGES. Puedo ayudarte con preguntas sobre eventos e inscripciones. ¿En qué te puedo ayudar?", "bot");
+                    }
+                }
+
+                // ── Guardar mensaje en sessionStorage ─────────────────────────────
+                function guardarEnHistorial(texto, tipo) {
+                    var historial = JSON.parse(sessionStorage.getItem("sges-chat-historial") || "[]");
+                    historial.push({ texto: texto, tipo: tipo });
+                    sessionStorage.setItem("sges-chat-historial", JSON.stringify(historial));
+                }
+
+                // ── Renderizar burbuja en pantalla (sin guardar) ──────────────────
+                function renderMensaje(texto, tipo) {
+                    var div = document.createElement("div");
+                    div.className = tipo === "bot" ? "sges-msg-bot" : "sges-msg-user";
+                    div.textContent = texto;
+                    messages.appendChild(div);
+                    messages.scrollTop = messages.scrollHeight;
+                }
+
+                // ── Agregar mensaje: renderiza Y guarda en historial ──────────────
+                function agregarMensaje(texto, tipo) {
+                    renderMensaje(texto, tipo);
+                    guardarEnHistorial(texto, tipo);
+                }
+
+                function mostrarEscribiendo() {
+                    var div = document.createElement("div");
+                    div.className = "sges-msg-bot";
+                    div.id = "sges-escribiendo";
+                    div.textContent = "Escribiendo...";
+                    messages.appendChild(div);
+                    messages.scrollTop = messages.scrollHeight;
+                }
+
+                function ocultarEscribiendo() {
+                    var el = document.getElementById("sges-escribiendo");
+                    if (el) el.remove();
+                }
+
+                function enviarMensaje() {
+                    var texto = input.value.trim();
+                    if (!texto) return;
+
+                    agregarMensaje(texto, "user");
+                    input.value = "";
+                    send.disabled = true;
+                    mostrarEscribiendo();
+
+                    var body = JSON.stringify({
+                        contents: [{
+                            role: "user",
+                            parts: [{ text: SYSTEM_CONTEXT + "\n\nPregunta del usuario: " + texto }]
+                        }]
+                    });
+
+                    fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: body
+                    })
+                        .then(function (res) { return res.json(); })
+                        .then(function (data) {
+                            ocultarEscribiendo();
+                            var respuesta = data.candidates &&
+                                data.candidates[0] &&
+                                data.candidates[0].content &&
+                                data.candidates[0].content.parts &&
+                                data.candidates[0].content.parts[0].text;
+                            agregarMensaje(respuesta || "No pude procesar tu pregunta. Intenta de nuevo.", "bot");
+                        })
+                        .catch(function () {
+                            ocultarEscribiendo();
+                            agregarMensaje("Ocurrió un error al conectar con el asistente. Verifica tu conexión e intenta de nuevo.", "bot");
+                        })
+                        .finally(function () {
+                            send.disabled = false;
+                            input.focus();
+                        });
+                }
+
+                btn.addEventListener("click", function () {
+                    var isOpen = box.style.display === "flex";
+                    box.style.display = isOpen ? "none" : "flex";
+                    if (!isOpen) input.focus();
+                });
+
+                send.addEventListener("click", enviarMensaje);
+                input.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter") enviarMensaje();
+                });
+
+                // ── Cargar historial al iniciar la página ─────────────────────────
+                cargarHistorial();
+            }());
+        </script>
+    }
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

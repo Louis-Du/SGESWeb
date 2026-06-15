@@ -9,58 +9,147 @@ namespace SGES.Web.Models
         private readonly Conexion cn = new Conexion();
 
         public List<EventoModel> ObtenerEventos()
+{
+    List<EventoModel> lista = new List<EventoModel>();
+
+    using(SqlConnection con = cn.ObtenerConexion())
+    {
+        string sql = @"
+        SELECT 
+            idEvento,
+            nombreEvento,
+            tipoEvento,
+            modalidadEvento,
+            tipoInscrip,
+            cupoMaximo,
+            fechaHoraInicio,
+            fechaHoraFin,
+            idAdmin
+        FROM Eventos";
+
+
+        SqlCommand cmd =
+            new SqlCommand(sql, con);
+
+
+        con.Open();
+
+
+        SqlDataReader dr =
+            cmd.ExecuteReader();
+
+
+        while(dr.Read())
         {
-            List<EventoModel> lista = new List<EventoModel>();
-
-            using (SqlConnection con = cn.ObtenerConexion())
+            lista.Add(new EventoModel
             {
-                string sql = "SELECT idEvento, nombreEvento, tipoEvento, modalidadEvento, tipoInscrip, cupoMaximo, fechaHoraInicio, fechaHoraFin, idUser FROM Eventos";
+                IdEvento =
+                Convert.ToInt32(dr["idEvento"]),
 
-                SqlCommand cmd = new SqlCommand(sql, con);
-                con.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
 
-                while (dr.Read())
-                {
-                    lista.Add(new EventoModel
-                    {
-                        IdEvento = Convert.ToInt32(dr["idEvento"]),
-                        NombreEvento = dr["nombreEvento"].ToString(),
-                        TipoEvento = dr["tipoEvento"].ToString(),
-                        ModalidadEvento = dr["modalidadEvento"].ToString(),  // NUEVO
-                        TipoInscrip = dr["tipoInscrip"].ToString(),       // NUEVO
-                        CupoMaximo = Convert.ToInt32(dr["cupoMaximo"]),
-                        FechaHoraInicio = Convert.ToDateTime(dr["fechaHoraInicio"]),
-                        FechaHoraFin = Convert.ToDateTime(dr["fechaHoraFin"]),
-                        IdUser = Convert.ToInt32(dr["idUser"])
-                    });
-                }
-            }
+                NombreEvento =
+                dr["nombreEvento"].ToString(),
 
-            return lista;
+
+                TipoEvento =
+                dr["tipoEvento"].ToString(),
+
+
+                ModalidadEvento =
+                dr["modalidadEvento"].ToString(),
+
+
+                TipoInscrip =
+                dr["tipoInscrip"].ToString(),
+
+
+                CupoMaximo =
+                Convert.ToInt32(dr["cupoMaximo"]),
+
+
+                FechaHoraInicio =
+                Convert.ToDateTime(dr["fechaHoraInicio"]),
+
+
+                FechaHoraFin =
+                Convert.ToDateTime(dr["fechaHoraFin"]),
+
+
+                IdAdmin =
+                Convert.ToInt32(dr["idAdmin"])
+            });
         }
+    }
+
+
+    return lista;
+}
 
         public void InsertarEvento(EventoModel evento)
-        {
-            using (SqlConnection con = cn.ObtenerConexion())
-            {
-                string sql = @"INSERT INTO Eventos (nombreEvento, tipoEvento, modalidadEvento, tipoInscrip, cupoMaximo, fechaHoraInicio, fechaHoraFin, idUser)
-                             VALUES (@nombreEvento, @tipoEvento, @modalidadEvento, @tipoInscrip, @cupoMaximo, @fechaHoraInicio, @fechaHoraFin, @idUser)";
+{
+    using(SqlConnection con = cn.ObtenerConexion())
+    {
 
-                SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@nombreEvento", evento.NombreEvento);
-                cmd.Parameters.AddWithValue("@tipoEvento", evento.TipoEvento);
-                cmd.Parameters.AddWithValue("@modalidadEvento", evento.ModalidadEvento);  // NUEVO
-                cmd.Parameters.AddWithValue("@tipoInscrip", evento.TipoInscrip);       // NUEVO
-                cmd.Parameters.AddWithValue("@cupoMaximo", evento.CupoMaximo);
-                cmd.Parameters.AddWithValue("@fechaHoraInicio", evento.FechaHoraInicio);
-                cmd.Parameters.AddWithValue("@fechaHoraFin", evento.FechaHoraFin);
-                cmd.Parameters.AddWithValue("@idUser", evento.IdUser);
+        string sql = @"
+        INSERT INTO Eventos
+        (
+            nombreEvento,
+            tipoEvento,
+            modalidadEvento,
+            tipoInscrip,
+            cupoMaximo,
+            fechaHoraInicio,
+            fechaHoraFin,
+            idAdmin
+        )
 
-                con.Open();
-                cmd.ExecuteNonQuery();
-            }
-        }
+        VALUES
+        (
+            @nombre,
+            @tipo,
+            @modalidad,
+            @inscrip,
+            @cupo,
+            @inicio,
+            @fin,
+            @admin
+        )";
+
+
+        SqlCommand cmd =
+            new SqlCommand(sql, con);
+
+
+        cmd.Parameters.AddWithValue("@nombre",
+            evento.NombreEvento);
+
+        cmd.Parameters.AddWithValue("@tipo",
+            evento.TipoEvento);
+
+        cmd.Parameters.AddWithValue("@modalidad",
+            evento.ModalidadEvento);
+
+        cmd.Parameters.AddWithValue("@inscrip",
+            evento.TipoInscrip);
+
+        cmd.Parameters.AddWithValue("@cupo",
+            evento.CupoMaximo);
+
+        cmd.Parameters.AddWithValue("@inicio",
+            evento.FechaHoraInicio);
+
+        cmd.Parameters.AddWithValue("@fin",
+            evento.FechaHoraFin);
+
+        cmd.Parameters.AddWithValue("@admin",
+            evento.IdAdmin);
+
+
+        con.Open();
+
+        cmd.ExecuteNonQuery();
+    }
+}
 
         public void ActualizarEvento(EventoModel evento)
         {

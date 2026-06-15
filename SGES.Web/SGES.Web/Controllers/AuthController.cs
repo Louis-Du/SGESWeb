@@ -1,4 +1,4 @@
-using SGES.Web.Models;
+﻿using SGES.Web.Models;
 using System;
 using System.Web.Mvc;
 
@@ -34,7 +34,7 @@ namespace SGES.Web.Controllers
 
             if (usuario == null)
             {
-                ModelState.AddModelError(string.Empty, "ID o contraseña incorrectos.");
+                TempData["Error"] = "ID o contraseña incorrectos.";
                 return View(model);
             }
 
@@ -68,6 +68,59 @@ namespace SGES.Web.Controllers
                 return RedirectToAction("InicioAdmin", "Evento");
 
             return RedirectToAction("InicioAprendiz", "Evento");
+        }
+
+        [HttpGet]
+        [OutputCache(NoStore = true, Duration = 0)]
+        public ActionResult RestablecerPassword()
+        {
+            return View(new LoginModel());
+        }
+
+        // POST: /Auth/RestablecerPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RestablecerPassword(LoginModel model, string nuevaPassword, string confirmarPassword)
+        {
+            // Buscar usuario solo por ID
+            var usuario = _dao.ObtenerUsuarioPorId(model.Id);
+
+            if (usuario == null)
+            {
+                TempData["Error"] = "El usuario no existe.";
+
+                return View(model);
+            }
+
+
+            if (nuevaPassword != confirmarPassword)
+            {
+                TempData["Error"] = "Las contraseñas no coinciden.";
+                return View(model);
+            }
+
+
+            if (string.IsNullOrWhiteSpace(nuevaPassword))
+            {
+                TempData["Error"] = "La contraseña no puede estar vacía.";
+                return View(model);
+            }
+
+
+            try
+            {
+                _dao.ActualizarPassword(usuario.Id, nuevaPassword);
+
+                TempData["Success"] = "Contraseña actualizada correctamente.";
+
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al cambiar contraseña: " + ex.Message;
+
+                return View(model);
+            }
         }
     }
 }
