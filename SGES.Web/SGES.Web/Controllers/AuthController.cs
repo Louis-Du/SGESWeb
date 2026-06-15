@@ -108,19 +108,25 @@ namespace SGES.Web.Controllers
 
 
             try
-            {
-                _dao.ActualizarPassword(usuario.Id, nuevaPassword);
+{
+    _dao.ActualizarPassword(
+        usuario.Id,
+        nuevaPassword,
+        usuario.Tipo
+    );
 
-                TempData["Success"] = "Contraseña actualizada correctamente.";
+    TempData["Success"] = 
+        "Contraseña actualizada correctamente.";
 
-                return RedirectToAction("Login");
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Error al cambiar contraseña: " + ex.Message;
+    return RedirectToAction("Login");
+}
+catch (Exception ex)
+{
+    TempData["Error"] = 
+        "Error al cambiar contraseña: " + ex.Message;
 
-                return View(model);
-            }
+    return View(model);
+}
         }
     }
 }
