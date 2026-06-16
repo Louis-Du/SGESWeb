@@ -658,5 +658,85 @@ namespace SGES.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult InscribirGrupo(int id)
+        {
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+
+            var evento = _dao.ObtenerEventos().FirstOrDefault(e => e.IdEvento == id);
+            if (evento == null || evento.TipoInscrip != "Grupal")
+                return RedirectToAction("InicioAprendiz");
+
+            if (_inscripcionDao.YaInscrito(UsuarioActual.Id, id))
+            {
+                TempData["Error"] = "Ya estás inscrito en este evento.";
+                return RedirectToAction("InicioAprendiz");
+            }
+
+            var aprendizDao = new AprendizDAO();
+            ViewBag.Evento = evento;
+            ViewBag.Disponibles = aprendizDao.ObtenerAprendicesDisponibles(id, UsuarioActual.Id);
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult InscribirGrupo(int idEvento, List<int> seleccionados)
+        {
+            if (UsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+
+            var evento = _dao.ObtenerEventos().FirstOrDefault(e => e.IdEvento == idEvento);
+
+            // El aprendiz actual siempre se incluye
+            if (seleccionados == null) seleccionados = new List<int>();
+            if (!seleccionados.Contains(UsuarioActual.Id))
+                seleccionados.Insert(0, UsuarioActual.Id);
+
+            // Validar límite de 3
+            if (seleccionados.Count > 3)
+            {
+                TempData["Error"] = "El grupo no puede tener más de 3 integrantes.";
+                return RedirectToAction("InscribirGrupo", new { id = idEvento });
+            }
+
+            // Validar que ninguno ya esté inscrito 
+            foreach (int idApr in seleccionados)
+            {
+                if (_inscripcionDao.YaInscrito(idApr, idEvento))
+                {
+                    TempData["Error"] =
+                        "Uno o más integrantes del grupo ya están inscritos en este evento.";
+                    return RedirectToAction("InscribirGrupo", new { id = idEvento });
+                }
+            }
+
+            // Validar que ninguno tenga cruce de horario
+            foreach (int idApr in seleccionados)
+            {
+                if (_inscripcionDao.TieneCruceDeHorario(idApr, idEvento))
+                {
+                    TempData["Error"] = "Uno o más integrantes tienen cruce de horario.";
+                    return RedirectToAction("InscribirGrupo", new { id = idEvento });
+                }
+            }
+
+            // Validar cupo del evento
+            if (evento.CupoMaximo > 0)
+            {
+                int inscritos = _inscripcionDao.ContarInscritos(idEvento);
+                if (inscritos + seleccionados.Count > evento.CupoMaximo)
+                {
+                    TempData["Error"] = "No hay suficientes cupos para todo el grupo.";
+                    return RedirectToAction("InscribirGrupo", new { id = idEvento });
+                }
+            }
+
+            _inscripcionDao.InscribirGrupo(seleccionados, idEvento, DateTime.Today);
+            TempData["Success"] = "Grupo inscrito correctamente.";
+            return RedirectToAction("InicioAprendiz");
+        }
     }
 }

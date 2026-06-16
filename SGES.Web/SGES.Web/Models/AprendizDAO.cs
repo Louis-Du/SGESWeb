@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
@@ -13,7 +13,7 @@ namespace SGES.Web.Models
         {
             List<AprendizModel> lista = new List<AprendizModel>();
 
-            using(SqlConnection con = cn.ObtenerConexion())
+            using (SqlConnection con = cn.ObtenerConexion())
             {
                 string sql = @"
                 SELECT 
@@ -41,7 +41,7 @@ namespace SGES.Web.Models
                 SqlDataReader dr = cmd.ExecuteReader();
 
 
-                while(dr.Read())
+                while (dr.Read())
                 {
                     lista.Add(new AprendizModel
                     {
@@ -65,7 +65,7 @@ namespace SGES.Web.Models
 
         public AprendizModel ObtenerPorId(int id)
         {
-            using(SqlConnection con = cn.ObtenerConexion())
+            using (SqlConnection con = cn.ObtenerConexion())
             {
                 string sql = @"
                 SELECT *
@@ -87,7 +87,7 @@ namespace SGES.Web.Models
                     cmd.ExecuteReader();
 
 
-                if(dr.Read())
+                if (dr.Read())
                 {
                     return new AprendizModel
                     {
