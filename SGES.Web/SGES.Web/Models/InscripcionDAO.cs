@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data.SqlClient;
 
 namespace SGES.Web.Models
@@ -210,6 +210,58 @@ namespace SGES.Web.Models
 
             }
 
+        }
+
+        public int? ObtenerOCrearGrupo(int idEvento)
+        {
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                // Buscar grupo existente para este evento
+                string sqlBuscar = "SELECT TOP 1 idGrupo FROM Grupos WHERE idEvento = @idEvento";
+                SqlCommand cmdBuscar = new SqlCommand(sqlBuscar, con);
+                cmdBuscar.Parameters.AddWithValue("@idEvento", idEvento);
+                con.Open();
+                var resultado = cmdBuscar.ExecuteScalar();
+                if (resultado != null)
+                    return Convert.ToInt32(resultado);
+            }
+
+            // Si no existe, crear uno nuevo
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                string sqlCrear = @"INSERT INTO Grupos (nombreGrupo, idEvento)
+                            OUTPUT INSERTED.idGrupo
+                            VALUES (@nombre, @idEvento)";
+                SqlCommand cmdCrear = new SqlCommand(sqlCrear, con);
+                cmdCrear.Parameters.AddWithValue("@nombre", "Grupo-" + idEvento);
+                cmdCrear.Parameters.AddWithValue("@idEvento", idEvento);
+                con.Open();
+                return Convert.ToInt32(cmdCrear.ExecuteScalar());
+            }
+        }
+
+        public void Inscribir(InscripcionModel inscripcion, bool esGrupal)
+        {
+            int? idGrupo = null;
+
+            if (esGrupal)
+                idGrupo = ObtenerOCrearGrupo(inscripcion.IdEvento);
+
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                string sql = @"INSERT INTO Inscripciones
+                       (fechaInscrip, idApr, idEvento, idGrupo)
+                       VALUES (@fecha, @apr, @evento, @grupo)";
+
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@fecha", inscripcion.FechaInscrip);
+                cmd.Parameters.AddWithValue("@apr", inscripcion.IdApr);
+                cmd.Parameters.AddWithValue("@evento", inscripcion.IdEvento);
+                cmd.Parameters.AddWithValue("@grupo",
+                    idGrupo.HasValue ? (object)idGrupo.Value : DBNull.Value);
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
         }
 
     }

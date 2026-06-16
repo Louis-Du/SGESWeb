@@ -346,7 +346,9 @@ namespace SGES.Web.Controllers
             try
             {
                 // Inserta en tabla Inscripciones
-                _inscripcionDao.Inscribir(inscripcion);
+                // Reemplaza la llamada actual a Inscribir
+                bool esGrupal = evento.TipoInscrip == "Grupal";
+                _inscripcionDao.Inscribir(inscripcion, esGrupal);
 
 
                 TempData["Success"] =
