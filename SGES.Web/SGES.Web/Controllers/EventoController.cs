@@ -275,6 +275,7 @@ namespace SGES.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Details(InscripcionModel inscripcion)
         {
+
             // Verificamos sesión
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
@@ -284,12 +285,17 @@ namespace SGES.Web.Controllers
             var evento = _dao.ObtenerEventos()
                 .FirstOrDefault(e => e.IdEvento == inscripcion.IdEvento);
 
-
             // Si no existe el evento
             if (evento == null)
             {
                 TempData["Error"] = "Evento no encontrado.";
                 return RedirectToAction("InicioAprendiz");
+            }
+
+            // Si el evento es grupal, no debe procesarse aquí
+            if (evento.TipoInscrip == "Grupal")
+            {
+                return RedirectToAction("InscribirGrupo", new { id = inscripcion.IdEvento });
             }
 
 
@@ -347,8 +353,7 @@ namespace SGES.Web.Controllers
             {
                 // Inserta en tabla Inscripciones
                 // Reemplaza la llamada actual a Inscribir
-                bool esGrupal = evento.TipoInscrip == "Grupal";
-                _inscripcionDao.Inscribir(inscripcion, esGrupal);
+                _inscripcionDao.Inscribir(inscripcion);
 
 
                 TempData["Success"] =

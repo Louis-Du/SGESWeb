@@ -89,6 +89,9 @@ namespace SGES.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult RestablecerPassword(LoginModel model, string nuevaPassword, string confirmarPassword)
         {
+            if (model == null || !ModelState.IsValid)
+                return View(model ?? new LoginModel());
+
             // Validar formato: solo dígitos, sin ceros a la izquierda (salvo "0")
             if (!System.Text.RegularExpressions.Regex.IsMatch(model.Id, @"^(0|[1-9][0-9]*)$"))
             {
