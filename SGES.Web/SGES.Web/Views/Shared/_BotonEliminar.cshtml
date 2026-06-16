@@ -73,10 +73,10 @@
             class="@btnClass"
             @(disabled ? "disabled" : "")
             onclick="if(confirm('@Html.Raw(confirm)')) { document.getElementById('@formId').submit(); }">
-        <i class="bi @icono @(!string.IsNullOrEmpty(texto) ? "me-1" : "")" aria-hidden="true"></i>
+        <i class="bi @icono" aria-hidden="true"></i>
         @if (!string.IsNullOrEmpty(texto))
         {
-            @texto
+            <span>@texto</span>
         }
     </button>
 }

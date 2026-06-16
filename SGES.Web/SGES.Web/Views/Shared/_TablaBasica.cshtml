@@ -32,6 +32,7 @@
         })
 *@
 @using System.Linq
+@using System.Web.Mvc
 
 @{
     var columnas = (ViewData["columnas"] as IEnumerable<string>) ?? Enumerable.Empty<string>();
@@ -81,6 +82,8 @@
         tableClasses.Append(" table-sm");
     }
 
+    tableClasses.Append(" sges-tabla-base");
+
     if (!string.IsNullOrEmpty(cssClass))
     {
         tableClasses.Append(" " + cssClass);
@@ -107,17 +110,21 @@
     var idsLista = idsFila != null
         ? idsFila.ToList()
         : new List<object>();
+
+    var tableWrapClass = responsive ? "sges-tabla-wrap table-responsive" : "sges-tabla-wrap";
 }
 
 @if (!string.IsNullOrEmpty(titulo))
 {
-    <h5 class="sges-tabla-titulo mb-2">
-        <i class="bi bi-table me-2" aria-hidden="true"></i>
-        @titulo
-    </h5>
+    <div class="sges-tabla-encabezado">
+        <h5 class="sges-tabla-titulo mb-0">
+            <i class="bi bi-table me-2" aria-hidden="true"></i>
+            @titulo
+        </h5>
+    </div>
 }
 
-@Html.Raw(responsive ? "<div class='table-responsive'>" : "")
+<div class="@tableWrapClass">
 
 <table class="@tableClasses.ToString()" id="@tableId">
 
@@ -126,7 +133,7 @@
 
             @if (seleccionable)
             {
-                <th style="width:40px;"></th>
+                <th class="sges-col-seleccion" aria-label="Seleccionar"></th>
             }
 
             @foreach (var col in columnas)
@@ -168,7 +175,7 @@
 
                     @if (seleccionable)
                     {
-                        <td>
+                        <td class="align-middle text-center">
                             <input type="radio"
                                    name="filaSeleccionada"
                                    value="@(filaIndex < idsLista.Count ? idsLista[filaIndex] : "")" />
@@ -201,4 +208,4 @@
 
 </table>
 
-@Html.Raw(responsive ? "</div>" : "")
+</div>
