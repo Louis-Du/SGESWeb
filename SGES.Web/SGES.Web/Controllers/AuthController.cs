@@ -30,7 +30,16 @@ namespace SGES.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var usuario = _dao.Login(model.Id, model.Contrasena);
+            // Validar formato: solo dígitos, sin ceros a la izquierda (salvo "0")
+            if (!System.Text.RegularExpressions.Regex.IsMatch(model.Id, @"^(0|[1-9][0-9]*)$"))
+            {
+                TempData["Error"] = "ID o contraseña incorrectos.";
+                return View(model);
+            }
+
+            int idNumerico = int.Parse(model.Id);
+
+            var usuario = _dao.Login(idNumerico, model.Contrasena);
 
             if (usuario == null)
             {
@@ -38,9 +47,7 @@ namespace SGES.Web.Controllers
                 return View(model);
             }
 
-            // Guardar en sesión
             Session["Usuario"] = usuario;
-
             return RedirigirSegunRol(usuario);
         }
 
@@ -82,16 +89,24 @@ namespace SGES.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult RestablecerPassword(LoginModel model, string nuevaPassword, string confirmarPassword)
         {
-            // Buscar usuario solo por ID
-            var usuario = _dao.ObtenerUsuarioPorId(model.Id);
+            if (model == null || !ModelState.IsValid)
+                return View(model ?? new LoginModel());
+
+            // Validar formato: solo dígitos, sin ceros a la izquierda (salvo "0")
+            if (!System.Text.RegularExpressions.Regex.IsMatch(model.Id, @"^(0|[1-9][0-9]*)$"))
+            {
+                TempData["Error"] = "El usuario no existe.";
+                return View(model);
+            }
+
+            int idNumerico = int.Parse(model.Id);
+            var usuario = _dao.ObtenerUsuarioPorId(idNumerico);
 
             if (usuario == null)
             {
                 TempData["Error"] = "El usuario no existe.";
-
                 return View(model);
             }
-
 
             if (nuevaPassword != confirmarPassword)
             {
@@ -99,26 +114,21 @@ namespace SGES.Web.Controllers
                 return View(model);
             }
 
-
             if (string.IsNullOrWhiteSpace(nuevaPassword))
             {
                 TempData["Error"] = "La contraseña no puede estar vacía.";
                 return View(model);
             }
 
-
             try
             {
-                _dao.ActualizarPassword(usuario.Id, nuevaPassword);
-
+                _dao.ActualizarPassword(usuario.Id, nuevaPassword, usuario.Tipo);
                 TempData["Success"] = "Contraseña actualizada correctamente.";
-
                 return RedirectToAction("Login");
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Error al cambiar contraseña: " + ex.Message;
-
                 return View(model);
             }
         }

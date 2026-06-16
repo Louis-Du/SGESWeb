@@ -129,5 +129,49 @@ namespace SGES.Web.Models
                 cmd.ExecuteNonQuery();
             }
         }
+
+        public void InscribirGrupo(List<int> idAprendices, int idEvento, DateTime fechaInscrip)
+        {
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                con.Open();
+                SqlTransaction tx = con.BeginTransaction();
+
+                try
+                {
+                    // 1. Crear el grupo
+                    string sqlGrupo = @"INSERT INTO Grupos (nombreGrupo, descripcion, idEvento)
+                                VALUES (@nombre, @desc, @idEvento);
+                                SELECT SCOPE_IDENTITY();";
+
+                    SqlCommand cmdGrupo = new SqlCommand(sqlGrupo, con, tx);
+                    cmdGrupo.Parameters.AddWithValue("@nombre", "Grupo " + DateTime.Now.ToString("yyyyMMddHHmm"));
+                    cmdGrupo.Parameters.AddWithValue("@desc", "Grupo inscrito en evento " + idEvento);
+                    cmdGrupo.Parameters.AddWithValue("@idEvento", idEvento);
+                    int idGrupo = Convert.ToInt32(cmdGrupo.ExecuteScalar());
+
+                    // 2. Inscribir a cada aprendiz con ese grupo
+                    string sqlInsc = @"INSERT INTO Inscripciones (fechaInscrip, idApr, idEvento, idGrupo)
+                               VALUES (@fecha, @idApr, @idEvento, @idGrupo)";
+
+                    foreach (int idApr in idAprendices)
+                    {
+                        SqlCommand cmdInsc = new SqlCommand(sqlInsc, con, tx);
+                        cmdInsc.Parameters.AddWithValue("@fecha", fechaInscrip);
+                        cmdInsc.Parameters.AddWithValue("@idApr", idApr);
+                        cmdInsc.Parameters.AddWithValue("@idEvento", idEvento);
+                        cmdInsc.Parameters.AddWithValue("@idGrupo", idGrupo);
+                        cmdInsc.ExecuteNonQuery();
+                    }
+
+                    tx.Commit();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
+            }
+        }
     }
 }

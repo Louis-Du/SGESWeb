@@ -19,10 +19,10 @@
             --sges-border: #dde2e8;
             --sges-text: #1e2a38;
             --sges-text-muted: #6b7a8d;
-            --sges-primary: #2c6e91;
+            --sges-primary: #2c6e91; /* azul pizarra */
             --sges-primary-dk: #1f5070;
             --sges-primary-lt: #e8f3f9;
-            --sges-accent: #2a9d8f;
+            --sges-accent: #2a9d8f; /* teal suave */
             --sges-accent-lt: #e4f5f3;
             --sges-danger: #c0392b;
             --sges-danger-lt: #fdecea;
@@ -41,6 +41,7 @@
             --sges-transition: .18s ease;
         }
 
+        /* ── Base ── */
         *, *::before, *::after {
             box-sizing: border-box;
         }
@@ -115,12 +116,13 @@
                     color: #fff !important;
                 }
 
-        /* ── Layout ── */
+        /* ── Contenedor principal ── */
         .sges-body {
             padding: 2rem 0 3rem;
             min-height: calc(100vh - 120px);
         }
 
+        /* ── Footer ── */
         .sges-footer {
             border-top: 1px solid var(--sges-border);
             padding: 1rem 0;
@@ -184,7 +186,9 @@
             letter-spacing: .01em;
         }
 
-        .sges-input, .sges-textarea, .sges-select {
+        .sges-input,
+        .sges-textarea,
+        .sges-select {
             border: 1.5px solid var(--sges-border);
             border-radius: var(--sges-radius-sm);
             background: var(--sges-surface);
@@ -195,23 +199,30 @@
             width: 100%;
         }
 
-            .sges-input:focus, .sges-textarea:focus, .sges-select:focus {
+            .sges-input:focus,
+            .sges-textarea:focus,
+            .sges-select:focus {
                 border-color: var(--sges-primary);
                 box-shadow: 0 0 0 3px var(--sges-primary-lt);
                 outline: none;
             }
 
-            .sges-input.is-valid, .sges-textarea.is-valid, .sges-select.is-valid {
+            .sges-input.is-valid,
+            .sges-textarea.is-valid,
+            .sges-select.is-valid {
                 border-color: var(--sges-accent);
                 box-shadow: 0 0 0 3px var(--sges-accent-lt);
             }
 
-            .sges-input.is-invalid, .sges-textarea.is-invalid, .sges-select.is-invalid {
+            .sges-input.is-invalid,
+            .sges-textarea.is-invalid,
+            .sges-select.is-invalid {
                 border-color: var(--sges-danger);
                 box-shadow: 0 0 0 3px var(--sges-danger-lt);
             }
 
-            .sges-input::placeholder, .sges-textarea::placeholder {
+            .sges-input::placeholder,
+            .sges-textarea::placeholder {
                 color: #a0adb9;
                 font-size: .875rem;
             }
@@ -247,37 +258,43 @@
                 transform: translateY(1px);
             }
 
-        .sges-btn-guardar, .btn-primary {
+        .sges-btn-guardar,
+        .btn-primary {
             background: var(--sges-primary);
             border-color: var(--sges-primary);
             color: #fff;
         }
 
-            .sges-btn-guardar:hover, .btn-primary:hover {
+            .sges-btn-guardar:hover,
+            .btn-primary:hover {
                 background: var(--sges-primary-dk);
                 border-color: var(--sges-primary-dk);
                 color: #fff;
             }
 
-        .sges-btn-cancelar, .btn-secondary {
+        .sges-btn-cancelar,
+        .btn-secondary {
             background: transparent;
             border-color: var(--sges-border);
             color: var(--sges-text-muted);
         }
 
-            .sges-btn-cancelar:hover, .btn-secondary:hover {
+            .sges-btn-cancelar:hover,
+            .btn-secondary:hover {
                 background: var(--sges-bg);
                 border-color: #b0bcc9;
                 color: var(--sges-text);
             }
 
-        .sges-btn-eliminar, .btn-danger {
+        .sges-btn-eliminar,
+        .btn-danger {
             background: var(--sges-danger);
             border-color: var(--sges-danger);
             color: #fff;
         }
 
-            .sges-btn-eliminar:hover, .btn-danger:hover {
+            .sges-btn-eliminar:hover,
+            .btn-danger:hover {
                 background: #a93226;
                 border-color: #a93226;
                 color: #fff;
@@ -306,7 +323,8 @@
             font-size: .875rem;
         }
 
-            .sges-tabla-thead th, .sges-tabla thead th {
+            .sges-tabla-thead th,
+            .sges-tabla thead th {
                 background: var(--sges-primary);
                 color: #fff;
                 font-weight: 600;
@@ -318,10 +336,12 @@
                 white-space: nowrap;
             }
 
+                .sges-tabla-thead th:first-child,
                 .sges-tabla thead th:first-child {
                     border-radius: var(--sges-radius-sm) 0 0 0;
                 }
 
+                .sges-tabla-thead th:last-child,
                 .sges-tabla thead th:last-child {
                     border-radius: 0 var(--sges-radius-sm) 0 0;
                 }
@@ -356,6 +376,7 @@
             color: var(--sges-text);
         }
 
+        /* Radio en tabla */
         .sges-tabla input[type="radio"] {
             width: 1.05rem;
             height: 1.05rem;
@@ -405,7 +426,7 @@
             font-weight: 600;
         }
 
-        /* ── Alertas ── */
+        /* ── Validación resumen ── */
         .alert-danger {
             background: var(--sges-danger-lt);
             border: 1px solid #f5c6cb;
@@ -414,14 +435,11 @@
             font-size: .875rem;
             padding: .75rem 1rem;
         }
-
-        /* ── Fix: ícono de validación repetido en select ── */
-        .sges-select.is-valid, select.is-valid {
-            background-repeat: no-repeat !important;
-            background-position: right .75rem center !important;
-            background-size: 1rem 1rem !important;
+        /* ── Fix: evita ícono de validación repetido en select ── */
+        .sges-select.is-valid,
+        select.is-valid {
+            background-image: none !important;
         }
-
         /* ── Chatbot flotante ── */
         #sges-chat-btn {
             position: fixed;
@@ -486,6 +504,7 @@
             max-height: 340px;
         }
 
+        /* Burbuja del bot */
         .sges-msg-bot {
             align-self: flex-start;
             background: var(--sges-primary-lt);
@@ -496,6 +515,7 @@
             max-width: 85%;
         }
 
+        /* Burbuja del usuario */
         .sges-msg-user {
             align-self: flex-end;
             background: var(--sges-accent);
@@ -544,15 +564,10 @@
     </style>
 </head>
 <body>
-
-    <!--══════════════════════════════════════════
-          NAVBAR
-    ══════════════════════════════════════════-->
     <nav class="navbar navbar-expand-sm sges-navbar">
         <div class="container">
             @Html.ActionLink("SGES", "Login", "Auth", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler border-secondary"
-                    data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+            <button type="button" class="navbar-toggler border-secondary" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -568,9 +583,8 @@
                             </span>
                         </li>
                         <li class="nav-item">
-                            <!--Abre el modal Bootstrap en lugar del confirm() nativo-->
-                            <a href="#" class="nav-link sges-logout"
-                               data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+                            <a href="@Url.Action("Logout", "Auth")" class="nav-link sges-logout"
+                               onclick="if(confirm('¿Está seguro que desea cerrar la sesión?')){ sessionStorage.removeItem('sges-chat-historial'); return true; } return false;">
                                 <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión
                             </a>
                         </li>
@@ -580,25 +594,17 @@
         </div>
     </nav>
 
-    <!--══════════════════════════════════════════
-          CONTENIDO PRINCIPAL
-    ══════════════════════════════════════════-->
     <div class="container sges-body">
         @RenderBody()
     </div>
 
-    <!--══════════════════════════════════════════
-          FOOTER
-    ══════════════════════════════════════════-->
     <footer class="sges-footer">
         <div class="container">
             &copy; @DateTime.Now.Year &mdash; Sistema de Gestión de Eventos SGES
         </div>
     </footer>
 
-    <!--══════════════════════════════════════════
-          TOAST — Éxito / Error
-    ══════════════════════════════════════════-->
+    @* ── Toast flotante: Éxito / Error ── *@
     @{
         var _hasNotif = TempData["Success"] != null || TempData["Error"] != null;
         var _esExito = TempData["Success"] != null;
@@ -606,8 +612,10 @@
     }
     @if (_hasNotif)
     {
-        var bgClass = _esExito ? "text-bg-success" : "text-bg-danger";
-        var icono = _esExito ? "bi-check-circle-fill" : "bi-x-circle-fill";
+        var esExito = _esExito;
+        var mensaje = _mensaje;
+        var bgClass = esExito ? "text-bg-success" : "text-bg-danger";
+        var icono = esExito ? "bi-check-circle-fill" : "bi-x-circle-fill";
 
         <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index:1100">
             <div id="sgesNotificacion"
@@ -617,7 +625,7 @@
                 <div class="d-flex">
                     <div class="toast-body d-flex align-items-center gap-2">
                         <i class="bi @icono fs-5"></i>
-                        <span>@_mensaje</span>
+                        <span>@mensaje</span>
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto"
                             data-bs-dismiss="toast" aria-label="Cerrar"></button>
@@ -626,9 +634,7 @@
         </div>
     }
 
-    <!--══════════════════════════════════════════
-          MODAL — Confirmar eliminar evento (con inscritos)
-    ══════════════════════════════════════════-->
+    @* ── Modal: Confirmación con inscritos ── *@
     @{
         var _hasConfirm = TempData["ConfirmarEliminar"] != null;
         var _eventoId = TempData["EventoId"];
@@ -636,6 +642,9 @@
     }
     @if (_hasConfirm)
     {
+        var eventoId = _eventoId;
+        var mensajeConf = _mensajeConf;
+
         <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1"
              aria-labelledby="modalConfirmarLabel" aria-hidden="true" data-bs-backdrop="static">
             <div class="modal-dialog modal-dialog-centered">
@@ -646,13 +655,13 @@
                         </h5>
                     </div>
                     <div class="modal-body" style="font-size:.9rem; color:var(--sges-text)">
-                        @_mensajeConf
+                        @mensajeConf
                     </div>
                     <div class="modal-footer">
-                        @using (Html.BeginForm("EliminarConfirmado", "Evento", FormMethod.Post))
+                        @using (Html.BeginForm("EliminarConfirmado", "Evento", FormMethod.Post, new { id = "frmEliminarConfirmado" }))
                         {
                             @Html.AntiForgeryToken()
-                            <input type="hidden" name="idEvento" value="@_eventoId" />
+                            <input type="hidden" name="idEvento" value="@eventoId" />
                             <button type="submit" class="btn sges-btn-eliminar">
                                 <i class="bi bi-trash3"></i>Sí, eliminar todo
                             </button>
@@ -666,44 +675,9 @@
         </div>
     }
 
-    <!--══════════════════════════════════════════
-          MODAL — Confirmar cerrar sesión
-          Fuera del <nav> para evitar problemas de z-index
-    ══════════════════════════════════════════-->
-    @if (Session["Usuario"] != null)
-    {
-        <div class="modal fade" id="modalCerrarSesion" tabindex="-1"
-             aria-labelledby="modalCerrarLabel" aria-hidden="true" data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header"
-                         style="background:var(--sges-primary-lt); border-bottom:1px solid var(--sges-border)">
-                        <h5 class="modal-title" id="modalCerrarLabel" style="color:var(--sges-primary)">
-                            <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
-                        </h5>
-                    </div>
-                    <div class="modal-body" style="font-size:.9rem; color:var(--sges-text)">
-                        ¿Está seguro que desea cerrar la sesión?
-                    </div>
-                    <div class="modal-footer">
-                        <a href="@Url.Action("Logout", "Auth")"
-                           class="btn sges-btn-guardar"
-                           onclick="sessionStorage.removeItem('sges-chat-historial')">
-                            <i class="bi bi-check-lg"></i>Sí, cerrar sesión
-                        </a>
-                        <button type="button" class="btn sges-btn-cancelar" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-
-    <!--══════════════════════════════════════════
-          CHATBOT FLOTANTE
-          Solo visible con sesión activa
-    ══════════════════════════════════════════-->
+    @* ── Chatbot flotante (HU-11) ──────────────────────────────────────────
+        Solo se muestra si hay una sesión activa.
+        Usa la API de Gemini para responder preguntas sobre el SGES. *@
     @if (Session["Usuario"] != null)
     {
         <button id="sges-chat-btn" title="Asistente SGES">
@@ -714,10 +688,11 @@
             <div class="sges-chat-header">
                 <i class="bi bi-robot"></i> Asistente SGES
             </div>
-            <div class="sges-chat-messages" id="sges-chat-messages"></div>
+            <div class="sges-chat-messages" id="sges-chat-messages">
+                @* Mensaje de bienvenida que aparece al abrir el chat *@
+            </div>
             <div class="sges-chat-footer">
-                <input type="text" id="sges-chat-input"
-                       placeholder="Escribe tu pregunta..." maxlength="300" />
+                <input type="text" id="sges-chat-input" placeholder="Escribe tu pregunta..." maxlength="300" />
                 <button id="sges-chat-send"><i class="bi bi-send"></i></button>
             </div>
         </div>
@@ -725,24 +700,28 @@
         <script>
             (function () {
                 var GEMINI_API_KEY = "AIzaSyDKqd99Z-kkqU1ioItC3rONjSRt4IBt16I";
-                var SYSTEM_CONTEXT =
-                    "Eres un asistente virtual del Sistema de Gestión de Eventos del SENA llamado SGES. " +
-                    "Solo debes responder preguntas relacionadas con este sistema. " +
-                    "Si te preguntan algo fuera del contexto del SGES, responde amablemente que solo puedes ayudar con temas del sistema. " +
-                    "Responde siempre en español y de forma breve y clara. " +
-                    "INFORMACIÓN EXACTA DEL SISTEMA: " +
-                    "CREAR EVENTO (solo administradores): Los campos exactos son: " +
-                    "1. Nombre del evento (texto, máximo 100 caracteres). " +
-                    "2. Tipo de evento (opciones: Educativo, Deportivo, Social, Cultural). " +
-                    "3. Modalidad (Virtual o Presencial). " +
-                    "4. Tipo de inscripción (Individual o Grupal). " +
-                    "5. Fecha y hora de inicio (no puede ser anterior a la fecha actual). " +
-                    "6. Fecha y hora de fin (debe ser posterior al inicio y con mínimo 30 minutos de diferencia). " +
-                    "El sistema NO tiene campo de descripción ni de ubicación. " +
-                    "INSCRIBIRSE A UN EVENTO (solo aprendices): El aprendiz selecciona un evento del listado y elige una modalidad: Presencial o Virtual. " +
-                    "Validaciones: no puede inscribirse en el mismo evento dos veces, y no puede inscribirse si el horario se cruza con otro evento en el que ya está inscrito. " +
-                    "ROLES DEL SISTEMA: Administrador (puede crear, modificar y eliminar eventos, ver aprendices registrados) y Aprendiz (puede ver eventos disponibles, inscribirse y consultar el chatbot). " +
-                    "INICIO DE SESIÓN: Se ingresa con ID numérico y contraseña. La contraseña es sensible a mayúsculas y minúsculas.";
+                var SYSTEM_CONTEXT = "Eres un asistente virtual del Sistema de Gestión de Eventos del SENA llamado SGES. " +
+    "Solo debes responder preguntas relacionadas con este sistema. " +
+    "Si te preguntan algo fuera del contexto del SGES, responde amablemente que solo puedes ayudar con temas del sistema. " +
+    "Responde siempre en español y de forma breve y clara. " +
+
+    "INFORMACIÓN EXACTA DEL SISTEMA: " +
+
+    "CREAR EVENTO (solo administradores): Los campos exactos son: " +
+    "1. Nombre del evento (texto, máximo 100 caracteres). " +
+    "2. Tipo de evento (opciones: Educativo, Deportivo, Social, Cultural). " +
+    "3. Fecha y hora de inicio (no puede ser anterior a la fecha actual). " +
+    "4. La modalidad (Virtual o Presencial). " +
+    "5. Fecha y hora de fin (debe ser posterior al inicio y con mínimo 30 minutos de diferencia). " +
+    "6. El tipo de inscripcion (grupal o individal). " +
+    "El sistema NO tiene campo de descripción ni de ubicación. " +
+
+    "INSCRIBIRSE A UN EVENTO (solo aprendices): El aprendiz selecciona un evento del listado y elige una modalidad: Presencial o Virtual. " +
+    "Validaciones: no puede inscribirse en el mismo evento dos veces, y no puede inscribirse si el horario se cruza con otro evento en el que ya está inscrito. " +
+
+    "ROLES DEL SISTEMA: Administrador (puede crear, modificar y eliminar eventos, ver aprendices registrados y generar reportes) y Aprendiz (puede ver eventos disponibles, inscribirse y consultar el chatbot). " +
+
+    "INICIO DE SESIÓN: Se ingresa con ID numérico y contraseña. La contraseña es sensible a mayúsculas y minúsculas.";
 
                 var btn = document.getElementById("sges-chat-btn");
                 var box = document.getElementById("sges-chat-box");
@@ -750,22 +729,29 @@
                 var input = document.getElementById("sges-chat-input");
                 var send = document.getElementById("sges-chat-send");
 
+                // ── Cargar historial guardado en sessionStorage ────────────────────
+                // sessionStorage persiste mientras la pestaña esté abierta,
+                // así el chat no se reinicia al navegar entre páginas.
                 function cargarHistorial() {
-                    var h = JSON.parse(sessionStorage.getItem("sges-chat-historial") || "[]");
-                    h.forEach(function (m) { renderMensaje(m.texto, m.tipo); });
-                    if (h.length === 0) {
-                        var bienvenida = "¡Hola! Soy el asistente del SGES. Puedo ayudarte con preguntas sobre eventos e inscripciones. ¿En qué te puedo ayudar?";
-                        renderMensaje(bienvenida, "bot");
-                        guardarEnHistorial(bienvenida, "bot");
+                    var historial = JSON.parse(sessionStorage.getItem("sges-chat-historial") || "[]");
+                    historial.forEach(function (msg) {
+                        renderMensaje(msg.texto, msg.tipo);
+                    });
+                    // Si no hay historial, mostramos el mensaje de bienvenida
+                    if (historial.length === 0) {
+                        renderMensaje("¡Hola! Soy el asistente del SGES. Puedo ayudarte con preguntas sobre eventos e inscripciones. ¿En qué te puedo ayudar?", "bot");
+                        guardarEnHistorial("¡Hola! Soy el asistente del SGES. Puedo ayudarte con preguntas sobre eventos e inscripciones. ¿En qué te puedo ayudar?", "bot");
                     }
                 }
 
+                // ── Guardar mensaje en sessionStorage ─────────────────────────────
                 function guardarEnHistorial(texto, tipo) {
-                    var h = JSON.parse(sessionStorage.getItem("sges-chat-historial") || "[]");
-                    h.push({ texto: texto, tipo: tipo });
-                    sessionStorage.setItem("sges-chat-historial", JSON.stringify(h));
+                    var historial = JSON.parse(sessionStorage.getItem("sges-chat-historial") || "[]");
+                    historial.push({ texto: texto, tipo: tipo });
+                    sessionStorage.setItem("sges-chat-historial", JSON.stringify(historial));
                 }
 
+                // ── Renderizar burbuja en pantalla (sin guardar) ──────────────────
                 function renderMensaje(texto, tipo) {
                     var div = document.createElement("div");
                     div.className = tipo === "bot" ? "sges-msg-bot" : "sges-msg-user";
@@ -774,6 +760,7 @@
                     messages.scrollTop = messages.scrollHeight;
                 }
 
+                // ── Agregar mensaje: renderiza Y guarda en historial ──────────────
                 function agregarMensaje(texto, tipo) {
                     renderMensaje(texto, tipo);
                     guardarEnHistorial(texto, tipo);
@@ -802,24 +789,27 @@
                     send.disabled = true;
                     mostrarEscribiendo();
 
+                    var body = JSON.stringify({
+                        contents: [{
+                            role: "user",
+                            parts: [{ text: SYSTEM_CONTEXT + "\n\nPregunta del usuario: " + texto }]
+                        }]
+                    });
+
                     fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            contents: [{
-                                role: "user",
-                                parts: [{ text: SYSTEM_CONTEXT + "\n\nPregunta del usuario: " + texto }]
-                            }]
-                        })
+                        body: body
                     })
-                        .then(function (r) { return r.json(); })
-                        .then(function (d) {
+                        .then(function (res) { return res.json(); })
+                        .then(function (data) {
                             ocultarEscribiendo();
-                            var r = d.candidates && d.candidates[0] &&
-                                d.candidates[0].content &&
-                                d.candidates[0].content.parts &&
-                                d.candidates[0].content.parts[0].text;
-                            agregarMensaje(r || "No pude procesar tu pregunta. Intenta de nuevo.", "bot");
+                            var respuesta = data.candidates &&
+                                data.candidates[0] &&
+                                data.candidates[0].content &&
+                                data.candidates[0].content.parts &&
+                                data.candidates[0].content.parts[0].text;
+                            agregarMensaje(respuesta || "No pude procesar tu pregunta. Intenta de nuevo.", "bot");
                         })
                         .catch(function () {
                             ocultarEscribiendo();
@@ -836,16 +826,17 @@
                     box.style.display = isOpen ? "none" : "flex";
                     if (!isOpen) input.focus();
                 });
+
                 send.addEventListener("click", enviarMensaje);
                 input.addEventListener("keydown", function (e) {
                     if (e.key === "Enter") enviarMensaje();
                 });
 
+                // ── Cargar historial al iniciar la página ─────────────────────────
                 cargarHistorial();
             }());
         </script>
     }
-
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
@@ -863,10 +854,10 @@
     {
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                new bootstrap.Modal(document.getElementById("modalConfirmarEliminar")).show();
+                var modal = new bootstrap.Modal(document.getElementById("modalConfirmarEliminar"));
+                modal.show();
             });
         </script>
     }
-
 </body>
 </html>
