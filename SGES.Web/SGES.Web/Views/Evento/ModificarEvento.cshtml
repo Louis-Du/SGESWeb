@@ -5,122 +5,122 @@
     ViewBag.Title = "Modificar Evento";
 }
 
-@* Encabezado igual que en CrearEvento *@
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
     { "titulo",    "Modificar Evento" },
     { "icono",     "bi-pencil-square" },
-    { "subtitulo", "Edite los datos del evento y haga clic en Actualizar" }
+    { "subtitulo", "Edite los datos del evento y haga clic en Actualizar" },
+    { "cuerpo", new Func<object, HelperResult>(@<text>
+    <form action="@Url.Action("ModificarEvento", "Evento")" method="post">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+        @* Campo oculto: transporta el IdEvento para que el UPDATE sepa qué fila modificar *@
+        @Html.HiddenFor(m => m.IdEvento)
+
+        @* Campo oculto: conservamos el IdAdmin original del evento *@
+        @Html.HiddenFor(m => m.IdAdmin)
+
+        @* Nombre del evento — límite de 100 caracteres igual que en CrearEvento *@
+        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",          "NombreEvento" },
+                { "label",       "Nombre del Evento" },
+                { "value",       Model != null ? Model.NombreEvento : "" },
+                { "placeholder", "Ej: Dia del niño" },
+                { "required",    true },
+                { "maxLength",   100 },
+                { "contador",    true }
+            })
+        @Html.ValidationMessage("NombreEvento", "", new { @class = "text-danger small" })
+
+        @* Tipo de evento *@
+        @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",            "TipoEvento" },
+                { "label",         "Tipo de Evento" },
+                { "items",         ViewBag.TiposEvento },
+                { "selectedValue", Model != null ? Model.TipoEvento : "" },
+                { "defaultOption", "-- Seleccione --" },
+                { "required",      true }
+            })
+        @Html.ValidationMessage("TipoEvento", "", new { @class = "text-danger small" })
+
+        @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",            "ModalidadEvento" },
+                { "label",         "Modalidad" },
+                { "items",         ViewBag.Modalidades },
+                { "selectedValue", Model != null ? Model.ModalidadEvento : "" },
+                { "defaultOption", "-- Seleccione --" },
+                { "required",      true }
+            })
+        @Html.ValidationMessage("ModalidadEvento", "", new { @class = "text-danger small" })
+
+        @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",            "TipoInscrip" },
+                { "label",         "Tipo de Inscripción" },
+                { "items",         ViewBag.TiposInscripcion },
+                { "selectedValue", Model != null ? Model.TipoInscrip : "" },
+                { "defaultOption", "-- Seleccione --" },
+                { "required",      true }
+            })
+        @Html.ValidationMessage("TipoInscrip", "", new { @class = "text-danger small" })
+
+        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",          "CupoMaximo" },
+                { "label",       "Cupo Máximo" },
+                { "type",        "number" },
+                { "value",       Model != null ? Model.CupoMaximo.ToString() : "0" },
+                { "placeholder", "Ej: 30" },
+                { "required",    true }
+            })
+        @Html.ValidationMessage("CupoMaximo", "", new { @class = "text-danger small" })
+
+        @* Fecha de inicio — precargada con el valor actual del evento *@
+        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",      "FechaHoraInicio" },
+                { "label",   "Fecha y Hora de Inicio" },
+                { "type",    "datetime-local" },
+                { "value",   Model != null && Model.FechaHoraInicio != DateTime.MinValue
+                                 ? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
+                { "required", true }
+            })
+        @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
+
+        @* Fecha de fin — precargada con el valor actual del evento *@
+        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",      "FechaHoraFin" },
+                { "label",   "Fecha y Hora de Fin" },
+                { "type",    "datetime-local" },
+                { "value",   Model != null && Model.FechaHoraFin != DateTime.MinValue
+                                 ? Model.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm") : "" },
+                { "required", true }
+            })
+        @Html.ValidationMessage("FechaHoraFin", "", new { @class = "text-danger small" })
+
+        <div class="mt-3">
+            @* Botón actualizar: envía el formulario *@
+            @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
+                            {
+                    { "texto", "Actualizar Evento" },
+                    { "icono", "bi-check-circle" }
+                })
+            @* Botón cancelar: vuelve al inicio sin guardar *@
+            @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
+                            {
+                    { "texto",   "Cancelar" },
+                    { "url",     Url.Action("InicioAdmin", "Evento") },
+                    { "confirm", "¿Está seguro que desea cancelar? Los cambios no se guardarán." }
+                })
+        </div>
+    </form>
+    </text>)}
 })
-
-@using (Html.BeginForm("ModificarEvento", "Evento", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
-
-    @* Campo oculto: transporta el IdEvento para que el UPDATE sepa qué fila modificar *@
-    @Html.HiddenFor(m => m.IdEvento)
-
-    @* Campo oculto: conservamos el IdAdmin original del evento *@
-    @Html.HiddenFor(m => m.IdAdmin)
-
-    @* Nombre del evento — límite de 100 caracteres igual que en CrearEvento *@
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",          "NombreEvento" },
-        { "label",       "Nombre del Evento" },
-        { "value",       Model != null ? Model.NombreEvento : "" },
-        { "placeholder", "Ej: Dia del niño" },
-        { "required",    true },
-        { "maxLength",   100 },
-        { "contador",    true }
-    })
-    @Html.ValidationMessage("NombreEvento", "", new { @class = "text-danger small" })
-
-    @* Tipo de evento *@
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "TipoEvento" },
-        { "label",         "Tipo de Evento" },
-        { "items",         ViewBag.TiposEvento },
-        { "selectedValue", Model != null ? Model.TipoEvento : "" },
-        { "defaultOption", "-- Seleccione --" },
-        { "required",      true }
-    })
-    @Html.ValidationMessage("TipoEvento", "", new { @class = "text-danger small" })
-
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "ModalidadEvento" },
-        { "label",         "Modalidad" },
-        { "items",         ViewBag.Modalidades },
-        { "selectedValue", Model != null ? Model.ModalidadEvento : "" },
-        { "defaultOption", "-- Seleccione --" },
-        { "required",      true }
-    })
-    @Html.ValidationMessage("ModalidadEvento", "", new { @class = "text-danger small" })
-
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "TipoInscrip" },
-        { "label",         "Tipo de Inscripción" },
-        { "items",         ViewBag.TiposInscripcion },
-        { "selectedValue", Model != null ? Model.TipoInscrip : "" },
-        { "defaultOption", "-- Seleccione --" },
-        { "required",      true }
-    })
-    @Html.ValidationMessage("TipoInscrip", "", new { @class = "text-danger small" })
-
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",          "CupoMaximo" },
-        { "label",       "Cupo Máximo" },
-        { "type",        "number" },
-        { "value",       Model != null ? Model.CupoMaximo.ToString() : "0" },
-        { "placeholder", "Ej: 30" },
-        { "required",    true }
-    })
-    @Html.ValidationMessage("CupoMaximo", "", new { @class = "text-danger small" })
-
-    @* Fecha de inicio — precargada con el valor actual del evento *@
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",      "FechaHoraInicio" },
-        { "label",   "Fecha y Hora de Inicio" },
-        { "type",    "datetime-local" },
-        { "value",   Model != null && Model.FechaHoraInicio != DateTime.MinValue
-                         ? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
-        { "required", true }
-    })
-    @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
-
-    @* Fecha de fin — precargada con el valor actual del evento *@
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",      "FechaHoraFin" },
-        { "label",   "Fecha y Hora de Fin" },
-        { "type",    "datetime-local" },
-        { "value",   Model != null && Model.FechaHoraFin != DateTime.MinValue
-                         ? Model.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm") : "" },
-        { "required", true }
-    })
-    @Html.ValidationMessage("FechaHoraFin", "", new { @class = "text-danger small" })
-
-    <div class="mt-3">
-        @* Botón actualizar: envía el formulario *@
-        @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
-        {
-            { "texto", "Actualizar Evento" },
-            { "icono", "bi-check-circle" }
-        })
-        @* Botón cancelar: vuelve al inicio sin guardar *@
-        @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
-        {
-            { "texto",   "Cancelar" },
-            { "url",     Url.Action("InicioAdmin", "Evento") },
-            { "confirm", "¿Está seguro que desea cancelar? Los cambios no se guardarán." }
-        })
-    </div>
-}
 
 @section scripts {
     <script>

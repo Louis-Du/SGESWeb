@@ -8,593 +8,264 @@
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
     { "titulo",    "Registrar Evento" },
+    { "subtitulo", "Complete la información del nuevo evento" },
     { "icono",     "bi-calendar-event" },
-    { "subtitulo", "Complete la información del nuevo evento" }
+    { "cuerpo", new Func<object, HelperResult>(@<text>
+    <form action="@Url.Action("CrearEvento", "Evento")" method="post">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",          "NombreEvento" },
+                { "label",       "Nombre del Evento" },
+                { "value",       Model != null ? Model.NombreEvento : "" },
+                { "placeholder", "Ej: Día del niño" },
+                { "required",    true },
+                { "maxLength",   100 },
+                { "contador",    true }
+            })
+        @Html.ValidationMessage("NombreEvento", "", new { @class = "text-danger small" })
+
+        @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",            "TipoEvento" },
+                { "label",         "Tipo de Evento" },
+                { "items",         ViewBag.TiposEvento },
+                { "selectedValue", Model != null ? Model.TipoEvento : "" },
+                { "defaultOption", "-- Seleccione --" },
+                { "required",      true }
+            })
+        @Html.ValidationMessage("TipoEvento", "", new { @class = "text-danger small" })
+
+        @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",            "ModalidadEvento" },
+                { "label",         "Modalidad" },
+                { "items",         ViewBag.Modalidades },
+                { "selectedValue", Model != null ? Model.ModalidadEvento : "" },
+                { "defaultOption", "-- Seleccione --" },
+                { "required",      true }
+            })
+        @Html.ValidationMessage("ModalidadEvento", "", new { @class = "text-danger small" })
+
+        @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",            "TipoInscrip" },
+                { "label",         "Tipo de Inscripción" },
+                { "items",         ViewBag.TiposInscripcion },
+                { "selectedValue", Model != null ? Model.TipoInscrip : "" },
+                { "defaultOption", "-- Seleccione --" },
+                { "required",      true }
+            })
+        @Html.ValidationMessage("TipoInscrip", "", new { @class = "text-danger small" })
+
+        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",          "CupoMaximo" },
+                { "label",       "Cupo Máximo por Grupo" },
+                { "type",        "number" },
+                { "value",       Model != null ? Model.CupoMaximo.ToString() : "2" },
+                { "placeholder", "Ej: 5" },
+                { "required",    true }
+            })
+        @Html.ValidationMessage("CupoMaximo", "", new { @class = "text-danger small" })
+
+        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",      "FechaHoraInicio" },
+                { "label",   "Fecha y Hora de Inicio" },
+                { "type",    "datetime-local" },
+                { "value",   Model != null && Model.FechaHoraInicio != DateTime.MinValue
+                                 ? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
+                { "required", true }
+            })
+        @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
+
+        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                    {
+                { "id",      "FechaHoraFin" },
+                { "label",   "Fecha y Hora de Fin" },
+                { "type",    "datetime-local" },
+                { "value",   Model != null && Model.FechaHoraFin != DateTime.MinValue
+                                 ? Model.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm") : "" },
+                { "required", true }
+            })
+        @Html.ValidationMessage("FechaHoraFin", "", new { @class = "text-danger small" })
+
+        <div class="mt-3 d-flex gap-2">
+            @Html.Partial("_BotonGuardar")
+            @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
+                            {
+                    { "texto", "Volver" },
+                    { "url",   Url.Action("InicioAdmin", "Evento") },
+                    { "confirm", "¿Está seguro que desea volver? Los cambios no se guardarán." }
+                })
+        </div>
+    </form>
+    </text>)}
 })
-
-@using (Html.BeginForm("CrearEvento", "Evento", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
-
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",          "NombreEvento" },
-        { "label",       "Nombre del Evento" },
-        { "value",       Model != null ? Model.NombreEvento : "" },
-        { "placeholder", "Ej: Dia del niño" },
-        { "required",    true },
-        { "maxLength",   100 },
-        { "contador",    true }
-    })
-    @Html.ValidationMessage("NombreEvento", "", new { @class = "text-danger small" })
-
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "TipoEvento" },
-        { "label",         "Tipo de Evento" },
-        { "items",         ViewBag.TiposEvento },
-        { "selectedValue", Model != null ? Model.TipoEvento : "" },
-        { "defaultOption", "-- Seleccione --" },
-        { "required",      true }
-    })
-    @Html.ValidationMessage("TipoEvento", "", new { @class = "text-danger small" })
-
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",      "FechaHoraInicio" },
-        { "label",   "Fecha y Hora de Inicio" },
-        { "type",    "datetime-local" },
-        { "value",   Model != null && Model.FechaHoraInicio != DateTime.MinValue
-                         ? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
-        { "required", true }
-    })
-    @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
-
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "ModalidadEvento" },
-        { "label",         "Modalidad" },
-        { "items",         ViewBag.Modalidades },
-        { "selectedValue", Model != null ? Model.ModalidadEvento : "" },
-        { "defaultOption", "-- Seleccione --" },
-        { "required",      true }
-    })
-
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",      "FechaHoraFin" },
-        { "label",   "Fecha y Hora de Fin" },
-        { "type",    "datetime-local" },
-        { "value",   Model != null && Model.FechaHoraFin != DateTime.MinValue
-                         ? Model.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm") : "" },
-        { "required", true }
-    })
-    @Html.ValidationMessage("FechaHoraFin", "", new { @class = "text-danger small" })
-
-    @Html.ValidationMessage("ModalidadEvento", "", new { @class = "text-danger small" })
-
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "TipoInscrip" },
-        { "label",         "Tipo de Inscripción" },
-        { "items",         ViewBag.TiposInscripcion },
-        { "selectedValue", Model != null ? Model.TipoInscrip : "" },
-        { "defaultOption", "-- Seleccione --" },
-        { "required",      true }
-    })
-
-    @Html.ValidationMessage("TipoInscrip", "", new { @class = "text-danger small" })
-
-    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",          "CupoMaximo" },
-        { "label",       "Cupo Máximo" },
-        { "type",        "number" },
-        { "value",       Model != null ? Model.CupoMaximo.ToString() : "2" },
-        { "placeholder", "Ej: 30" },
-        { "required",    true }
-    })
-    @Html.ValidationMessage("CupoMaximo", "", new { @class = "text-danger small" })
-
-    <div class="mt-3">
-        @Html.Partial("_BotonGuardar")
-        @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData) {
-            { "texto", "Volver" },
-            { "url", Url.Action("InicioAdmin", "Evento") },
-            { "confirm", "¿Está seguro que desea volver?" }
-        })
-    </div>
-}
 
 @section scripts {
     <script>
         (function () {
 
             var form = document.querySelector("form");
-
             var nombre = document.getElementById("NombreEvento");
             var tipo = document.getElementById("TipoEvento");
-
+            var modalidad = document.getElementById("ModalidadEvento");
+            var tipoInscrip = document.getElementById("TipoInscrip");
+            var campoCupo = document.getElementById("CupoMaximo");
             var inicio = document.getElementById("FechaHoraInicio");
             var fin = document.getElementById("FechaHoraFin");
-
-            var modalidad = document.getElementById("ModalidadEvento");
-
-            var tipoInscrip = document.getElementById("TipoInscrip");
-
-            var campoCupo = document.getElementById("CupoMaximo");
-
-            var divCupo = campoCupo
-                ? campoCupo.closest(".mb-3")
-                : null;
-
+            var divCupo = campoCupo ? campoCupo.closest(".mb-3") : null;
 
             function getSpan(fieldId) {
-
-                return document.querySelector(
-                    '[data-valmsg-for="' + fieldId + '"]'
-                );
+                return document.querySelector('[data-valmsg-for="' + fieldId + '"]');
             }
-
 
             function mostrarError(campo, span, mensaje) {
-
                 if (!campo) return;
-
                 campo.classList.add("is-invalid");
                 campo.classList.remove("is-valid");
-
-                if (span) {
-                    span.textContent = mensaje;
-                    span.style.display = "block";
-                }
+                if (span) { span.textContent = mensaje; span.style.display = "block"; }
             }
-
 
             function limpiar(campo, span) {
-
                 if (!campo) return;
-
                 campo.classList.remove("is-invalid");
                 campo.classList.add("is-valid");
-
-                if (span) {
-                    span.textContent = "";
-                    span.style.display = "none";
-                }
+                if (span) { span.textContent = ""; span.style.display = "none"; }
             }
-
-
 
             function validarNombre() {
-
                 if (!nombre) return true;
-
                 if (!nombre.value.trim()) {
-
-                    mostrarError(
-                        nombre,
-                        getSpan("NombreEvento"),
-                        "El nombre del evento no puede estar vacío."
-                    );
-
+                    mostrarError(nombre, getSpan("NombreEvento"), "El nombre no puede estar vacío.");
                     return false;
                 }
-
-
-                limpiar(
-                    nombre,
-                    getSpan("NombreEvento")
-                );
-
+                limpiar(nombre, getSpan("NombreEvento"));
                 return true;
             }
-
-
 
             function validarTipo() {
-
                 if (!tipo) return true;
-
                 if (!tipo.value) {
-
-                    mostrarError(
-                        tipo,
-                        getSpan("TipoEvento"),
-                        "Debe seleccionar un tipo de evento."
-                    );
-
+                    mostrarError(tipo, getSpan("TipoEvento"), "Debe seleccionar un tipo de evento.");
                     return false;
                 }
-
-
-                limpiar(
-                    tipo,
-                    getSpan("TipoEvento")
-                );
-
+                limpiar(tipo, getSpan("TipoEvento"));
                 return true;
             }
-
-
 
             function validarModalidad() {
-
                 if (!modalidad) return true;
-
-
                 if (!modalidad.value) {
-
-                    mostrarError(
-                        modalidad,
-                        getSpan("ModalidadEvento"),
-                        "Debe seleccionar una modalidad."
-                    );
-
+                    mostrarError(modalidad, getSpan("ModalidadEvento"), "Debe seleccionar una modalidad.");
                     return false;
                 }
-
-
-                limpiar(
-                    modalidad,
-                    getSpan("ModalidadEvento")
-                );
-
+                limpiar(modalidad, getSpan("ModalidadEvento"));
                 return true;
             }
-
-
 
             function validarTipoInscripcion() {
-
                 if (!tipoInscrip) return true;
-
-
                 if (!tipoInscrip.value) {
-
-                    mostrarError(
-                        tipoInscrip,
-                        getSpan("TipoInscrip"),
-                        "Debe seleccionar el tipo de inscripción."
-                    );
-
+                    mostrarError(tipoInscrip, getSpan("TipoInscrip"), "Debe seleccionar el tipo de inscripción.");
                     return false;
                 }
-
-
-                limpiar(
-                    tipoInscrip,
-                    getSpan("TipoInscrip")
-                );
-
+                limpiar(tipoInscrip, getSpan("TipoInscrip"));
                 return true;
             }
-
-
-
 
             function validarCupo() {
-
-
-                if (!campoCupo || !tipoInscrip)
-                    return true;
-
-
-
+                if (!campoCupo || !tipoInscrip) return true;
                 if (tipoInscrip.value === "Grupal") {
-
-
-                    if (!campoCupo.value ||
-                        parseInt(campoCupo.value) <= 1) {
-
-
-                        mostrarError(
-                            campoCupo,
-                            getSpan("CupoMaximo"),
-                            "Debe indicar un cupo mayor a uno."
-                        );
-
-
+                    if (!campoCupo.value || parseInt(campoCupo.value) <= 1) {
+                        mostrarError(campoCupo, getSpan("CupoMaximo"), "Debe indicar un cupo mayor a 1.");
                         return false;
                     }
-
                 }
-
-
-                limpiar(
-                    campoCupo,
-                    getSpan("CupoMaximo")
-                );
-
-
+                limpiar(campoCupo, getSpan("CupoMaximo"));
                 return true;
             }
-
-
-
 
             function toggleCupo() {
-
-
-                if (!divCupo || !tipoInscrip)
-                    return;
-
-
-
+                if (!divCupo || !tipoInscrip) return;
                 if (tipoInscrip.value === "Grupal") {
-
                     divCupo.style.display = "";
-
-                }
-                else {
-
+                } else {
                     divCupo.style.display = "none";
-
-                    if (campoCupo)
-                        campoCupo.value = "2";
+                    if (campoCupo) campoCupo.value = "0";
                 }
-
             }
-
-
-
-
 
             function validarInicio() {
-
-
                 if (!inicio) return true;
-
-
                 if (!inicio.value) {
-
-                    mostrarError(
-                        inicio,
-                        getSpan("FechaHoraInicio"),
-                        "La fecha de inicio es obligatoria."
-                    );
-
+                    mostrarError(inicio, getSpan("FechaHoraInicio"), "La fecha de inicio es obligatoria.");
                     return false;
                 }
-
-
-
-                var ahora = new Date();
-
-                ahora.setSeconds(0, 0);
-
-
-
+                var ahora = new Date(); ahora.setSeconds(0, 0);
                 if (new Date(inicio.value) < ahora) {
-
-
-                    mostrarError(
-                        inicio,
-                        getSpan("FechaHoraInicio"),
-                        "La fecha no puede ser anterior a la actual."
-                    );
-
-
+                    mostrarError(inicio, getSpan("FechaHoraInicio"), "La fecha no puede ser anterior a la actual.");
                     return false;
                 }
-
-
-
-                limpiar(
-                    inicio,
-                    getSpan("FechaHoraInicio")
-                );
-
-
+                limpiar(inicio, getSpan("FechaHoraInicio"));
+                if (fin && fin.value) validarFin();
                 return true;
             }
-
-
-
-
 
             function validarFin() {
-
-
                 if (!fin) return true;
-
-
-
                 if (!fin.value) {
-
-
-                    mostrarError(
-                        fin,
-                        getSpan("FechaHoraFin"),
-                        "La fecha de fin es obligatoria."
-                    );
-
-
+                    mostrarError(fin, getSpan("FechaHoraFin"), "La fecha de fin es obligatoria.");
                     return false;
                 }
-
-
-
-                var ahora = new Date();
-
-                ahora.setSeconds(0, 0);
-
-
-
+                var ahora = new Date(); ahora.setSeconds(0, 0);
                 var fechaFin = new Date(fin.value);
-
-
-
                 if (fechaFin < ahora) {
-
-
-                    mostrarError(
-                        fin,
-                        getSpan("FechaHoraFin"),
-                        "La fecha no puede ser anterior a la actual."
-                    );
-
-
+                    mostrarError(fin, getSpan("FechaHoraFin"), "La fecha no puede ser anterior a la actual.");
                     return false;
                 }
-
-
-
-                if (inicio &&
-                    inicio.value &&
-                    fechaFin <= new Date(inicio.value)) {
-
-
-                    mostrarError(
-                        fin,
-                        getSpan("FechaHoraFin"),
-                        "Debe ser posterior al inicio."
-                    );
-
-
+                if (inicio && inicio.value && fechaFin <= new Date(inicio.value)) {
+                    mostrarError(fin, getSpan("FechaHoraFin"), "Debe ser posterior a la fecha de inicio.");
                     return false;
                 }
-
-
-
-
                 if (inicio && inicio.value) {
-
-
-                    var minutos =
-                        (fechaFin - new Date(inicio.value))
-                        / 60000;
-
-
-
+                    var minutos = (fechaFin - new Date(inicio.value)) / 60000;
                     if (minutos < 30) {
-
-
-                        mostrarError(
-                            fin,
-                            getSpan("FechaHoraFin"),
-                            "El evento debe durar mínimo 30 minutos."
-                        );
-
-
+                        mostrarError(fin, getSpan("FechaHoraFin"), "El evento debe durar mínimo 30 minutos.");
                         return false;
                     }
-
                 }
-
-
-
-                limpiar(
-                    fin,
-                    getSpan("FechaHoraFin")
-                );
-
-
+                limpiar(fin, getSpan("FechaHoraFin"));
                 return true;
             }
 
-
-
-
-
-
-            // ==========================
-            // Eventos del formulario
-            // ==========================
-
-
+            // ── Inicializar ──
             toggleCupo();
 
-
-
-            if (tipoInscrip) {
-
-                tipoInscrip.addEventListener(
-                    "change",
-                    function () {
-
-                        toggleCupo();
-                        validarCupo();
-
-                    }
-                );
-
-            }
-
-
-
-            if (nombre)
-                nombre.addEventListener("blur", validarNombre);
-
-
-
-            if (tipo)
-                tipo.addEventListener("change", validarTipo);
-
-
-
-            if (modalidad)
-                modalidad.addEventListener(
-                    "change",
-                    validarModalidad
-                );
-
-
-
-            if (inicio)
-                inicio.addEventListener(
-                    "change",
-                    validarInicio
-                );
-
-
-
-            if (fin)
-                fin.addEventListener(
-                    "change",
-                    validarFin
-                );
-
-
+            if (tipoInscrip) tipoInscrip.addEventListener("change", function () { toggleCupo(); validarCupo(); });
+            if (nombre) nombre.addEventListener("blur", validarNombre);
+            if (tipo) tipo.addEventListener("change", validarTipo);
+            if (modalidad) modalidad.addEventListener("change", validarModalidad);
+            if (inicio) inicio.addEventListener("change", validarInicio);
+            if (fin) fin.addEventListener("change", validarFin);
 
             if (form) {
-
-                form.addEventListener(
-                    "submit",
-                    function (e) {
-
-
-                        var correcto =
-
-                            validarNombre()
-                            &&
-                            validarTipo()
-                            &&
-                            validarModalidad()
-                            &&
-                            validarTipoInscripcion()
-                            &&
-                            validarCupo()
-                            &&
-                            validarInicio()
-                            &&
-                            validarFin();
-
-
-
-                        if (!correcto) {
-
-                            e.preventDefault();
-
-                        }
-
-                    }
-                );
-
+                form.addEventListener("submit", function (e) {
+                    var ok = validarNombre()
+                        && validarTipo()
+                        && validarModalidad()
+                        && validarTipoInscripcion()
+                        && validarCupo()
+                        && validarInicio()
+                        && validarFin();
+                    if (!ok) e.preventDefault();
+                });
             }
 
-
-
-        })();
+        }());
     </script>
 }

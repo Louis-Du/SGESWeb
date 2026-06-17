@@ -9,32 +9,35 @@
 {
     { "titulo",    "Menú de inicio para el aprendiz" },
     { "icono",     "bi-house-door-fill" },
-    { "subtitulo", "Elija una acción" }
-})
-
-@Html.Partial("_TablaSeleccion", null, new ViewDataDictionary(ViewData)
-{
-    { "titulo",        "Listado de Eventos" },
-    { "seleccionable", true },
-    { "idFila",        Model.Select(e => (object)e.IdEvento) },
-    { "columnas",      new[] { "Nombre", "Tipo", "Modalidad", "Tipo de inscripcion", "Inicio", "Fin" } },
-    { "filas",         Model.Select(e => new object[]
-        {
-            e.NombreEvento,
-            e.TipoEvento,
-            e.ModalidadEvento,
-            e.TipoInscrip,
-            e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
-            e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
+    { "subtitulo", "Elija una acción" },
+    { "cuerpo", new Func<object, HelperResult>(@<text>
+    @Html.Partial("_TablaSeleccion", null, new ViewDataDictionary(ViewData)
+            {
+            { "titulo",        "Listado de Eventos" },
+            { "seleccionable", true },
+            { "idFila",        Model.Select(e => (object)e.IdEvento) },
+            { "columnas",      new[] { "Nombre", "Tipo", "Modalidad", "Tipo de inscripcion", "Inicio", "Fin" } },
+            { "filas",         Model.Select(e => new object[]
+                    {
+                    e.NombreEvento,
+                    e.TipoEvento,
+                    e.ModalidadEvento,
+                    e.TipoInscrip,
+                    e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
+                    e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
+                })
+            }
         })
-    }
-})
 
-@Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-{
-    { "texto", "Ver / Inscribirse" },
-    { "icono", "bi-box-arrow-in-right" },
-    { "id",    "btnVerInscribirse" }
+    <div class="mt-3">
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+                    {
+                { "texto", "Ver / Inscribirse" },
+                { "icono", "bi-box-arrow-in-right" },
+                { "id",    "btnVerInscribirse" }
+            })
+    </div>
+    </text>)}
 })
 
 @{
