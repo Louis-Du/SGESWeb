@@ -1,4 +1,4 @@
-@*
+﻿@*
     _TextBox.cshtml — Componente reutilizable de campo de texto
 
     Parámetros (vía ViewData al invocar el partial):
@@ -13,6 +13,8 @@
         "cssClass"    : string  — Clases CSS adicionales para el input (opcional)
         "helpText"    : string  — Texto de ayuda debajo del campo (opcional)
         "maxLength"   : int     — Longitud máxima permitida (opcional)
+        "maxLength"   : int     — Longitud máxima permitida (opcional)
+        "contador"    : bool    — Muestra contador de caracteres dentro del input (requiere maxLength)
 
     Uso básico:
         @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
@@ -23,7 +25,6 @@
             { "required",    true }
         })
 *@
-
 @{
     var id = ViewData["id"]?.ToString() ?? "campo";
     var label = ViewData["label"]?.ToString() ?? "Campo";
@@ -36,9 +37,15 @@
     var cssClass = ViewData["cssClass"]?.ToString() ?? "";
     var helpText = ViewData["helpText"]?.ToString();
     var maxLength = ViewData["maxLength"];
+    var contador = ViewData["contador"] is bool && (bool)ViewData["contador"];
 
     var inputClass = "form-control sges-input " + cssClass;
     var helpId = id + "Help";
+    var contadorId = id + "Contador";
+
+    // Calcular caracteres actuales para cuando el campo ya tiene valor (edición)
+    var valorActual = value?.ToString() ?? "";
+    var limiteInt = maxLength != null ? Convert.ToInt32(maxLength) : 0;
 }
 
 <div class="mb-3 sges-field">
@@ -50,22 +57,54 @@
         }
     </label>
 
-    <input type="@type"
-           id="@id"
-           name="@id"
-           class="@inputClass"
-           value="@value"
-           placeholder="@placeholder"
-           @(required ? "required" : "")
-           @(disabled ? "disabled" : "")
-           @(readOnly ? "readonly" : "")
-           @(maxLength != null ? $"maxlength=\"{maxLength}\"" : "")
-           @(!string.IsNullOrEmpty(helpText) ? $"aria-describedby=\"{helpId}\"" : "") />
+    <div style="position:relative; display:block; width:100%">
+        <input type="@type"
+               id="@id"
+               name="@id"
+               class="@inputClass"
+               value="@value"
+               placeholder="@placeholder"
+               @(required ? "required" : "")
+               @(disabled ? "disabled" : "")
+               @(readOnly ? "readonly" : "")
+               @(maxLength != null ? $"maxlength=\"{maxLength}\"" : "")
+               style="@(contador && limiteInt > 0 ? "padding-right:3.5rem" : "")"
+               @(!string.IsNullOrEmpty(helpText) || contador ? $"aria-describedby=\"{helpId}\"" : "") />
+
+        @if (contador && limiteInt > 0)
+        {
+            <small id="@contadorId"
+                   style="position:absolute; top:50%; right:.65rem;
+                      transform:translateY(-50%);
+                      font-size:.75rem; color:var(--sges-text-muted);
+                      pointer-events:none; user-select:none;">
+                @valorActual.Length/@limiteInt
+            </small>
+        }
+    </div>
 
     @if (!string.IsNullOrEmpty(helpText))
     {
-        <div id="@helpId" class="form-text sges-help-text">
-            @helpText
-        </div>
+        <div id="@helpId" class="form-text sges-help-text mt-1">@helpText</div>
+    }
+
+    @if (contador && limiteInt > 0)
+    {
+        <script>
+            (function () {
+                var inp   = document.getElementById("@id");
+                var span  = document.getElementById("@contadorId");
+                var limit = @limiteInt;
+                if (!inp || !span) return;
+
+                inp.addEventListener("input", function () {
+                    var usado = inp.value.length;
+                    span.textContent = usado + "/" + limit;
+                    span.style.color = usado >= limit
+                        ? "var(--sges-danger)"
+                        : "var(--sges-text-muted)";
+                });
+            }());
+        </script>
     }
 </div>

@@ -29,9 +29,10 @@
         { "id",          "NombreEvento" },
         { "label",       "Nombre del Evento" },
         { "value",       Model != null ? Model.NombreEvento : "" },
-        { "placeholder", "Ej: Día del niño" },
+        { "placeholder", "Ej: Dia del niño" },
         { "required",    true },
-        { "maxLength",   100 }
+        { "maxLength",   100 },
+        { "contador",    true }
     })
     @Html.ValidationMessage("NombreEvento", "", new { @class = "text-danger small" })
 

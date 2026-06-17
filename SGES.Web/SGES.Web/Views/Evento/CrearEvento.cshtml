@@ -23,7 +23,8 @@
         { "value",       Model != null ? Model.NombreEvento : "" },
         { "placeholder", "Ej: Dia del niño" },
         { "required",    true },
-        { "maxLength",   100 }
+        { "maxLength",   100 },
+        { "contador",    true }
     })
     @Html.ValidationMessage("NombreEvento", "", new { @class = "text-danger small" })
 
@@ -89,7 +90,7 @@
         { "id",          "CupoMaximo" },
         { "label",       "Cupo Máximo" },
         { "type",        "number" },
-        { "value",       Model != null ? Model.CupoMaximo.ToString() : "0" },
+        { "value",       Model != null ? Model.CupoMaximo.ToString() : "2" },
         { "placeholder", "Ej: 30" },
         { "required",    true }
     })
@@ -284,13 +285,13 @@
 
 
                     if (!campoCupo.value ||
-                        parseInt(campoCupo.value) <= 0) {
+                        parseInt(campoCupo.value) <= 1) {
 
 
                         mostrarError(
                             campoCupo,
                             getSpan("CupoMaximo"),
-                            "Debe indicar un cupo mayor a cero."
+                            "Debe indicar un cupo mayor a uno."
                         );
 
 
@@ -330,7 +331,7 @@
                     divCupo.style.display = "none";
 
                     if (campoCupo)
-                        campoCupo.value = "0";
+                        campoCupo.value = "2";
                 }
 
             }
