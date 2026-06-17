@@ -84,7 +84,7 @@
                 e.preventDefault();
                 var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
                 if (!sel || !sel.value) {
-                    alert("Debe seleccionar un evento antes de continuar.");
+                    sgesUI.alert("Debe seleccionar un evento antes de continuar.");
                     return;
                 }
                 window.location.href = '@Url.Action("Details", "Evento")' + '?id=' + encodeURIComponent(sel.value);

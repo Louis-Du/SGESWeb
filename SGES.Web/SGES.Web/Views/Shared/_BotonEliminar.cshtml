@@ -72,7 +72,7 @@
     <button type="button"
             class="@btnClass"
             @(disabled ? "disabled" : "")
-            onclick="if(confirm('@Html.Raw(confirm)')) { document.getElementById('@formId').submit(); }">
+            onclick="sgesUI.confirm('@Html.Raw(confirm)', function () { document.getElementById('@formId').submit(); }); return false;">
         <i class="bi @icono" aria-hidden="true"></i>
         @if (!string.IsNullOrEmpty(texto))
         {

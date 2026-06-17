@@ -132,7 +132,7 @@
                 btn.addEventListener("click", function (e) {
                     e.preventDefault();
                     var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
-                    if (!sel) { alert("Seleccione un evento."); return; }
+                    if (!sel) { sgesUI.alert("Seleccione un evento."); return; }
                     window.location.href = '@Url.Action("AprendicesRegistrados", "Evento")' + '?idEvento=' + encodeURIComponent(sel.value);
                 });
             }
@@ -143,7 +143,7 @@
                 btnMod.addEventListener("click", function (e) {
                     e.preventDefault();
                     var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
-                    if (!sel) { alert("Seleccione un evento para modificar."); return; }
+                    if (!sel) { sgesUI.alert("Seleccione un evento para modificar."); return; }
                     window.location.href = '@Url.Action("ModificarEvento", "Evento")' + '?id=' + encodeURIComponent(sel.value);
                 });
             }
