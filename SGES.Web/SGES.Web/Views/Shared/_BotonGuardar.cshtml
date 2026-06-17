@@ -36,6 +36,6 @@
         @(disabled ? "disabled" : "")
         @(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "")
         @(!string.IsNullOrEmpty(form) ? $"form=\"{form}\"" : "")>
-    <i class="bi @icono me-1" aria-hidden="true"></i>
-    @texto
+    <i class="bi @icono" aria-hidden="true"></i>
+    <span>@texto</span>
 </button>

@@ -2,170 +2,140 @@
 @using System.Linq
 @using System.Collections.Generic
 @using SGES.Web.Models
-
 @{
     ViewBag.Title = "Inicio Administrador";
-
     var columnas = new[] { "Nombre", "Tipo", "Modalidad", "Tipo de inscripcion", "Inicio", "Fin" };
-    var filas = Model?.Select(e => new object[]
-    {
-        e.NombreEvento,
-        e.TipoEvento,
-        e.ModalidadEvento,
-        e.TipoInscrip,
+    var filas = Model?.Select(e => new object[] {
+        e.NombreEvento, e.TipoEvento, e.ModalidadEvento, e.TipoInscrip,
         e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
         e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
-                    }) ?? Enumerable.Empty<object[]>();
-
+    }) ?? Enumerable.Empty<object[]>();
     var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
-
-    var tablaViewData = new ViewDataDictionary(ViewData)
-{
-        { "columnas",      columnas },
-        { "filas",         filas },
-        { "mensajeVacio",  "No hay eventos disponibles en este momento." },
-        { "seleccionable", true },
-        { "idFila",        ids }
-    };
 }
 
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
     { "titulo",    "Menú de inicio para el administrador" },
     { "icono",     "bi-house-door-fill" },
-    { "subtitulo", "Elija una acción" }
+    { "subtitulo", "Elija una acción" },
+    { "cuerpo", new Func<object, HelperResult>(@<text>
+    @* ── FORMULARIO MANUAL (con id) ── *@
+    <form action="@Url.Action("Eliminar", "Evento")" method="post" id="frmEliminarEvento">
+        @Html.AntiForgeryToken()
+        <input type="hidden" id="idEvento" name="idEvento" value="" />
+
+        @Html.Partial("_TablaSeleccion", null, new ViewDataDictionary(ViewData)
+        {
+            { "columnas", columnas },
+            { "filas", filas },
+            { "mensajeVacio", "No hay eventos disponibles." },
+            { "seleccionable", true },
+            { "idFila", ids }
+        })
+
+        <div class="mt-3 d-flex gap-2 flex-wrap">
+            @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Crear Evento" },
+                { "icono", "bi-plus-circle" },
+                { "url", Url.Action("CrearEvento", "Evento") }
+            })
+            @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Modificar Evento" },
+                { "icono", "bi-pencil-square" },
+                { "id", "btnModificarEvento" }
+            })
+            @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Ver Aprendices" },
+                { "icono", "bi-people-fill" },
+                { "id", "btnVerAprendices" }
+            })
+            @Html.Partial("_BotonAccion", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Eliminar Evento" },
+                { "icono", "bi-trash3" },
+                { "cssClass", "btn-danger" },
+                { "type", "submit" },
+                { "confirm", "¿Desea eliminar el evento seleccionado?" },
+                { "requireSelection", true }
+            })
+            @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Exportar Eventos" },
+                { "icono", "bi-file-earmark-pdf" },
+                { "url", Url.Action("ReporteEventos", "Evento") }
+            })
+        </div>
+    </form>
+    </text>)}
 })
 
-@using (Html.BeginForm("Eliminar", "Evento", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
-    <input type="hidden" id="idEvento" name="idEvento" value="" />
-
-    @Html.Partial("_TablaSeleccion", null, tablaViewData)
-
-<div class="mt-3 d-flex gap-2 flex-wrap">
-    @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-    {
-        { "texto", "Crear Evento" },
-        { "icono", "bi-plus-circle" },
-        { "url",   Url.Action("CrearEvento", "Evento") }
-    })
-
-    @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-    {
-        { "texto", "Modificar Evento" },
-        { "icono", "bi-pencil-square" },
-        { "id",    "btnModificarEvento" }
-    })
-
-    @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-    {
-        { "texto", "Ver Aprendices" },
-        { "icono", "bi-people-fill" },
-        { "id",    "btnVerAprendices" }
-    })
-
-    @Html.Partial("_BotonAccion", null, new ViewDataDictionary(ViewData)
-    {
-        { "texto",            "Eliminar Evento" },
-        { "icono",            "bi-trash3" },
-        { "cssClass",         "btn-danger" },
-        { "type",             "submit" },
-        { "confirm",          "¿Desea eliminar el evento seleccionado?" },
-        { "requireSelection", true }
-    })
-
-    @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-    {
-        { "texto", "Exportar Eventos" },
-        { "icono", "bi-file-earmark-pdf" },
-        { "url",   Url.Action("ReporteEventos", "Evento") }
-    })
-
-</div>
-
-}
-
+@* ── Panel de filtros (fuera de la card, como siempre) ── *@
 @{ var filtro = ViewBag.Filtro as SGES.Web.Models.EventoFiltroModel; }
 
-@using (Html.BeginForm("InicioAdmin", "Evento", FormMethod.Get))
+@Html.Partial("_PanelFiltros", null, new ViewDataDictionary(ViewData)
 {
-    @Html.TextBox("Nombre", filtro != null ? filtro.Nombre : "",
-        new { @class = "form-control", placeholder = "Buscar por nombre..." })
-
-    <div class="mb-3">
-        <input type="date" name="Fecha"
-               value="@(filtro != null && filtro.Fecha.HasValue ? filtro.Fecha.Value.ToString("yyyy-MM-dd") : "")"
-               class="form-control" />
-    </div>
-
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "Modalidad" },
-        { "label",         "Modalidad" },
-        { "items",         ViewBag.Modalidades },
-        { "selectedValue", filtro != null ? filtro.Modalidad : "" },
-        { "defaultOption", "Todas" },
-        { "required",      false }
-    })
-
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "TipoInscrip" },
-        { "label",         "Tipo de Inscripción" },
-        { "items",         ViewBag.TiposInscripcion },
-        { "selectedValue", filtro != null ? filtro.TipoInscrip : "" },
-        { "defaultOption", "Todos" },
-        { "required",      false }
-    })
-
-    <button type="submit" class="btn btn-primary">Buscar</button>
-    <a href="@Url.Action("InicioAdmin")" class="btn btn-secondary">Limpiar</a>
-}
+    { "accion",      "InicioAdmin" },
+    { "controlador", "Evento" },
+    { "hayFiltro",   filtro != null && (!string.IsNullOrEmpty(filtro.Nombre) || filtro.Fecha.HasValue || !string.IsNullOrEmpty(filtro.Modalidad) || !string.IsNullOrEmpty(filtro.TipoInscrip)) },
+    { "campos", new System.Web.Mvc.MvcHtmlString(
+        Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
+            { "id", "Nombre" }, { "label", "Nombre" }, { "type", "text" },
+            { "placeholder", "Buscar por nombre..." }, { "value", filtro?.Nombre }
+        }).ToString() +
+        Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
+            { "id", "Fecha" }, { "label", "Fecha" }, { "type", "date" },
+            { "value", filtro?.Fecha?.ToString("yyyy-MM-dd") }
+        }).ToString() +
+        Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
+            { "id", "Modalidad" }, { "label", "Modalidad" },
+            { "items", ViewBag.Modalidades }, { "defaultOption", "Todas" },
+            { "selectedValue", filtro?.Modalidad }
+        }).ToString() +
+        Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
+            { "id", "TipoInscrip" }, { "label", "Tipo de Inscripción" },
+            { "items", ViewBag.TiposInscripcion }, { "defaultOption", "Todos" },
+            { "selectedValue", filtro?.TipoInscrip }
+        }).ToString()
+    )}
+})
 
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Botón Ver Aprendices
             var btn = document.getElementById("btnVerAprendices");
             if (btn) {
                 btn.addEventListener("click", function (e) {
                     e.preventDefault();
                     var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
-                    if (!sel) { alert("Seleccione un evento."); return; }
+                    if (!sel) { sgesUI.alert("Seleccione un evento."); return; }
                     window.location.href = '@Url.Action("AprendicesRegistrados", "Evento")' + '?idEvento=' + encodeURIComponent(sel.value);
                 });
             }
 
-            // Botón Modificar Evento
             var btnMod = document.getElementById("btnModificarEvento");
             if (btnMod) {
                 btnMod.addEventListener("click", function (e) {
                     e.preventDefault();
                     var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
-                    if (!sel) { alert("Seleccione un evento para modificar."); return; }
+                    if (!sel) { sgesUI.alert("Seleccione un evento para modificar."); return; }
                     window.location.href = '@Url.Action("ModificarEvento", "Evento")' + '?id=' + encodeURIComponent(sel.value);
                 });
             }
         });
 
         (function () {
-            // TextBox de nombre — filtra al dejar de escribir (500ms de espera)
             var inputNombre = document.getElementById("Nombre");
-            var timeoutNombre;
+            if (!inputNombre) return;
+            var timeout;
             inputNombre.addEventListener("input", function () {
-                clearTimeout(timeoutNombre);
-                timeoutNombre = setTimeout(function () {
-                    inputNombre.closest("form").submit();
+                clearTimeout(timeout);
+                timeout = setTimeout(function () {
+                    document.querySelector("#panelFiltros form").submit();
                 }, 500);
             });
-
-            // Date — filtra al seleccionar fecha automáticamente
-            var inputFecha = document.querySelector("input[name='Fecha']");
-            inputFecha.addEventListener("change", function () {
-                inputFecha.closest("form").submit();
-            });
         }());
-
     </script>
 }

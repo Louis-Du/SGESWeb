@@ -1,4 +1,4 @@
-@*
+﻿@*
     _Card.cshtml — Componente reutilizable de tarjeta (Bootstrap Card)
 
     Envuelve contenido en una card de Bootstrap con encabezado, cuerpo y pie opcionales.
@@ -35,6 +35,7 @@
         @Html.Partial("_Card")
         @* El contenido se coloca dentro del card-body en la vista que llama *@
 
+@* _Card.cshtml — Card con cuerpo por delegado *@
 @{
     var titulo = ViewData["titulo"]?.ToString();
     var subtitulo = ViewData["subtitulo"]?.ToString();
@@ -49,57 +50,60 @@
     var cardId = ViewData["id"]?.ToString() ?? "";
     var sinBorde = ViewData["sinBorde"] is bool && (bool)ViewData["sinBorde"];
 
-    // Construir clases de la card
+    // NUEVO: acepta un delegado para el cuerpo
+    var cuerpo = ViewData["cuerpo"] as Func<object, HelperResult>;
+
     var shadowClass = shadow == "lg" ? "shadow-lg" : shadow == "sm" ? "shadow-sm" : "shadow";
     var cardClasses = $"card sges-card {shadowClass} {(sinBorde ? "border-0" : "")} {cssClass}".Trim();
 
-    // Clases del header según color
     var headerColorClass = !string.IsNullOrEmpty(color)
         ? $"text-bg-{color}"
         : "sges-card-header";
     var headerClasses = $"card-header {headerColorClass} {headerCss}".Trim();
 }
 
-<div class="@cardClasses"
-     @(!string.IsNullOrEmpty(cardId) ? $"id=\"{cardId}\"" : "")>
+<div class="@cardClasses" @(!string.IsNullOrEmpty(cardId) ? $"id=\"{cardId}\"" : "")>
 
-    @* ── Encabezado ── *@
     @if (!string.IsNullOrEmpty(titulo) || !string.IsNullOrEmpty(icono))
     {
         <div class="@headerClasses">
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-start gap-3 sges-card-header-content">
                 @if (!string.IsNullOrEmpty(icono))
                 {
-                    <i class="bi @icono fs-5" aria-hidden="true"></i>
+                    <span class="sges-card-icon" aria-hidden="true">
+                        <i class="bi @icono"></i>
+                    </span>
                 }
-                <div>
+                <div class="flex-grow-1">
                     @if (!string.IsNullOrEmpty(titulo))
                     {
                         <h5 class="mb-0 sges-card-title">@titulo</h5>
                     }
                     @if (!string.IsNullOrEmpty(subtitulo))
                     {
-                        <small class="sges-card-subtitle opacity-75">@subtitulo</small>
+                        <small class="sges-card-subtitle">@subtitulo</small>
                     }
                 </div>
             </div>
         </div>
     }
 
-    @* ── Cuerpo ── *@
-    <div class="card-body @bodyCss">
-        @if (!string.IsNullOrEmpty(cuerpoHtml))
+    <div class="card-body @bodyCss sges-card-body">
+        @* Prioridad: delegado (más flexible) *@
+        @if (cuerpo != null)
+        {
+            @cuerpo(null)
+        }
+        else if (!string.IsNullOrEmpty(cuerpoHtml))
         {
             @Html.Raw(cuerpoHtml)
         }
     </div>
 
-    @* ── Pie ── *@
     @if (!string.IsNullOrEmpty(footer))
     {
         <div class="card-footer sges-card-footer text-muted">
             @Html.Raw(footer)
         </div>
     }
-
 </div>

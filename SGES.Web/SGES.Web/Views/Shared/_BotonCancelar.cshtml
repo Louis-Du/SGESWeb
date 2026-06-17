@@ -44,8 +44,8 @@
        role="button"
        @(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "")
        @(disabled ? "aria-disabled=\"true\"" : "")>
-        <i class="bi @icono me-1" aria-hidden="true"></i>
-        @texto
+        <i class="bi @icono" aria-hidden="true"></i>
+        <span>@texto</span>
     </a>
 }
 else
@@ -55,8 +55,8 @@ else
        role="button"
        @(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "")
        @(disabled ? "aria-disabled=\"true\"" : "")
-       onclick="if(confirm('@confirm')) { window.location.href='@url'; }">
-        <i class="bi @icono me-1" aria-hidden="true"></i>
-        @texto
+       onclick="sgesUI.confirm('@confirm', function () { window.location.href='@url'; }); return false;">
+        <i class="bi @icono" aria-hidden="true"></i>
+        <span>@texto</span>
     </a>
 }

@@ -82,12 +82,17 @@ namespace SGES.Web.Controllers
             ViewBag.TiposInscripcion = ObtenerTiposInscripcion();
 
             // Asignar el idUser desde la sesión
-            evento.IdUser = UsuarioActual.Id;
+            evento.IdAdmin = UsuarioActual.Id;
 
             var ahora = new DateTime(
                 DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
                 DateTime.Now.Hour, DateTime.Now.Minute, 0
             );
+
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo > 5)
+            {
+                ModelState.AddModelError("CupoMaximo", "El cupo máximo no puede ser mayor a 5.");
+            }
 
             if (evento.FechaHoraInicio < ahora)
             {
@@ -275,6 +280,7 @@ namespace SGES.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Details(InscripcionModel inscripcion)
         {
+
             // Verificamos sesión
             if (UsuarioActual == null)
                 return RedirectToAction("Login", "Auth");
@@ -284,12 +290,17 @@ namespace SGES.Web.Controllers
             var evento = _dao.ObtenerEventos()
                 .FirstOrDefault(e => e.IdEvento == inscripcion.IdEvento);
 
-
             // Si no existe el evento
             if (evento == null)
             {
                 TempData["Error"] = "Evento no encontrado.";
                 return RedirectToAction("InicioAprendiz");
+            }
+
+            // Si el evento es grupal, no debe procesarse aquí
+            if (evento.TipoInscrip == "Grupal")
+            {
+                return RedirectToAction("InscribirGrupo", new { id = inscripcion.IdEvento });
             }
 
 
@@ -346,6 +357,7 @@ namespace SGES.Web.Controllers
             try
             {
                 // Inserta en tabla Inscripciones
+                // Reemplaza la llamada actual a Inscribir
                 _inscripcionDao.Inscribir(inscripcion);
 
 
@@ -384,6 +396,7 @@ namespace SGES.Web.Controllers
                     return RedirectToAction("InicioAdmin");
                 }
 
+                _inscripcionDao.EliminarGruposDeEvento(idEvento);
                 _dao.EliminarEventos(idEvento);
 
                 TempData["Success"] = "Evento eliminado correctamente.";
@@ -408,7 +421,7 @@ namespace SGES.Web.Controllers
                     return RedirectToAction("Login", "Auth");
 
                 _inscripcionDao.EliminarInscritos(idEvento);
-
+                _inscripcionDao.EliminarGruposDeEvento(idEvento);
                 _dao.EliminarEventos(idEvento);
 
                 TempData["Success"] =
@@ -507,6 +520,11 @@ namespace SGES.Web.Controllers
                 DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
                 DateTime.Now.Hour, DateTime.Now.Minute, 0
             );
+
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo > 5)
+            {
+                ModelState.AddModelError("CupoMaximo", "El cupo máximo no puede ser mayor a 5.");
+            }
 
             if (evento.FechaHoraInicio < ahora)
             {

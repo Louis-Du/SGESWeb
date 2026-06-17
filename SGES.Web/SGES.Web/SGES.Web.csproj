@@ -570,6 +570,7 @@
     <Content Include="Views\Evento\InscribirGrupo.cshtml" />
     <Content Include="Views\Auth\RestablecerPassword.cshtml" />
     <Content Include="Views\Shared\_LinkAccion.cshtml" />
+    <Content Include="Views\Shared\_PanelFiltros.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 
 namespace SGES.Web.Models
@@ -7,127 +7,261 @@ namespace SGES.Web.Models
     {
         private readonly Conexion cn = new Conexion();
 
+
         public UsuarioSesion Login(int id, string contrasena)
         {
-            // 1. Buscar en Usuario (Administrador)
-            using (SqlConnection con = cn.ObtenerConexion())
-            {
-                string sql = @"SELECT idUser, nombreUser, tipoUser
-                               FROM Usuario
-                               WHERE idUser = @id
-                                 AND passwordHash = @pass";
 
-                SqlCommand cmd = new SqlCommand(sql, con);
+            // 1. Buscar administrador
+            using(SqlConnection con = cn.ObtenerConexion())
+            {
+
+                string sql = @"
+                SELECT 
+                    idAdmin,
+                    nombreAdmin
+                FROM Administrador
+                WHERE idAdmin = @id
+                AND passwordHash = @pass";
+
+
+                SqlCommand cmd =
+                    new SqlCommand(sql, con);
+
+
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@pass", contrasena);
 
-                con.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
 
-                if (dr.Read())
+                con.Open();
+
+
+                SqlDataReader dr =
+                    cmd.ExecuteReader();
+
+
+                if(dr.Read())
                 {
                     return new UsuarioSesion
                     {
-                        Id = (int)dr["idUser"],
-                        Nombre = dr["nombreUser"].ToString(),
-                        Tipo = dr["tipoUser"].ToString()
+                        Id =
+                        Convert.ToInt32(dr["idAdmin"]),
+
+                        Nombre =
+                        dr["nombreAdmin"].ToString(),
+
+                        Tipo = "Administrador"
                     };
                 }
             }
 
-            // 2. Buscar en Aprendiz (join con Usuario para obtener passwordHash y tipoUser)
-            using (SqlConnection con = cn.ObtenerConexion())
-            {
-                string sql = @"SELECT A.idApr, A.nombreApr, U.tipoUser
-                               FROM Aprendiz A
-                               JOIN Usuario U ON A.idUser = U.idUser
-                               WHERE A.idApr = @id
-                                 AND U.passwordHash = @pass";
 
-                SqlCommand cmd = new SqlCommand(sql, con);
+
+            // 2. Buscar aprendiz
+            using(SqlConnection con = cn.ObtenerConexion())
+            {
+
+                string sql = @"
+                SELECT
+                    idApr,
+                    nombreApr
+                FROM Aprendiz
+                WHERE idApr = @id
+                AND passwordHash = @pass";
+
+
+                SqlCommand cmd =
+                    new SqlCommand(sql, con);
+
+
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@pass", contrasena);
 
-                con.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
 
-                if (dr.Read())
+                con.Open();
+
+
+                SqlDataReader dr =
+                    cmd.ExecuteReader();
+
+
+
+                if(dr.Read())
                 {
+
                     return new UsuarioSesion
                     {
-                        Id = (int)dr["idApr"],
-                        Nombre = dr["nombreApr"].ToString(),
-                        Tipo = dr["tipoUser"].ToString()
+                        Id =
+                        Convert.ToInt32(dr["idApr"]),
+
+
+                        Nombre =
+                        dr["nombreApr"].ToString(),
+
+
+                        Tipo = "Aprendiz"
                     };
                 }
+
             }
+
 
             return null;
         }
+
+
 
         public UsuarioSesion ObtenerUsuarioPorId(int id)
         {
-            using (SqlConnection con = cn.ObtenerConexion())
+
+            // administrador
+            using(SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = @"SELECT idUser, nombreUser, tipoUser FROM Usuario WHERE idUser = @id";
-                SqlCommand cmd = new SqlCommand(sql, con);
+
+                string sql = @"
+                SELECT
+                    idAdmin,
+                    nombreAdmin
+                FROM Administrador
+                WHERE idAdmin=@id";
+
+
+                SqlCommand cmd =
+                    new SqlCommand(sql, con);
+
+
                 cmd.Parameters.AddWithValue("@id", id);
+
+
                 con.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                if (dr.Read())
+
+
+                SqlDataReader dr =
+                    cmd.ExecuteReader();
+
+
+
+                if(dr.Read())
                 {
                     return new UsuarioSesion
                     {
-                        Id = Convert.ToInt32(dr["idUser"]),
-                        Nombre = dr["nombreUser"].ToString(),
-                        Tipo = dr["tipoUser"].ToString()
+                        Id =
+                        Convert.ToInt32(dr["idAdmin"]),
+
+                        Nombre =
+                        dr["nombreAdmin"].ToString(),
+
+                        Tipo =
+                        "Administrador"
                     };
                 }
             }
 
-            using (SqlConnection con = cn.ObtenerConexion())
+
+
+            // aprendiz
+            using(SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = @"SELECT A.idApr, A.nombreApr, U.tipoUser, A.idUser
-                       FROM Aprendiz A
-                       JOIN Usuario U ON A.idUser = U.idUser
-                       WHERE A.idApr = @id";
-                SqlCommand cmd = new SqlCommand(sql, con);
+
+                string sql = @"
+                SELECT
+                    idApr,
+                    nombreApr
+                FROM Aprendiz
+                WHERE idApr=@id";
+
+
+                SqlCommand cmd =
+                    new SqlCommand(sql, con);
+
+
                 cmd.Parameters.AddWithValue("@id", id);
+
+
                 con.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
-                if (dr.Read())
+
+
+                SqlDataReader dr =
+                    cmd.ExecuteReader();
+
+
+                if(dr.Read())
                 {
                     return new UsuarioSesion
                     {
-                        Id = Convert.ToInt32(dr["idApr"]),
-                        Nombre = dr["nombreApr"].ToString(),
-                        Tipo = dr["tipoUser"].ToString()
+                        Id =
+                        Convert.ToInt32(dr["idApr"]),
+
+
+                        Nombre =
+                        dr["nombreApr"].ToString(),
+
+
+                        Tipo =
+                        "Aprendiz"
                     };
                 }
+
             }
+
 
             return null;
         }
 
-        public void ActualizarPassword(int id, string password)
+
+
+        public void ActualizarPassword(
+            int id,
+            string password,
+            string tipo)
         {
-            using (SqlConnection con = cn.ObtenerConexion())
+
+            using(SqlConnection con = cn.ObtenerConexion())
             {
-                string sql = @"
-                    UPDATE Usuario
-                    SET passwordHash = @password
-                    WHERE idUser = @id";
 
-                SqlCommand cmd = new SqlCommand(sql, con);
+                string sql;
 
-                cmd.Parameters.AddWithValue("@password", password);
-                cmd.Parameters.AddWithValue("@id", id);
+
+                if(tipo == "Administrador")
+                {
+                    sql = @"
+                    UPDATE Administrador
+                    SET passwordHash=@password
+                    WHERE idAdmin=@id";
+                }
+                else
+                {
+                    sql = @"
+                    UPDATE Aprendiz
+                    SET passwordHash=@password
+                    WHERE idApr=@id";
+                }
+
+
+
+                SqlCommand cmd =
+                    new SqlCommand(sql, con);
+
+
+
+                cmd.Parameters.AddWithValue(
+                    "@password",
+                    password
+                );
+
+
+                cmd.Parameters.AddWithValue(
+                    "@id",
+                    id
+                );
+
 
                 con.Open();
 
                 cmd.ExecuteNonQuery();
+
             }
+
         }
-        
+
     }
 }

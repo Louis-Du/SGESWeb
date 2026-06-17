@@ -1,55 +1,31 @@
-
 CREATE DATABASE SGES;
 GO
 
 USE SGES;
 GO
 
+
 /*==================================================
-TABLA: USUARIO
+TABLA: ADMINISTRADOR
 ==================================================*/
 
-CREATE TABLE Usuario
+CREATE TABLE Administrador
 (
-    idUser INT NOT NULL PRIMARY KEY,
+    idAdmin INT NOT NULL PRIMARY KEY,
 
-    nombreUser VARCHAR(50) NOT NULL,
+    nombreAdmin VARCHAR(50) NOT NULL,
 
-    emailUser VARCHAR(100) NOT NULL,
+    emailAdmin VARCHAR(100) NOT NULL,
 
     passwordHash VARCHAR(255) NOT NULL,
 
-    tipoUser VARCHAR(20) NOT NULL,
 
-    CONSTRAINT UQ_Usuario_Email
-        UNIQUE(emailUser)
+    CONSTRAINT UQ_Admin_Email
+        UNIQUE(emailAdmin)
 );
 GO
 
-/*==================================================
-TABLA: EVENTOS
-==================================================*/
 
-CREATE TABLE Eventos
-(
-    idEvento         INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    nombreEvento     VARCHAR(100) NOT NULL,
-    tipoEvento       VARCHAR(20)  NOT NULL,
-    modalidadEvento  VARCHAR(15)  NOT NULL,  -- 'Virtual' o 'Presencial'
-    tipoInscrip      VARCHAR(10)  NOT NULL,  -- 'Individual' o 'Grupal'
-    cupoMaximo       INT NOT NULL DEFAULT 0,
-    fechaHoraInicio  DATETIME2(0) NOT NULL,
-    fechaHoraFin     DATETIME2(0) NOT NULL,
-    idUser           INT NOT NULL,
-
-    CONSTRAINT FK_Eventos_Usuario    FOREIGN KEY(idUser) REFERENCES Usuario(idUser),
-    CONSTRAINT CK_Eventos_Fechas     CHECK(fechaHoraFin > fechaHoraInicio),
-    CONSTRAINT CK_Eventos_Tipo       CHECK(tipoEvento IN ('Educativo','Deportivo','Social','Cultural')),
-    CONSTRAINT CK_Eventos_Modalidad  CHECK(modalidadEvento IN ('Virtual','Presencial')),
-    CONSTRAINT CK_Eventos_TipoInscrip CHECK(tipoInscrip IN ('Individual','Grupal')),
-    CONSTRAINT CK_Eventos_CupoGrupal CHECK (tipoInscrip = 'Individual' OR (tipoInscrip = 'Grupal' AND cupoMaximo > 0))
-);
-GO
 
 /*==================================================
 TABLA: PROGRAMAS
@@ -66,9 +42,10 @@ CREATE TABLE Programas
     duracionProg INT NOT NULL,
 
     nivelProg VARCHAR(15) NOT NULL
-
 );
 GO
+
+
 
 /*==================================================
 TABLA: FICHAS
@@ -84,10 +61,14 @@ CREATE TABLE Fichas
 
     codigoProg INT NOT NULL,
 
-    CONSTRAINT FK_Fichas_Programas FOREIGN KEY(codigoProg) REFERENCES Programas(codigoProg)
 
+    CONSTRAINT FK_Fichas_Programa
+    FOREIGN KEY(codigoProg)
+    REFERENCES Programas(codigoProg)
 );
 GO
+
+
 
 /*==================================================
 TABLA: APRENDIZ
@@ -99,26 +80,115 @@ CREATE TABLE Aprendiz
 
     nombreApr VARCHAR(50) NOT NULL,
 
-    edadApr INT NOT NULL,
-
     emailApr VARCHAR(100) NOT NULL,
 
-    contactoApr VARCHAR(15) NOT NULL,
+    passwordHash VARCHAR(255) NOT NULL,
+
+
+    edadApr INT NOT NULL,
+
+    contactoApr VARCHAR(15),
 
     generoApr CHAR(1) NOT NULL,
 
+
     codigoFic INT NOT NULL,
 
-    idUser INT NOT NULL,
 
-    CONSTRAINT FK_Aprendiz_Fichas FOREIGN KEY(codigoFic) REFERENCES Fichas(codigoFic),
+    CONSTRAINT UQ_Aprendiz_Email
+    UNIQUE(emailApr),
 
-    CONSTRAINT FK_Aprendiz_Usuario FOREIGN KEY(idUser) REFERENCES Usuario(idUser),
 
-    CONSTRAINT CK_Aprendiz_Genero CHECK(generoApr IN ('M','F'))
+    CONSTRAINT FK_Aprendiz_Ficha
+    FOREIGN KEY(codigoFic)
+    REFERENCES Fichas(codigoFic),
 
+
+    CONSTRAINT CK_Aprendiz_Genero
+    CHECK(generoApr IN ('M','F'))
 );
 GO
+
+
+
+/*==================================================
+TABLA: EVENTOS
+==================================================*/
+
+CREATE TABLE Eventos
+(
+    idEvento INT IDENTITY(1,1) PRIMARY KEY,
+
+
+    nombreEvento VARCHAR(100) NOT NULL,
+
+
+    tipoEvento VARCHAR(20) NOT NULL,
+
+
+    modalidadEvento VARCHAR(15) NOT NULL,
+
+
+    tipoInscrip VARCHAR(10) NOT NULL,
+
+
+    cupoMaximo INT NOT NULL DEFAULT 0,
+
+
+    fechaHoraInicio DATETIME2(0) NOT NULL,
+
+    fechaHoraFin DATETIME2(0) NOT NULL,
+
+
+    idAdmin INT NOT NULL,
+
+
+    CONSTRAINT FK_Evento_Admin
+    FOREIGN KEY(idAdmin)
+    REFERENCES Administrador(idAdmin),
+
+
+    CONSTRAINT CK_Evento_Fecha
+    CHECK(fechaHoraFin > fechaHoraInicio),
+
+
+    CONSTRAINT CK_Evento_Tipo
+    CHECK(tipoEvento IN
+    (
+        'Educativo',
+        'Deportivo',
+        'Social',
+        'Cultural'
+    )),
+
+
+    CONSTRAINT CK_Evento_Modalidad
+    CHECK(modalidadEvento IN
+    (
+        'Virtual',
+        'Presencial'
+    )),
+
+
+    CONSTRAINT CK_Evento_Inscripcion
+    CHECK(tipoInscrip IN
+    (
+        'Individual',
+        'Grupal'
+    )),
+
+
+    CONSTRAINT CK_Evento_Cupo
+    CHECK
+    (
+        tipoInscrip='Individual'
+        OR
+        (tipoInscrip='Grupal' AND cupoMaximo>0)
+    )
+);
+GO
+
+
 
 /*==================================================
 TABLA: GRUPOS
@@ -126,11 +196,25 @@ TABLA: GRUPOS
 
 CREATE TABLE Grupos
 (
-    idGrupo      INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    nombreGrupo  VARCHAR(20)  NOT NULL,
-    descripcion  VARCHAR(100) NULL
+    idGrupo INT IDENTITY(1,1) PRIMARY KEY,
+
+
+    nombreGrupo VARCHAR(20) NOT NULL,
+
+
+    descripcion VARCHAR(100),
+
+
+    idEvento INT NOT NULL,
+
+
+    CONSTRAINT FK_Grupo_Evento
+    FOREIGN KEY(idEvento)
+    REFERENCES Eventos(idEvento)
 );
 GO
+
+
 
 /*==================================================
 TABLA: INSCRIPCIONES
@@ -138,30 +222,59 @@ TABLA: INSCRIPCIONES
 
 CREATE TABLE Inscripciones
 (
-    idInscrip        INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    fechaInscrip     DATE NOT NULL,
-    idApr            INT NOT NULL,
-    idEvento         INT NOT NULL,
-    idGrupo          INT NULL,
+    idInscrip INT IDENTITY(1,1) PRIMARY KEY,
 
-    CONSTRAINT FK_Inscripciones_Aprendiz FOREIGN KEY(idApr)    REFERENCES Aprendiz(idApr),
-    CONSTRAINT FK_Inscripciones_Eventos  FOREIGN KEY(idEvento) REFERENCES Eventos(idEvento),
-    CONSTRAINT FK_Inscripciones_Grupos   FOREIGN KEY(idGrupo)  REFERENCES Grupos(idGrupo),
-    CONSTRAINT UQ_Inscripcion_Aprendiz_Evento UNIQUE(idApr, idEvento)
+
+    fechaInscrip DATE NOT NULL,
+
+
+    idApr INT NOT NULL,
+
+
+    idEvento INT NOT NULL,
+
+
+    idGrupo INT NULL,
+
+
+
+    CONSTRAINT FK_Inscripcion_Aprendiz
+    FOREIGN KEY(idApr)
+    REFERENCES Aprendiz(idApr),
+
+
+    CONSTRAINT FK_Inscripcion_Evento
+    FOREIGN KEY(idEvento)
+    REFERENCES Eventos(idEvento),
+
+
+    CONSTRAINT FK_Inscripcion_Grupo
+    FOREIGN KEY(idGrupo)
+    REFERENCES Grupos(idGrupo),
+
+
+    CONSTRAINT UQ_Aprendiz_Evento
+    UNIQUE(idApr,idEvento)
 );
 GO
 
+
+
+
 /*==================================================
-ÍNDICES
+INDICES
 ==================================================*/
 
-CREATE INDEX IX_Eventos_FechaInicio
+
+CREATE INDEX IX_Eventos_Fecha
 ON Eventos(fechaHoraInicio);
 GO
+
 
 CREATE INDEX IX_Inscripciones_Evento
 ON Inscripciones(idEvento);
 GO
+
 
 CREATE INDEX IX_Inscripciones_Aprendiz
 ON Inscripciones(idApr);

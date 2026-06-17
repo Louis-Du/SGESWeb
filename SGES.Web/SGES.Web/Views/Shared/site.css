@@ -214,6 +214,12 @@ small, .text-small {
     border:        1px solid var(--sges-gris-borde);
     transition:    var(--sges-transicion);
     overflow:      hidden;
+    background:    var(--sges-blanco);
+    box-shadow:    var(--sges-sombra-sm);
+}
+
+.sges-card:hover {
+    box-shadow: var(--sges-sombra-md);
 }
 
 .sges-card-header {
@@ -221,6 +227,26 @@ small, .text-small {
     color:            var(--sges-blanco);
     padding:          0.85rem var(--sges-padding-card);
     border-bottom:    none;
+}
+
+.sges-card-header-content {
+    min-height: 2.25rem;
+}
+
+.sges-card-icon {
+    width:        2.25rem;
+    height:       2.25rem;
+    flex:         0 0 2.25rem;
+    border-radius: 999px;
+    display:      inline-flex;
+    align-items:  center;
+    justify-content: center;
+    background:   rgba(255, 255, 255, 0.12);
+    color:        var(--sges-blanco);
+}
+
+.sges-card-icon i {
+    font-size: 1rem;
 }
 
 .sges-card-title {
@@ -234,6 +260,11 @@ small, .text-small {
     font-size: var(--sges-font-size-sm);
     display:   block;
     margin-top: 2px;
+    color:     rgba(255, 255, 255, 0.82);
+}
+
+.sges-card-body {
+    padding: 1.25rem;
 }
 
 .sges-card-footer {
@@ -266,19 +297,20 @@ small, .text-small {
 .sges-select {
     border:        1px solid var(--sges-gris-borde);
     border-radius: var(--sges-radio-borde);
-    padding:       0.45rem 0.75rem;
+    padding:       0.72rem 0.9rem;
     font-size:     var(--sges-font-size-base);
     color:         var(--sges-negro-suave);
     background-color: var(--sges-blanco);
-    transition:    border-color 0.18s ease, box-shadow 0.18s ease;
+    transition:    var(--sges-transicion);
     width:         100%;
+    box-shadow:    none;
 }
 
 .sges-input:focus,
 .sges-textarea:focus,
 .sges-select:focus {
-    border-color: var(--sges-secundario);
-    box-shadow:   0 0 0 0.2rem rgba(74, 111, 165, 0.2);
+    border-color: var(--sges-primario);
+    box-shadow:   0 0 0 0.2rem rgba(26, 58, 107, 0.14);
     outline:      none;
 }
 
@@ -301,6 +333,10 @@ small, .text-small {
     font-size: var(--sges-font-size-sm);
     color:     var(--sges-gris-texto);
     margin-top: 0.25rem;
+}
+
+.sges-field {
+    margin-bottom: 1rem;
 }
 
 /* Validación */
@@ -326,13 +362,14 @@ small, .text-small {
 .sges-btn-eliminar {
     font-weight:   600;
     font-size:     var(--sges-font-size-sm);
-    padding:       0.45rem 1.1rem;
+    padding:       0.7rem 1.1rem;
     border-radius: var(--sges-radio-borde);
     transition:    var(--sges-transicion);
     letter-spacing: 0.02em;
     display:       inline-flex;
     align-items:   center;
     gap:           0.3rem;
+    min-height:    2.75rem;
 }
 
 /* Guardar — Primario institucional */
@@ -395,6 +432,10 @@ small, .text-small {
 .sges-tabla {
     font-size: var(--sges-font-size-sm);
     margin-bottom: 0;
+    background: var(--sges-blanco);
+    border-radius: var(--sges-radio-card);
+    overflow: hidden;
+    box-shadow: var(--sges-sombra-sm);
 }
 
 .sges-tabla-thead th {
@@ -409,12 +450,16 @@ small, .text-small {
     padding:          0.65rem 0.85rem;
 }
 
+.sges-col-seleccion {
+    width: 40px;
+}
+
 .sges-tabla tbody tr {
     transition: background-color 0.15s ease;
 }
 
 .sges-tabla tbody td {
-    padding:        0.55rem 0.85rem;
+    padding:        0.75rem 0.9rem;
     vertical-align: middle;
     border-color:   var(--sges-gris-borde);
     color:          var(--sges-negro-suave);
@@ -441,6 +486,25 @@ small, .text-small {
     font-size:   1rem;
     font-weight: 600;
     color:       var(--sges-primario);
+}
+
+.sges-tabla-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    padding-left: 0.2rem;
+}
+
+.sges-tabla-wrap {
+    border-radius: var(--sges-radio-card);
+    overflow: hidden;
+    box-shadow: var(--sges-sombra-sm);
+    background: var(--sges-blanco);
+}
+
+.sges-tabla-base {
+    margin-bottom: 0;
 }
 
 /* Contenedor responsive de tabla con estilo */
@@ -563,9 +627,24 @@ small, .text-small {
         justify-content: center;
     }
 
+    .sges-btn-guardar,
+    .sges-btn-cancelar,
+    .sges-btn-eliminar {
+        width: 100%;
+        justify-content: center;
+    }
+
     .sges-tabla-thead th {
         font-size: 0.75rem;
         padding:   0.5rem 0.6rem;
+    }
+
+    .sges-tabla-encabezado {
+        margin-bottom: 0.5rem;
+    }
+
+    .sges-card-header-content {
+        gap: 0.75rem !important;
     }
 
     .sges-tabla tbody td {

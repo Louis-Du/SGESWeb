@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Web;
 
 namespace SGES.Web.Models
 {
@@ -140,13 +137,14 @@ namespace SGES.Web.Models
                 try
                 {
                     // 1. Crear el grupo
-                    string sqlGrupo = @"INSERT INTO Grupos (nombreGrupo, descripcion)
-                                VALUES (@nombre, @desc);
+                    string sqlGrupo = @"INSERT INTO Grupos (nombreGrupo, descripcion, idEvento)
+                                VALUES (@nombre, @desc, @idEvento);
                                 SELECT SCOPE_IDENTITY();";
 
                     SqlCommand cmdGrupo = new SqlCommand(sqlGrupo, con, tx);
                     cmdGrupo.Parameters.AddWithValue("@nombre", "Grupo " + DateTime.Now.ToString("yyyyMMddHHmm"));
                     cmdGrupo.Parameters.AddWithValue("@desc", "Grupo inscrito en evento " + idEvento);
+                    cmdGrupo.Parameters.AddWithValue("@idEvento", idEvento);
                     int idGrupo = Convert.ToInt32(cmdGrupo.ExecuteScalar());
 
                     // 2. Inscribir a cada aprendiz con ese grupo
@@ -170,6 +168,18 @@ namespace SGES.Web.Models
                     tx.Rollback();
                     throw;
                 }
+            }
+        }
+
+        public void EliminarGruposDeEvento(int idEvento)
+        {
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                SqlCommand cmd = new SqlCommand(
+                    "DELETE FROM Grupos WHERE idEvento = @id", con);
+                cmd.Parameters.AddWithValue("@id", idEvento);
+                con.Open();
+                cmd.ExecuteNonQuery();
             }
         }
     }

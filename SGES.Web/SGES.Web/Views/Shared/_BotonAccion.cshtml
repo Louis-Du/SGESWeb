@@ -54,6 +54,8 @@
             })
 *@
 
+@* ... comentarios ... *@
+
 @{
     var texto = ViewData["texto"]?.ToString() ?? "Acción";
     var icono = ViewData["icono"]?.ToString() ?? "";
@@ -69,15 +71,33 @@
 
     if (requireSelection && !string.IsNullOrEmpty(confirm))
     {
-        onclickValue = "var s=document.querySelector('input[name=filaSeleccionada]:checked'); if(!s){alert('Debe seleccionar un registro.');return false;} document.getElementById('idEvento').value=s.value; return confirm('" + confirm + "');";
+        onclickValue = @"
+    var s = document.querySelector('input[name=filaSeleccionada]:checked');
+    if(!s) { sgesUI.alert('Debe seleccionar un registro.'); return false; }
+    document.getElementById('idEvento').value = s.value;
+    var form = this.closest('form') || document.getElementById('frmEliminarEvento');
+    if (!form) { sgesUI.alert('No se encontró el formulario.'); return false; }
+    sgesUI.confirm('" + confirm + @"', function() { form.submit(); });
+    return false;
+";
     }
     else if (requireSelection)
     {
-        onclickValue = "var s=document.querySelector('input[name=filaSeleccionada]:checked'); if(!s){alert('Debe seleccionar un registro.');return false;} document.getElementById('idEvento').value=s.value; return true;";
+        onclickValue = @"
+    var s = document.querySelector('input[name=filaSeleccionada]:checked');
+    if(!s) { sgesUI.alert('Debe seleccionar un registro.'); return false; }
+    document.getElementById('idEvento').value = s.value;
+    return true;
+";
     }
     else if (!string.IsNullOrEmpty(confirm))
     {
-        onclickValue = "return confirm('" + confirm + "');";
+        onclickValue = @"
+    var form = this.closest('form') || document.getElementById('frmEliminarEvento');
+    if (!form) { sgesUI.alert('No se encontró el formulario.'); return false; }
+    sgesUI.confirm('" + confirm + @"', function() { form.submit(); });
+    return false;
+";
     }
     else
     {
