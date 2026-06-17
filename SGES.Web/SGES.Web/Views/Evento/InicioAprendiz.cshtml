@@ -12,13 +12,13 @@
     { "subtitulo", "Elija una acción" },
     { "cuerpo", new Func<object, HelperResult>(@<text>
     @Html.Partial("_TablaSeleccion", null, new ViewDataDictionary(ViewData)
-            {
+                {
             { "titulo",        "Listado de Eventos" },
             { "seleccionable", true },
             { "idFila",        Model.Select(e => (object)e.IdEvento) },
             { "columnas",      new[] { "Nombre", "Tipo", "Modalidad", "Tipo de inscripcion", "Inicio", "Fin" } },
             { "filas",         Model.Select(e => new object[]
-                    {
+                        {
                     e.NombreEvento,
                     e.TipoEvento,
                     e.ModalidadEvento,
@@ -31,7 +31,7 @@
 
     <div class="mt-3">
         @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
-                    {
+                            {
                 { "texto", "Ver / Inscribirse" },
                 { "icono", "bi-box-arrow-in-right" },
                 { "id",    "btnVerInscribirse" }
@@ -56,24 +56,66 @@
     { "controlador", "Evento"      },
     { "hayFiltro",   hayFiltro     },
     { "campos", new System.Web.Mvc.MvcHtmlString(
-        Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
-            { "id", "Nombre" }, { "label", "Nombre" }, { "type", "text" },
-            { "placeholder", "Buscar por nombre..." }, { "value", filtro?.Nombre }
-        }).ToString() +
-        Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
-            { "id", "Fecha" }, { "label", "Fecha" }, { "type", "date" },
-            { "value", filtro?.Fecha?.ToString("yyyy-MM-dd") }
-        }).ToString() +
-        Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
-            { "id", "Modalidad" }, { "label", "Modalidad" },
-            { "items", ViewBag.Modalidades }, { "defaultOption", "Todas" },
-            { "selectedValue", filtro?.Modalidad }
-        }).ToString() +
-        Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
-            { "id", "TipoInscrip" }, { "label", "Tipo de Inscripción" },
-            { "items", ViewBag.TiposInscripcion }, { "defaultOption", "Todos" },
-            { "selectedValue", filtro?.TipoInscrip }
-        }).ToString()
+        @using (Html.BeginForm("RestablecerPassword", "Auth", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+{
+        { "id",          "Id" },
+        { "label",       "ID de Usuario" },
+        { "type",        "text" },
+        { "inputmode",   "numeric" },
+        { "pattern",     "[0-9]*" },
+        { "value",       Model != null ? Model.Id.ToString() : "" },
+        { "placeholder", "Ingrese su ID" },
+        { "required",    true }
+    })
+    @Html.ValidationMessage("Id", "", new { @class = "text-danger small" })
+
+@* Nueva contraseña *@
+@Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id",          "NuevaPassword" },
+        { "name",        "nuevaPassword" },
+        { "label",       "Nueva contraseña" },
+        { "type",        "password" },
+        { "placeholder", "Ingrese una nueva contraseña" },
+        { "required",    true }
+    })
+    @Html.ValidationMessage("NuevaPassword", "", new { @class = "text-danger small" })
+
+    @Html.ValidationMessage("NuevaPassword", "", new { @class = "text-danger small" })
+
+@* Confirmar contraseña *@
+@Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+    {
+        { "id",          "ConfirmarPassword" },
+        { "name",        "confirmarPassword" },
+        { "label",       "Confirmar contraseña" },
+        { "type",        "password" },
+        { "placeholder", "Repita la contraseña" },
+        { "required",    true }
+    })
+
+    @Html.ValidationMessage("ConfirmarPassword", "", new { @class = "text-danger small" })
+
+
+    <div class="mt-3">
+        @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Cambiar contraseña" },
+            { "icono", "bi-key-fill" }
+        })
+
+        @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Volver al login" },
+            { "url",   Url.Action("Login", "Auth") }
+        })
+    </div>
+}
+
     )}
 })
 
