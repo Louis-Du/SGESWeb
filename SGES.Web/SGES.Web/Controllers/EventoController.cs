@@ -391,6 +391,7 @@ namespace SGES.Web.Controllers
                     return RedirectToAction("InicioAdmin");
                 }
 
+                _inscripcionDao.EliminarGruposDeEvento(idEvento);
                 _dao.EliminarEventos(idEvento);
 
                 TempData["Success"] = "Evento eliminado correctamente.";
@@ -415,7 +416,7 @@ namespace SGES.Web.Controllers
                     return RedirectToAction("Login", "Auth");
 
                 _inscripcionDao.EliminarInscritos(idEvento);
-
+                _inscripcionDao.EliminarGruposDeEvento(idEvento);
                 _dao.EliminarEventos(idEvento);
 
                 TempData["Success"] =

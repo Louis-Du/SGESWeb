@@ -1,4 +1,4 @@
-@*
+﻿@*
     _Card.cshtml — Componente reutilizable de tarjeta (Bootstrap Card)
 
     Envuelve contenido en una card de Bootstrap con encabezado, cuerpo y pie opcionales.
@@ -93,10 +93,6 @@
         @if (!string.IsNullOrEmpty(cuerpoHtml))
         {
             @Html.Raw(cuerpoHtml)
-        }
-        else
-        {
-            @RenderBody()
         }
     </div>
 

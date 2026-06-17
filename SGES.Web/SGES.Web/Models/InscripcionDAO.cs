@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Web;
 
 namespace SGES.Web.Models
 {
@@ -171,6 +168,18 @@ namespace SGES.Web.Models
                     tx.Rollback();
                     throw;
                 }
+            }
+        }
+
+        public void EliminarGruposDeEvento(int idEvento)
+        {
+            using (SqlConnection con = cn.ObtenerConexion())
+            {
+                SqlCommand cmd = new SqlCommand(
+                    "DELETE FROM Grupos WHERE idEvento = @id", con);
+                cmd.Parameters.AddWithValue("@id", idEvento);
+                con.Open();
+                cmd.ExecuteNonQuery();
             }
         }
     }

@@ -37,42 +37,42 @@
     { "id",    "btnVerInscribirse" }
 })
 
-@{ var filtro = ViewBag.Filtro as SGES.Web.Models.EventoFiltroModel; }
-
-@using (Html.BeginForm("InicioAprendiz", "Evento", FormMethod.Get))
-{
-    @Html.TextBox("Nombre", filtro != null ? filtro.Nombre : "",
-        new { @class = "form-control", placeholder = "Buscar por nombre..." })
-
-    <div class="mb-3">
-        <input type="date" name="Fecha"
-               value="@(filtro != null && filtro.Fecha.HasValue ? filtro.Fecha.Value.ToString("yyyy-MM-dd") : "")"
-               class="form-control" />
-    </div>
-
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "Modalidad" },
-        { "label",         "Modalidad" },
-        { "items",         ViewBag.Modalidades },
-        { "selectedValue", filtro != null ? filtro.Modalidad : "" },
-        { "defaultOption", "Todas" },
-        { "required",      false }
-    })
-
-    @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-    {
-        { "id",            "TipoInscrip" },
-        { "label",         "Tipo de Inscripción" },
-        { "items",         ViewBag.TiposInscripcion },
-        { "selectedValue", filtro != null ? filtro.TipoInscrip : "" },
-        { "defaultOption", "Todos" },
-        { "required",      false }
-    })
-
-    <button type="submit" class="btn btn-primary">Buscar</button>
-    <a href="@Url.Action("InicioAprendiz")" class="btn btn-secondary">Limpiar</a>
+@{
+    var filtro = ViewBag.Filtro as SGES.Web.Models.EventoFiltroModel;
+    var hayFiltro = filtro != null && (
+        !string.IsNullOrEmpty(filtro.Nombre) ||
+        filtro.Fecha.HasValue ||
+        !string.IsNullOrEmpty(filtro.Modalidad) ||
+        !string.IsNullOrEmpty(filtro.TipoInscrip)
+    );
 }
+
+@Html.Partial("_PanelFiltros", null, new ViewDataDictionary(ViewData)
+{
+    { "accion",      "InicioAdmin" },
+    { "controlador", "Evento"      },
+    { "hayFiltro",   hayFiltro     },
+    { "campos", new System.Web.Mvc.MvcHtmlString(
+        Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
+            { "id", "Nombre" }, { "label", "Nombre" }, { "type", "text" },
+            { "placeholder", "Buscar por nombre..." }, { "value", filtro?.Nombre }
+        }).ToString() +
+        Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
+            { "id", "Fecha" }, { "label", "Fecha" }, { "type", "date" },
+            { "value", filtro?.Fecha?.ToString("yyyy-MM-dd") }
+        }).ToString() +
+        Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
+            { "id", "Modalidad" }, { "label", "Modalidad" },
+            { "items", ViewBag.Modalidades }, { "defaultOption", "Todas" },
+            { "selectedValue", filtro?.Modalidad }
+        }).ToString() +
+        Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
+            { "id", "TipoInscrip" }, { "label", "Tipo de Inscripción" },
+            { "items", ViewBag.TiposInscripcion }, { "defaultOption", "Todos" },
+            { "selectedValue", filtro?.TipoInscrip }
+        }).ToString()
+    )}
+})
 
 @section Scripts {
     <script>
