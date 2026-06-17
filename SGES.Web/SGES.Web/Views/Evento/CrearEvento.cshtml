@@ -11,12 +11,12 @@
     { "subtitulo", "Complete la información del nuevo evento" },
     { "icono",     "bi-calendar-event" },
     { "cuerpo", new Func<object, HelperResult>(@<text>
-    <form action="@Url.Action("CrearEvento", "Evento")" method="post">
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+        <form action="@Url.Action("CrearEvento", "Evento")" method="post">
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
-        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-                    {
+            @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+            {
                 { "id",          "NombreEvento" },
                 { "label",       "Nombre del Evento" },
                 { "value",       Model != null ? Model.NombreEvento : "" },
@@ -25,10 +25,10 @@
                 { "maxLength",   100 },
                 { "contador",    true }
             })
-        @Html.ValidationMessage("NombreEvento", "", new { @class = "text-danger small" })
+            @Html.ValidationMessage("NombreEvento", "", new { @class = "text-danger small" })
 
-        @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-                    {
+            @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+            {
                 { "id",            "TipoEvento" },
                 { "label",         "Tipo de Evento" },
                 { "items",         ViewBag.TiposEvento },
@@ -36,10 +36,10 @@
                 { "defaultOption", "-- Seleccione --" },
                 { "required",      true }
             })
-        @Html.ValidationMessage("TipoEvento", "", new { @class = "text-danger small" })
+            @Html.ValidationMessage("TipoEvento", "", new { @class = "text-danger small" })
 
-        @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-                    {
+            @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+            {
                 { "id",            "ModalidadEvento" },
                 { "label",         "Modalidad" },
                 { "items",         ViewBag.Modalidades },
@@ -47,10 +47,10 @@
                 { "defaultOption", "-- Seleccione --" },
                 { "required",      true }
             })
-        @Html.ValidationMessage("ModalidadEvento", "", new { @class = "text-danger small" })
+            @Html.ValidationMessage("ModalidadEvento", "", new { @class = "text-danger small" })
 
-        @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
-                    {
+            @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData)
+            {
                 { "id",            "TipoInscrip" },
                 { "label",         "Tipo de Inscripción" },
                 { "items",         ViewBag.TiposInscripcion },
@@ -58,21 +58,23 @@
                 { "defaultOption", "-- Seleccione --" },
                 { "required",      true }
             })
-        @Html.ValidationMessage("TipoInscrip", "", new { @class = "text-danger small" })
+            @Html.ValidationMessage("TipoInscrip", "", new { @class = "text-danger small" })
 
-        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-                    {
+            @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+            {
                 { "id",          "CupoMaximo" },
                 { "label",       "Cupo Máximo por Grupo" },
                 { "type",        "number" },
                 { "value",       Model != null ? Model.CupoMaximo.ToString() : "2" },
-                { "placeholder", "Ej: 5" },
-                { "required",    true }
+                { "placeholder", "Ej: 2" },
+                { "required",    true },
+                { "min",         2 },
+                { "max",         5 }
             })
-        @Html.ValidationMessage("CupoMaximo", "", new { @class = "text-danger small" })
+            @Html.ValidationMessage("CupoMaximo", "", new { @class = "text-danger small" })
 
-        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-                    {
+            @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+            {
                 { "id",      "FechaHoraInicio" },
                 { "label",   "Fecha y Hora de Inicio" },
                 { "type",    "datetime-local" },
@@ -80,10 +82,10 @@
                                  ? Model.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm") : "" },
                 { "required", true }
             })
-        @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
+            @Html.ValidationMessage("FechaHoraInicio", "", new { @class = "text-danger small" })
 
-        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-                    {
+            @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+            {
                 { "id",      "FechaHoraFin" },
                 { "label",   "Fecha y Hora de Fin" },
                 { "type",    "datetime-local" },
@@ -91,25 +93,24 @@
                                  ? Model.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm") : "" },
                 { "required", true }
             })
-        @Html.ValidationMessage("FechaHoraFin", "", new { @class = "text-danger small" })
+            @Html.ValidationMessage("FechaHoraFin", "", new { @class = "text-danger small" })
 
-        <div class="mt-3 d-flex gap-2">
-            @Html.Partial("_BotonGuardar")
-            @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
-                            {
+            <div class="mt-3 d-flex gap-2">
+                @Html.Partial("_BotonGuardar")
+                @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
+                {
                     { "texto", "Volver" },
                     { "url",   Url.Action("InicioAdmin", "Evento") },
                     { "confirm", "¿Está seguro que desea volver? Los cambios no se guardarán." }
                 })
-        </div>
-    </form>
+            </div>
+        </form>
     </text>)}
 })
 
 @section scripts {
     <script>
         (function () {
-
             var form = document.querySelector("form");
             var nombre = document.getElementById("NombreEvento");
             var tipo = document.getElementById("TipoEvento");
@@ -178,11 +179,13 @@
                 return true;
             }
 
+            // ── VALIDACIÓN DEL CUPO (entre 2 y 5) ──
             function validarCupo() {
                 if (!campoCupo || !tipoInscrip) return true;
                 if (tipoInscrip.value === "Grupal") {
-                    if (!campoCupo.value || parseInt(campoCupo.value) <= 1) {
-                        mostrarError(campoCupo, getSpan("CupoMaximo"), "Debe indicar un cupo mayor a 1.");
+                    var valor = parseInt(campoCupo.value);
+                    if (isNaN(valor) || valor < 2 || valor > 5) {
+                        mostrarError(campoCupo, getSpan("CupoMaximo"), "El cupo debe ser un número entre 2 y 5.");
                         return false;
                     }
                 }
@@ -196,9 +199,33 @@
                     divCupo.style.display = "";
                 } else {
                     divCupo.style.display = "none";
-                    if (campoCupo) campoCupo.value = "0";
+                    if (campoCupo) campoCupo.value = "2";
                 }
             }
+
+            // ── EVENTO INPUT PARA CORREGIR EL CUPO EN TIEMPO REAL ──
+            document.addEventListener("DOMContentLoaded", function () {
+                var cupoInput = document.getElementById("CupoMaximo");
+                if (cupoInput) {
+                    cupoInput.addEventListener("input", function () {
+                        var valor = parseInt(this.value);
+                        if (!isNaN(valor)) {
+                            if (valor > 5) {
+                                this.value = 5;
+                                mostrarError(this, getSpan("CupoMaximo"), "El cupo máximo es 5.");
+                            } else if (valor < 2) {
+                                this.value = 2;
+                                mostrarError(this, getSpan("CupoMaximo"), "El cupo mínimo es 2.");
+                            } else {
+                                limpiar(this, getSpan("CupoMaximo"));
+                            }
+                        } else {
+                            // Si el usuario borra todo, no mostramos error hasta que envíe
+                            limpiar(this, getSpan("CupoMaximo"));
+                        }
+                    });
+                }
+            });
 
             function validarInicio() {
                 if (!inicio) return true;

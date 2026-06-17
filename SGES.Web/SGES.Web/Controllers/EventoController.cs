@@ -89,6 +89,11 @@ namespace SGES.Web.Controllers
                 DateTime.Now.Hour, DateTime.Now.Minute, 0
             );
 
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo > 5)
+            {
+                ModelState.AddModelError("CupoMaximo", "El cupo máximo no puede ser mayor a 5.");
+            }
+
             if (evento.FechaHoraInicio < ahora)
             {
                 ModelState.AddModelError(
@@ -515,6 +520,11 @@ namespace SGES.Web.Controllers
                 DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
                 DateTime.Now.Hour, DateTime.Now.Minute, 0
             );
+
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo > 5)
+            {
+                ModelState.AddModelError("CupoMaximo", "El cupo máximo no puede ser mayor a 5.");
+            }
 
             if (evento.FechaHoraInicio < ahora)
             {
