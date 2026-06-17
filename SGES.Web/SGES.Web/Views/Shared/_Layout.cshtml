@@ -610,29 +610,6 @@
         var _esExito = TempData["Success"] != null;
         var _mensaje = _esExito ? TempData["Success"]?.ToString() : TempData["Error"]?.ToString();
     }
-    @if (_hasNotif)
-    {
-        var esExito = _esExito;
-        var mensaje = _mensaje;
-        var bgClass = esExito ? "text-bg-success" : "text-bg-danger";
-        var icono = esExito ? "bi-check-circle-fill" : "bi-x-circle-fill";
-
-        <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index:1100">
-            <div id="sgesNotificacion"
-                 class="toast align-items-center @bgClass border-0 shadow"
-                 role="alert" aria-live="assertive" aria-atomic="true"
-                 data-bs-autohide="true" data-bs-delay="4000">
-                <div class="d-flex">
-                    <div class="toast-body d-flex align-items-center gap-2">
-                        <i class="bi @icono fs-5"></i>
-                        <span>@mensaje</span>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                            data-bs-dismiss="toast" aria-label="Cerrar"></button>
-                </div>
-            </div>
-        </div>
-    }
 
     @* ── Modal: Confirmación con inscritos ── *@
     @{
@@ -701,27 +678,27 @@
             (function () {
                 var GEMINI_API_KEY = "AIzaSyDKqd99Z-kkqU1ioItC3rONjSRt4IBt16I";
                 var SYSTEM_CONTEXT = "Eres un asistente virtual del Sistema de Gestión de Eventos del SENA llamado SGES. " +
-    "Solo debes responder preguntas relacionadas con este sistema. " +
-    "Si te preguntan algo fuera del contexto del SGES, responde amablemente que solo puedes ayudar con temas del sistema. " +
-    "Responde siempre en español y de forma breve y clara. " +
+                    "Solo debes responder preguntas relacionadas con este sistema. " +
+                    "Si te preguntan algo fuera del contexto del SGES, responde amablemente que solo puedes ayudar con temas del sistema. " +
+                    "Responde siempre en español y de forma breve y clara. " +
 
-    "INFORMACIÓN EXACTA DEL SISTEMA: " +
+                    "INFORMACIÓN EXACTA DEL SISTEMA: " +
 
-    "CREAR EVENTO (solo administradores): Los campos exactos son: " +
-    "1. Nombre del evento (texto, máximo 100 caracteres). " +
-    "2. Tipo de evento (opciones: Educativo, Deportivo, Social, Cultural). " +
-    "3. Fecha y hora de inicio (no puede ser anterior a la fecha actual). " +
-    "4. La modalidad (Virtual o Presencial). " +
-    "5. Fecha y hora de fin (debe ser posterior al inicio y con mínimo 30 minutos de diferencia). " +
-    "6. El tipo de inscripcion (grupal o individal). " +
-    "El sistema NO tiene campo de descripción ni de ubicación. " +
+                    "CREAR EVENTO (solo administradores): Los campos exactos son: " +
+                    "1. Nombre del evento (texto, máximo 100 caracteres). " +
+                    "2. Tipo de evento (opciones: Educativo, Deportivo, Social, Cultural). " +
+                    "3. Fecha y hora de inicio (no puede ser anterior a la fecha actual). " +
+                    "4. La modalidad (Virtual o Presencial). " +
+                    "5. Fecha y hora de fin (debe ser posterior al inicio y con mínimo 30 minutos de diferencia). " +
+                    "6. El tipo de inscripcion (grupal o individal). " +
+                    "El sistema NO tiene campo de descripción ni de ubicación. " +
 
-    "INSCRIBIRSE A UN EVENTO (solo aprendices): El aprendiz selecciona un evento del listado y elige una modalidad: Presencial o Virtual. " +
-    "Validaciones: no puede inscribirse en el mismo evento dos veces, y no puede inscribirse si el horario se cruza con otro evento en el que ya está inscrito. " +
+                    "INSCRIBIRSE A UN EVENTO (solo aprendices): El aprendiz selecciona un evento del listado y elige una modalidad: Presencial o Virtual. " +
+                    "Validaciones: no puede inscribirse en el mismo evento dos veces, y no puede inscribirse si el horario se cruza con otro evento en el que ya está inscrito. " +
 
-    "ROLES DEL SISTEMA: Administrador (puede crear, modificar y eliminar eventos, ver aprendices registrados y generar reportes) y Aprendiz (puede ver eventos disponibles, inscribirse y consultar el chatbot). " +
+                    "ROLES DEL SISTEMA: Administrador (puede crear, modificar y eliminar eventos, ver aprendices registrados y generar reportes) y Aprendiz (puede ver eventos disponibles, inscribirse y consultar el chatbot). " +
 
-    "INICIO DE SESIÓN: Se ingresa con ID numérico y contraseña. La contraseña es sensible a mayúsculas y minúsculas.";
+                    "INICIO DE SESIÓN: Se ingresa con ID numérico y contraseña. La contraseña es sensible a mayúsculas y minúsculas.";
 
                 var btn = document.getElementById("sges-chat-btn");
                 var box = document.getElementById("sges-chat-box");
@@ -841,123 +818,90 @@
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 
+    @* ── sgesUI global — modales dinámicos Bootstrap ── *@
+    <script>
+        window.sgesUI = {
+            toast: function (message, isSuccess) {
+                var container = document.getElementById("sges-toast-container");
+                if (!container) {
+                    container = document.createElement("div");
+                    container.id = "sges-toast-container";
+                    container.className = "toast-container position-fixed top-0 start-50 translate-middle-x p-3";
+                    container.style.zIndex = "1100";
+                    document.body.appendChild(container);
+                }
+                var toast = document.createElement("div");
+                toast.className = "toast align-items-center border-0 shadow " + (isSuccess ? "text-bg-success" : "text-bg-danger");
+                toast.setAttribute("role", "alert");
+                toast.setAttribute("data-bs-autohide", "true");
+                toast.setAttribute("data-bs-delay", "4000");
+                toast.innerHTML =
+                    '<div class="d-flex">' +
+                    '<div class="toast-body d-flex align-items-center gap-2">' +
+                    '<i class="bi ' + (isSuccess ? "bi-check-circle-fill" : "bi-x-circle-fill") + ' fs-5"></i>' +
+                    '<span></span></div>' +
+                    '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+                    '</div>';
+                toast.querySelector("span").textContent = message || "";
+                container.appendChild(toast);
+                bootstrap.Toast.getOrCreateInstance(toast).show();
+                toast.addEventListener("hidden.bs.toast", function () { toast.remove(); });
+            },
+            alert: function (message) {
+                window.sgesUI.toast(message, false);
+            },
+            confirm: function (message, onConfirm) {
+                var id = "sgesConfirmModal";
+                var modal = document.getElementById(id);
+                if (!modal) {
+                    modal = document.createElement("div");
+                    modal.id = id;
+                    modal.className = "modal fade";
+                    modal.setAttribute("data-bs-backdrop", "static");
+                    modal.innerHTML =
+                        '<div class="modal-dialog modal-dialog-centered">' +
+                        '<div class="modal-content">' +
+                        '<div class="modal-header" style="background:var(--sges-warning-lt)">' +
+                        '<h5 class="modal-title" style="color:var(--sges-warning);font-size:.95rem;font-weight:600">' +
+                        '<i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar acción</h5>' +
+                        '</div>' +
+                        '<div class="modal-body sges-confirm-body" style="font-size:.9rem"></div>' +
+                        '<div class="modal-footer">' +
+                        '<button class="btn sges-btn-eliminar" data-sges-confirm><i class="bi bi-check-lg me-1"></i>Aceptar</button>' +
+                        '<button class="btn sges-btn-cancelar" data-sges-cancel>Cancelar</button>' +
+                        '</div></div></div>';
+                    document.body.appendChild(modal);
+                }
+                modal.querySelector(".sges-confirm-body").textContent = message || "¿Desea continuar?";
+                var instance = bootstrap.Modal.getOrCreateInstance(modal);
+                var okBtn = modal.querySelector("[data-sges-confirm]");
+                var cancelBtn = modal.querySelector("[data-sges-cancel]");
+                var okNew = okBtn.cloneNode(true);
+                var cancelNew = cancelBtn.cloneNode(true);
+                okBtn.replaceWith(okNew);
+                cancelBtn.replaceWith(cancelNew);
+                okNew.addEventListener("click", function () { instance.hide(); if (onConfirm) onConfirm(); });
+                cancelNew.addEventListener("click", function () { instance.hide(); });
+                instance.show();
+            }
+        };
+    </script>
+
     @if (_hasNotif)
     {
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var el = document.getElementById("sgesNotificacion");
-                if (el) { new bootstrap.Toast(el).show(); }
-            });
+        document.addEventListener("DOMContentLoaded", function () {
+            window.sgesUI.toast(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(_mensaje)), @(_esExito ? "true" : "false"));
+        });
         </script>
     }
     @if (_hasConfirm)
     {
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                var modal = new bootstrap.Modal(document.getElementById("modalConfirmarEliminar"));
-                modal.show();
+                new bootstrap.Modal(document.getElementById("modalConfirmarEliminar")).show();
             });
         </script>
     }
-
-    <script>
-        window.sgesUI = window.sgesUI || {};
-
-        window.sgesUI.toast = function (message, isSuccess) {
-            var container = document.getElementById("sges-toast-container");
-            if (!container) {
-                container = document.createElement("div");
-                container.id = "sges-toast-container";
-                container.className = "toast-container position-fixed top-0 start-50 translate-middle-x p-3";
-                container.style.zIndex = "1100";
-                document.body.appendChild(container);
-            }
-
-            var toast = document.createElement("div");
-            toast.className = "toast align-items-center " + (isSuccess ? "text-bg-success" : "text-bg-danger") + " border-0 shadow";
-            toast.setAttribute("role", "alert");
-            toast.setAttribute("aria-live", "assertive");
-            toast.setAttribute("aria-atomic", "true");
-            toast.setAttribute("data-bs-autohide", "true");
-            toast.setAttribute("data-bs-delay", "4000");
-
-            toast.innerHTML =
-                '<div class="d-flex">' +
-                '<div class="toast-body d-flex align-items-center gap-2">' +
-                '<i class="bi ' + (isSuccess ? 'bi-check-circle-fill' : 'bi-x-circle-fill') + ' fs-5"></i>' +
-                '<span></span>' +
-                '</div>' +
-                '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>' +
-                '</div>';
-
-            toast.querySelector("span").textContent = message || "";
-            document.getElementById("sges-toast-container").appendChild(toast);
-
-            var instance = bootstrap.Toast.getOrCreateInstance(toast);
-            instance.show();
-
-            toast.addEventListener("hidden.bs.toast", function () {
-                toast.remove();
-            });
-        };
-
-        window.sgesUI.alert = function (message) {
-            window.sgesUI.toast(message, false);
-        };
-
-        window.sgesUI.confirm = function (message, onConfirm) {
-            var modal = document.getElementById("sgesConfirmModal");
-
-            if (!modal) {
-                modal = document.createElement("div");
-                modal.id = "sgesConfirmModal";
-                modal.className = "modal fade";
-                modal.tabIndex = -1;
-                modal.setAttribute("aria-hidden", "true");
-                modal.innerHTML =
-                    '<div class="modal-dialog modal-dialog-centered">' +
-                    '<div class="modal-content">' +
-                    '<div class="modal-header bg-warning">' +
-                    '<h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar acción</h5>' +
-                    '</div>' +
-                    '<div class="modal-body sges-confirm-body"></div>' +
-                    '<div class="modal-footer">' +
-                    '<button type="button" class="btn sges-btn-cancelar" data-sges-cancel>Cancelar</button>' +
-                    '<button type="button" class="btn sges-btn-eliminar" data-sges-confirm>Aceptar</button>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>';
-                document.body.appendChild(modal);
-            }
-
-            modal.querySelector(".sges-confirm-body").textContent = message || "¿Desea continuar?";
-
-            var confirmButton = modal.querySelector("[data-sges-confirm]");
-            var cancelButton = modal.querySelector("[data-sges-cancel]");
-            var modalInstance = bootstrap.Modal.getOrCreateInstance(modal, { backdrop: "static" });
-
-            var cleanup = function () {
-                confirmButton.removeEventListener("click", acceptHandler);
-                cancelButton.removeEventListener("click", cancelHandler);
-            };
-
-            var acceptHandler = function () {
-                cleanup();
-                modalInstance.hide();
-                if (typeof onConfirm === "function") {
-                    onConfirm();
-                }
-            };
-
-            var cancelHandler = function () {
-                cleanup();
-                modalInstance.hide();
-            };
-
-            confirmButton.addEventListener("click", acceptHandler);
-            cancelButton.addEventListener("click", cancelHandler);
-            modalInstance.show();
-        };
-    </script>
 </body>
 </html>

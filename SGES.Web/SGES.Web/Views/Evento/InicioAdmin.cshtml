@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<SGES.Web.Models.EventoModel>
+@using System.Linq
+@using System.Collections.Generic
+@using SGES.Web.Models
 @{
     ViewBag.Title = "Inicio Administrador";
     var columnas = new[] { "Nombre", "Tipo", "Modalidad", "Tipo de inscripcion", "Inicio", "Fin" };
@@ -10,13 +13,17 @@
     var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
 }
 
+@* ── Card solo con encabezado ── *@
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
     { "titulo",    "Menú de inicio para el administrador" },
     { "icono",     "bi-house-door-fill" },
-    { "subtitulo", "Elija una acción" },
-    { "cuerpo", new Func<object, HelperResult>(@<text>
-    @using (Html.BeginForm("Eliminar", "Evento", FormMethod.Post))
+    { "subtitulo", "Elija una acción" }
+})
+
+@* ── Contenido de la card (cuerpo) ── *@
+<div class="card-body sges-card-body">
+    @using (Html.BeginForm("Eliminar", "Evento", FormMethod.Post, new { id = "frmEliminarEvento" }))
     {
         @Html.AntiForgeryToken()
         <input type="hidden" id="idEvento" name="idEvento" value="" />
@@ -65,25 +72,17 @@
                 { "url", Url.Action("ReporteEventos", "Evento") }
             })
         </div>
-        }
-    </text>)}
-})
+    }
+</div>
 
-@* El PanelFiltros va fuera de la card (puede ir debajo) *@
-@{
-    var filtro = ViewBag.Filtro as SGES.Web.Models.EventoFiltroModel;
-    var hayFiltro = filtro != null && (
-        !string.IsNullOrEmpty(filtro.Nombre) ||
-        filtro.Fecha.HasValue ||
-        !string.IsNullOrEmpty(filtro.Modalidad) ||
-        !string.IsNullOrEmpty(filtro.TipoInscrip)
-    );
-}
+@* ── Panel de filtros ── *@
+@{ var filtro = ViewBag.Filtro as SGES.Web.Models.EventoFiltroModel; }
+
 @Html.Partial("_PanelFiltros", null, new ViewDataDictionary(ViewData)
 {
     { "accion",      "InicioAdmin" },
     { "controlador", "Evento" },
-    { "hayFiltro",   hayFiltro },
+    { "hayFiltro",   filtro != null && (!string.IsNullOrEmpty(filtro.Nombre) || filtro.Fecha.HasValue || !string.IsNullOrEmpty(filtro.Modalidad) || !string.IsNullOrEmpty(filtro.TipoInscrip)) },
     { "campos", new System.Web.Mvc.MvcHtmlString(
         Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
             { "id", "Nombre" }, { "label", "Nombre" }, { "type", "text" },
@@ -109,7 +108,6 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Botón Ver Aprendices
             var btn = document.getElementById("btnVerAprendices");
             if (btn) {
                 btn.addEventListener("click", function (e) {
@@ -120,7 +118,6 @@
                 });
             }
 
-            // Botón Modificar Evento
             var btnMod = document.getElementById("btnModificarEvento");
             if (btnMod) {
                 btnMod.addEventListener("click", function (e) {
