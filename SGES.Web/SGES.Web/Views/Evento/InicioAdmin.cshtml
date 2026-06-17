@@ -13,18 +13,14 @@
     var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
 }
 
-@* ── Card solo con encabezado ── *@
 @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
     { "titulo",    "Menú de inicio para el administrador" },
     { "icono",     "bi-house-door-fill" },
-    { "subtitulo", "Elija una acción" }
-})
-
-@* ── Contenido de la card (cuerpo) ── *@
-<div class="card-body sges-card-body">
-    @using (Html.BeginForm("Eliminar", "Evento", FormMethod.Post, new { id = "frmEliminarEvento" }))
-    {
+    { "subtitulo", "Elija una acción" },
+    { "cuerpo", new Func<object, HelperResult>(@<text>
+    @* ── FORMULARIO MANUAL (con id) ── *@
+    <form action="@Url.Action("Eliminar", "Evento")" method="post" id="frmEliminarEvento">
         @Html.AntiForgeryToken()
         <input type="hidden" id="idEvento" name="idEvento" value="" />
 
@@ -72,10 +68,11 @@
                 { "url", Url.Action("ReporteEventos", "Evento") }
             })
         </div>
-    }
-</div>
+    </form>
+    </text>)}
+})
 
-@* ── Panel de filtros ── *@
+@* ── Panel de filtros (fuera de la card, como siempre) ── *@
 @{ var filtro = ViewBag.Filtro as SGES.Web.Models.EventoFiltroModel; }
 
 @Html.Partial("_PanelFiltros", null, new ViewDataDictionary(ViewData)
