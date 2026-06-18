@@ -35,7 +35,7 @@
         </div>
 
         <div class="col-md-6">
-            <h6>Mi grupo <span id="contadorGrupo">(1/@evento.CupoMaximo)</span></h6>
+            <h6>Mi grupo <span id="contadorGrupo">@($"(1/{evento.CupoMaximo})")</span></h6> 
             <ul class="list-group" id="listaGrupo">
                 <li class="list-group-item">Tú (inscrito automáticamente)</li>
             </ul>
@@ -60,17 +60,21 @@
 @section scripts {
     <script>
     var grupo = [];
-    var cupoMaximo = @evento.CupoMaximo;        // valor dinámico desde el evento
+    var cupoMaximo = @(evento.CupoMaximo);        // valor dinámico desde el evento
     var limiteCompaneros = cupoMaximo - 1;        // descontando al usuario actual
 
     function agregarAlGrupo(btn) {
+        var li = btn.closest("li");
+        var id = li.dataset.id;
+        // Evitar agregar el mismo aprendiz más de una vez desde el front-end
+        if (grupo.indexOf(id) !== -1) {
+            return;
+        }           
+
         if (grupo.length >= limiteCompaneros) {
             alert("El grupo ya alcanzó el máximo de " + cupoMaximo + " integrantes (incluyéndote a ti).");
             return;
         }
-
-        var li = btn.closest("li");
-        var id = li.dataset.id;
         var nombre = li.dataset.nombre;
 
         grupo.push(id);
@@ -90,7 +94,12 @@
         input.id = "input_" + id;
         document.getElementById("inputsOcultos").appendChild(input);
 
-        li.style.display = "none";
+        // Marcar el botón como agregado y deshabilitarlo para evitar duplicados
+        btn.disabled = true;
+        btn.textContent = 'Agregado';
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-success');
+
         actualizarContador();
     }
 
@@ -107,6 +116,16 @@
         if (input) input.remove();
 
         li.remove();
+        // Si existe el botón en la lista de disponibles, reestablecer su estado
+        if (disponible) {
+            var btnDisp = disponible.querySelector('button');
+            if (btnDisp) {
+                btnDisp.disabled = false;
+                btnDisp.textContent = 'Agregar';
+                btnDisp.classList.remove('btn-success');
+                btnDisp.classList.add('btn-outline-primary');
+            }
+        }
         actualizarContador();
     }
 

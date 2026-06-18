@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Data.SqlClient;
 
 namespace SGES.Web.Controllers
 {
@@ -750,9 +751,10 @@ namespace SGES.Web.Controllers
                 _inscripcionDao.InscribirGrupo(seleccionados, idEvento, DateTime.Today);
                 TempData["Success"] = "Grupo inscrito correctamente.";
             }
-            catch (SqlException)
+            catch (Exception ex)
             {
-                TempData["Error"] = "Ocurrió un error al inscribir el grupo. Verifica que no haya integrantes duplicados.";
+                // Capturamos cualquier excepción para informar al usuario y evitar inserciones inconsistentes
+                TempData["Error"] = "Ocurrió un error al inscribir el grupo: " + ex.Message;
                 return RedirectToAction("InscribirGrupo", new { id = idEvento });
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace SGES.Web.Models
 {
@@ -136,6 +137,8 @@ namespace SGES.Web.Models
 
                 try
                 {
+                    // Evitar insertar duplicados si la lista enviada tiene repetidos
+                    idAprendices = idAprendices.Distinct().ToList();
                     // 1. Crear el grupo
                     string sqlGrupo = @"INSERT INTO Grupos (nombreGrupo, descripcion, idEvento)
                                 VALUES (@nombre, @desc, @idEvento);
@@ -153,6 +156,10 @@ namespace SGES.Web.Models
 
                     foreach (int idApr in idAprendices)
                     {
+                        // Si el aprendiz ya está inscrito, saltarlo (protección adicional)
+                        if (YaInscrito(idApr, idEvento))
+                            continue;
+
                         SqlCommand cmdInsc = new SqlCommand(sqlInsc, con, tx);
                         cmdInsc.Parameters.AddWithValue("@fecha", fechaInscrip);
                         cmdInsc.Parameters.AddWithValue("@idApr", idApr);
