@@ -714,17 +714,19 @@ namespace SGES.Web.Controllers
                 return RedirectToAction("InicioAprendiz");
 
             if (seleccionados == null) seleccionados = new List<int>();
+
+            // NUEVO: eliminar duplicados antes de cualquier otra validación
+            seleccionados = seleccionados.Distinct().ToList();
+
             if (!seleccionados.Contains(UsuarioActual.Id))
                 seleccionados.Insert(0, UsuarioActual.Id);
 
-            // Límite dinámico: cupoMaximo es el tamaño máximo del grupo
             if (seleccionados.Count > evento.CupoMaximo)
             {
                 TempData["Error"] = $"El grupo no puede tener más de {evento.CupoMaximo} integrantes.";
                 return RedirectToAction("InscribirGrupo", new { id = idEvento });
             }
 
-            // NUEVO: validar que ningún compañero ya esté inscrito
             foreach (int idApr in seleccionados)
             {
                 if (_inscripcionDao.YaInscrito(idApr, idEvento))
@@ -743,8 +745,17 @@ namespace SGES.Web.Controllers
                 }
             }
 
-            _inscripcionDao.InscribirGrupo(seleccionados, idEvento, DateTime.Today);
-            TempData["Success"] = "Grupo inscrito correctamente.";
+            try
+            {
+                _inscripcionDao.InscribirGrupo(seleccionados, idEvento, DateTime.Today);
+                TempData["Success"] = "Grupo inscrito correctamente.";
+            }
+            catch (SqlException)
+            {
+                TempData["Error"] = "Ocurrió un error al inscribir el grupo. Verifica que no haya integrantes duplicados.";
+                return RedirectToAction("InscribirGrupo", new { id = idEvento });
+            }
+
             return RedirectToAction("InicioAprendiz");
         }
     }
