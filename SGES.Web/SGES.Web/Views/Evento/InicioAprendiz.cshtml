@@ -84,37 +84,63 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+
+            // ── 1. Botón "Ver / Inscribirse" ──
             var btn = document.getElementById("btnVerInscribirse");
-            if (!btn) return;
+            if (btn) {
+                btn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
+                    if (!sel || !sel.value) {
+                        sgesUI.alert("Debe seleccionar un evento antes de continuar.");
+                        return;
+                    }
+                    window.location.href = '@Url.Action("Details", "Evento")' + '?id=' + encodeURIComponent(sel.value);
+                });
+            }
 
-            btn.addEventListener("click", function (e) {
-                e.preventDefault();
-                var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
-                if (!sel || !sel.value) {
-                    sgesUI.alert("Debe seleccionar un evento antes de continuar.");
-                    return;
+            // ── 2. Filtro automático en el panel de filtros ──
+            var panelFiltros = document.getElementById("panelFiltros");
+            if (panelFiltros) {
+                var form = panelFiltros.querySelector("form");
+                if (form) {
+                    // Campo Nombre: filtro al dejar de escribir (500ms)
+                    var inputNombre = document.getElementById("Nombre");
+                    if (inputNombre) {
+                        var timeoutNombre;
+                        inputNombre.addEventListener("input", function () {
+                            clearTimeout(timeoutNombre);
+                            timeoutNombre = setTimeout(function () {
+                                form.submit();
+                            }, 500);
+                        });
+                    }
+
+                    // Campo Fecha: filtro al cambiar la fecha
+                    var inputFecha = document.querySelector("input[name='Fecha']");
+                    if (inputFecha) {
+                        inputFecha.addEventListener("change", function () {
+                            form.submit();
+                        });
+                    }
+
+                    // Combos: filtro al cambiar la selección
+                    var comboModalidad = document.getElementById("Modalidad");
+                    if (comboModalidad) {
+                        comboModalidad.addEventListener("change", function () {
+                            form.submit();
+                        });
+                    }
+
+                    var comboTipoInscrip = document.getElementById("TipoInscrip");
+                    if (comboTipoInscrip) {
+                        comboTipoInscrip.addEventListener("change", function () {
+                            form.submit();
+                        });
+                    }
                 }
-                window.location.href = '@Url.Action("Details", "Evento")' + '?id=' + encodeURIComponent(sel.value);
-            });
+            }
+
         });
-
-        (function () {
-            // TextBox de nombre — filtra al dejar de escribir (500ms de espera)
-            var inputNombre = document.getElementById("Nombre");
-            var timeoutNombre;
-            inputNombre.addEventListener("input", function () {
-                clearTimeout(timeoutNombre);
-                timeoutNombre = setTimeout(function () {
-                    inputNombre.closest("form").submit();
-                }, 500);
-            });
-
-            // Date — filtra al seleccionar fecha automáticamente
-            var inputFecha = document.querySelector("input[name='Fecha']");
-            inputFecha.addEventListener("change", function () {
-                inputFecha.closest("form").submit();
-            });
-        }());
-
     </script>
 }

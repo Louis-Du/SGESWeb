@@ -115,37 +115,78 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var btn = document.getElementById("btnVerAprendices");
-            if (btn) {
-                btn.addEventListener("click", function (e) {
+
+            // ── 1. Botón "Ver Aprendices" ──
+            var btnAprendices = document.getElementById("btnVerAprendices");
+            if (btnAprendices) {
+                btnAprendices.addEventListener("click", function (e) {
                     e.preventDefault();
                     var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
-                    if (!sel) { sgesUI.alert("Seleccione un evento."); return; }
+                    if (!sel) {
+                        sgesUI.alert("Seleccione un evento.");
+                        return;
+                    }
                     window.location.href = '@Url.Action("AprendicesRegistrados", "Evento")' + '?idEvento=' + encodeURIComponent(sel.value);
                 });
             }
 
-            var btnMod = document.getElementById("btnModificarEvento");
-            if (btnMod) {
-                btnMod.addEventListener("click", function (e) {
+            // ── 2. Botón "Modificar Evento" ──
+            var btnModificar = document.getElementById("btnModificarEvento");
+            if (btnModificar) {
+                btnModificar.addEventListener("click", function (e) {
                     e.preventDefault();
                     var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
-                    if (!sel) { sgesUI.alert("Seleccione un evento para modificar."); return; }
+                    if (!sel) {
+                        sgesUI.alert("Seleccione un evento para modificar.");
+                        return;
+                    }
                     window.location.href = '@Url.Action("ModificarEvento", "Evento")' + '?id=' + encodeURIComponent(sel.value);
                 });
             }
-        });
 
-        (function () {
-            var inputNombre = document.getElementById("Nombre");
-            if (!inputNombre) return;
-            var timeout;
-            inputNombre.addEventListener("input", function () {
-                clearTimeout(timeout);
-                timeout = setTimeout(function () {
-                    document.querySelector("#panelFiltros form").submit();
-                }, 500);
-            });
-        }());
+            // ── 3. Filtro automático en el panel de filtros ──
+            var panelFiltros = document.getElementById("panelFiltros");
+            if (panelFiltros) {
+                var form = panelFiltros.querySelector("form");
+                if (form) {
+                    // Campo Nombre: filtro al dejar de escribir (500ms)
+                    var inputNombre = document.getElementById("Nombre");
+                    if (inputNombre) {
+                        var timeoutNombre;
+                        inputNombre.addEventListener("input", function () {
+                            clearTimeout(timeoutNombre);
+                            timeoutNombre = setTimeout(function () {
+                                form.submit();
+                            }, 500);
+                        });
+                    }
+
+                    // Campo Fecha: filtro al cambiar la fecha
+                    var inputFecha = document.querySelector("input[name='Fecha']");
+                    if (inputFecha) {
+                        inputFecha.addEventListener("change", function () {
+                            form.submit();
+                        });
+                    }
+
+                    // Combo Modalidad: filtro al cambiar la selección
+                    var comboModalidad = document.getElementById("Modalidad");
+                    if (comboModalidad) {
+                        comboModalidad.addEventListener("change", function () {
+                            form.submit();
+                        });
+                    }
+
+                    // Combo Tipo de Inscripción: filtro al cambiar la selección
+                    var comboTipoInscrip = document.getElementById("TipoInscrip");
+                    if (comboTipoInscrip) {
+                        comboTipoInscrip.addEventListener("change", function () {
+                            form.submit();
+                        });
+                    }
+                }
+            }
+
+        });
     </script>
 }
