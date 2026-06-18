@@ -13,7 +13,6 @@
     { "cuerpo", new Func<object, HelperResult>(@<text>
         <form action="@Url.Action("CrearEvento", "Evento")" method="post">
             @Html.AntiForgeryToken()
-            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
             @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
             {
@@ -184,8 +183,8 @@
                 if (!campoCupo || !tipoInscrip) return true;
                 if (tipoInscrip.value === "Grupal") {
                     var valor = parseInt(campoCupo.value);
-                    if (isNaN(valor) || valor < 2 || valor > 5) {
-                        mostrarError(campoCupo, getSpan("CupoMaximo"), "El cupo debe ser un número entre 2 y 5.");
+                    if (isNaN(valor) || valor < 2 || valor > 20) {
+                        mostrarError(campoCupo, getSpan("CupoMaximo"), "El cupo debe ser un número entre 2 y 20.");
                         return false;
                     }
                 }
@@ -210,9 +209,9 @@
                     cupoInput.addEventListener("input", function () {
                         var valor = parseInt(this.value);
                         if (!isNaN(valor)) {
-                            if (valor > 5) {
-                                this.value = 5;
-                                mostrarError(this, getSpan("CupoMaximo"), "El cupo máximo es 5.");
+                            if (valor > 20) {
+                                this.value = 20;
+                                mostrarError(this, getSpan("CupoMaximo"), "El cupo máximo es 20.");
                             } else if (valor < 2) {
                                 this.value = 2;
                                 mostrarError(this, getSpan("CupoMaximo"), "El cupo mínimo es 2.");

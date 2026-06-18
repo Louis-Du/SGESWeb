@@ -90,9 +90,9 @@ namespace SGES.Web.Controllers
                 DateTime.Now.Hour, DateTime.Now.Minute, 0
             );
 
-            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo > 5)
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo > 20)
             {
-                ModelState.AddModelError("CupoMaximo", "El cupo máximo no puede ser mayor a 5.");
+                ModelState.AddModelError("CupoMaximo", "El cupo máximo no puede ser mayor a 20.");
             }
 
             if (evento.FechaHoraInicio < ahora)
@@ -125,14 +125,14 @@ namespace SGES.Web.Controllers
             }
 
             // Validación cupo máximo
-            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 0)
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 2)
             {
                 ModelState.AddModelError("CupoMaximo",
-                    "Para eventos grupales debe indicar un cupo máximo mayor a cero.");
+                    "Para eventos grupales debe indicar un cupo máximo mayor a dos.");
             }
             if (evento.TipoInscrip == "Individual")
             {
-                evento.CupoMaximo = 0; // forzar a 0 por si el JS falló
+                evento.CupoMaximo = 2; // forzar a 2 por si el JS falló
             }
 
             if (!ModelState.IsValid)
@@ -522,9 +522,9 @@ namespace SGES.Web.Controllers
                 DateTime.Now.Hour, DateTime.Now.Minute, 0
             );
 
-            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo > 5)
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo > 20)
             {
-                ModelState.AddModelError("CupoMaximo", "El cupo máximo no puede ser mayor a 5.");
+                ModelState.AddModelError("CupoMaximo", "El cupo máximo no puede ser mayor a 20.");
             }
 
             if (evento.FechaHoraInicio < ahora)
@@ -552,14 +552,14 @@ namespace SGES.Web.Controllers
             }
 
             // Validación cupo máximo
-            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 0)
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 2)
             {
                 ModelState.AddModelError("CupoMaximo",
-                    "Para eventos grupales debe indicar un cupo máximo mayor a cero.");
+                    "Para eventos grupales debe indicar un cupo máximo mayor a dos.");
             }
             if (evento.TipoInscrip == "Individual")
             {
-                evento.CupoMaximo = 0; // forzar a 0 por si el JS falló
+                evento.CupoMaximo = 2; // forzar a 0 por si el JS falló
             }
 
 
