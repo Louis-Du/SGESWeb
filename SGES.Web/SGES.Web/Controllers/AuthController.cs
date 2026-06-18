@@ -56,6 +56,24 @@ namespace SGES.Web.Controllers
             return RedirigirSegunRol(usuario);
         }
 
+        [OutputCache(NoStore = true, Duration = 0)]
+        public ActionResult Logout()
+        {
+            Session["Usuario"] = null;
+            Session.Clear();
+            Session.Abandon();
+
+            if (Request.Cookies["ASP.NET_SessionId"] != null)
+            {
+                var cookie = new System.Web.HttpCookie("ASP.NET_SessionId");
+                cookie.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(cookie);
+            }
+
+            // Forzar request completamente nuevo con URL absoluta
+            return Redirect(Url.Action("Login", "Auth", null, Request.Url.Scheme));
+        }
+
         private ActionResult RedirigirSegunRol(UsuarioSesion usuario)
         {
             if (usuario.Tipo == "Administrador")
