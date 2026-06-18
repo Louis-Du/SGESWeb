@@ -30,14 +30,19 @@ namespace SGES.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // Validar formato: solo dígitos, sin ceros a la izquierda (salvo "0")
-            if (!System.Text.RegularExpressions.Regex.IsMatch(model.Id, @"^(0|[1-9][0-9]*)$"))
+            // Validar que solo contenga dígitos y tenga entre 1 y 10 caracteres
+            if (!System.Text.RegularExpressions.Regex.IsMatch(model.Id, @"^\d{1,10}$"))
             {
-                TempData["Error"] = "ID o contraseña incorrectos.";
+                TempData["Error"] = "El ID debe contener solo números y tener máximo 10 dígitos.";
                 return View(model);
             }
 
-            int idNumerico = int.Parse(model.Id);
+            // Convertir a int de forma segura
+            if (!int.TryParse(model.Id, out int idNumerico))
+            {
+                TempData["Error"] = "El ID ingresado no es válido.";
+                return View(model);
+            }
 
             var usuario = _dao.Login(idNumerico, model.Contrasena);
 
@@ -89,22 +94,24 @@ namespace SGES.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult RestablecerPassword(LoginModel model, string nuevaPassword, string confirmarPassword)
         {
-            if (model == null)
-                return View(new LoginModel());
-
             ModelState.Remove("Contrasena");
 
             if (!ModelState.IsValid)
-                return View(model);
+                return View(model ?? new LoginModel());
 
-            // Validar formato: solo dígitos, sin ceros a la izquierda (salvo "0")
-            if (!System.Text.RegularExpressions.Regex.IsMatch(model.Id, @"^(0|[1-9][0-9]*)$"))
+            // Validar ID
+            if (!System.Text.RegularExpressions.Regex.IsMatch(model.Id, @"^\d{1,10}$"))
             {
-                TempData["Error"] = "El usuario no existe.";
+                TempData["Error"] = "El ID debe contener solo números y tener máximo 10 dígitos.";
                 return View(model);
             }
 
-            int idNumerico = int.Parse(model.Id);
+            if (!int.TryParse(model.Id, out int idNumerico))
+            {
+                TempData["Error"] = "El ID ingresado no es válido.";
+                return View(model);
+            }
+
             var usuario = _dao.ObtenerUsuarioPorId(idNumerico);
 
             if (usuario == null)
