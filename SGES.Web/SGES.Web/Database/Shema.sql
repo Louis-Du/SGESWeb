@@ -4,7 +4,7 @@ GO
 USE SGES;
 GO
 
-
+select * from Grupos
 /*==================================================
 TABLA: ADMINISTRADOR
 ==================================================*/
@@ -183,7 +183,7 @@ CREATE TABLE Eventos
     (
         tipoInscrip='Individual'
         OR
-        (tipoInscrip='Grupal' AND cupoMaximo>0)
+        (tipoInscrip='Grupal' AND cupoMaximo>2)
     )
 );
 GO
