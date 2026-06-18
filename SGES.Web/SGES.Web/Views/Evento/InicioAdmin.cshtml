@@ -19,6 +19,46 @@
     { "icono",     "bi-house-door-fill" },
     { "subtitulo", "Elija una acción" },
     { "cuerpo", new Func<object, HelperResult>(@<text>
+
+    @{
+    var filtro = ViewBag.Filtro as SGES.Web.Models.EventoFiltroModel;
+    var hayFiltro = filtro != null && (!string.IsNullOrEmpty(filtro.Nombre) || filtro.Fecha.HasValue || !string.IsNullOrEmpty(filtro.Modalidad) || !string.IsNullOrEmpty(filtro.TipoInscrip));
+    }
+
+    @Html.Partial("_PanelFiltros", null, new ViewDataDictionary(ViewData)
+    {
+        { "accion", "InicioAdmin" },
+        { "controlador", "Evento" },
+        { "hayFiltro", hayFiltro },
+        { "campos", new System.Web.Mvc.MvcHtmlString(
+            "<div class='col-md-3 col-sm-6'>" +
+                Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
+                    { "id", "Nombre" }, { "label", "Nombre" }, { "type", "text" },
+                    { "placeholder", "Buscar por nombre..." }, { "value", filtro?.Nombre }
+                }).ToString() +
+            "</div>" +
+            "<div class='col-md-2 col-sm-6'>" +
+                Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
+                    { "id", "Fecha" }, { "label", "Fecha" }, { "type", "date" },
+                    { "value", filtro?.Fecha?.ToString("yyyy-MM-dd") }
+                }).ToString() +
+            "</div>" +
+            "<div class='col-md-2 col-sm-6'>" +
+                Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
+                    { "id", "Modalidad" }, { "label", "Modalidad" },
+                    { "items", ViewBag.Modalidades }, { "defaultOption", "Todas" },
+                    { "selectedValue", filtro?.Modalidad }
+                }).ToString() +
+            "</div>" +
+            "<div class='col-md-2 col-sm-6'>" +
+                Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
+                    { "id", "TipoInscrip" }, { "label", "Tipo de Inscripción" },
+                    { "items", ViewBag.TiposInscripcion }, { "defaultOption", "Todos" },
+                    { "selectedValue", filtro?.TipoInscrip }
+                }).ToString() +
+            "</div>"
+        )}
+    })
     @* ── FORMULARIO MANUAL (con id) ── *@
     <form action="@Url.Action("Eliminar", "Evento")" method="post" id="frmEliminarEvento">
         @Html.AntiForgeryToken()
@@ -70,36 +110,6 @@
         </div>
     </form>
     </text>)}
-})
-
-@* ── Panel de filtros (fuera de la card, como siempre) ── *@
-@{ var filtro = ViewBag.Filtro as SGES.Web.Models.EventoFiltroModel; }
-
-@Html.Partial("_PanelFiltros", null, new ViewDataDictionary(ViewData)
-{
-    { "accion",      "InicioAdmin" },
-    { "controlador", "Evento" },
-    { "hayFiltro",   filtro != null && (!string.IsNullOrEmpty(filtro.Nombre) || filtro.Fecha.HasValue || !string.IsNullOrEmpty(filtro.Modalidad) || !string.IsNullOrEmpty(filtro.TipoInscrip)) },
-    { "campos", new System.Web.Mvc.MvcHtmlString(
-        Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
-            { "id", "Nombre" }, { "label", "Nombre" }, { "type", "text" },
-            { "placeholder", "Buscar por nombre..." }, { "value", filtro?.Nombre }
-        }).ToString() +
-        Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
-            { "id", "Fecha" }, { "label", "Fecha" }, { "type", "date" },
-            { "value", filtro?.Fecha?.ToString("yyyy-MM-dd") }
-        }).ToString() +
-        Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
-            { "id", "Modalidad" }, { "label", "Modalidad" },
-            { "items", ViewBag.Modalidades }, { "defaultOption", "Todas" },
-            { "selectedValue", filtro?.Modalidad }
-        }).ToString() +
-        Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
-            { "id", "TipoInscrip" }, { "label", "Tipo de Inscripción" },
-            { "items", ViewBag.TiposInscripcion }, { "defaultOption", "Todos" },
-            { "selectedValue", filtro?.TipoInscrip }
-        }).ToString()
-    )}
 })
 
 @section Scripts {
