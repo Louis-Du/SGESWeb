@@ -19,12 +19,16 @@
     <div class="row">
         <div class="col-md-6">
             <h6>Aprendices disponibles</h6>
+
             <ul class="list-group" id="listaDisponibles">
                 @foreach (var aprendiz in disponibles)
                 {
                     <li class="list-group-item d-flex justify-content-between align-items-center"
                         data-id="@aprendiz.IdApr" data-nombre="@aprendiz.NombreApr">
-                        @aprendiz.NombreApr
+                        <span>
+                            @aprendiz.NombreApr
+                            <small class="text-muted d-block">@aprendiz.EmailApr</small>
+                        </span>
                         <button type="button" class="btn btn-sm btn-outline-primary"
                                 onclick="agregarAlGrupo(this)">
                             Agregar
@@ -35,7 +39,7 @@
         </div>
 
         <div class="col-md-6">
-            <h6>Mi grupo <span id="contadorGrupo">@($"(1/{evento.CupoMaximo})")</span></h6> 
+            <h6>Mi grupo <span id="contadorGrupo">(1/@evento.CupoMaximo)</span></h6>
             <ul class="list-group" id="listaGrupo">
                 <li class="list-group-item">Tú (inscrito automáticamente)</li>
             </ul>
@@ -58,74 +62,77 @@
 }
 
 @section scripts {
-    <script>
+<script>
     var grupo = [];
-    var cupoMaximo = @(evento.CupoMaximo);        // valor dinámico desde el evento
-    var limiteCompaneros = cupoMaximo - 1;        // descontando al usuario actual
+    var cupoMaximo = @evento.CupoMaximo;
+    var limiteCompaneros = cupoMaximo - 1;
 
     function agregarAlGrupo(btn) {
-        var li = btn.closest("li");
-        var id = li.dataset.id;
-        // Evitar agregar el mismo aprendiz más de una vez desde el front-end
-        if (grupo.indexOf(id) !== -1) {
-            return;
-        }           
-
         if (grupo.length >= limiteCompaneros) {
-            alert("El grupo ya alcanzó el máximo de " + cupoMaximo + " integrantes (incluyéndote a ti).");
+            alert("El grupo ya alcanzó el máximo de " + cupoMaximo +
+                  " integrantes (incluyéndote a ti).");
             return;
         }
+
+        var li = btn.closest("li");
+        var id = li.dataset.id;
         var nombre = li.dataset.nombre;
 
+        if (grupo.indexOf(id) !== -1) return;
         grupo.push(id);
 
+        // Efecto verde "Agregado" en la lista de disponibles
+        var btnAgregar = li.querySelector("button");
+        btnAgregar.disabled = true;
+        btnAgregar.textContent = "Agregado";
+        btnAgregar.className = "btn btn-sm btn-success";
+        li.classList.add("list-group-item-success");
+        li.dataset.agregado = "true";
+
+        // Agregar a Mi grupo
         var listaGrupo = document.getElementById("listaGrupo");
         var nuevoLi = document.createElement("li");
         nuevoLi.className = "list-group-item d-flex justify-content-between align-items-center";
         nuevoLi.dataset.id = id;
         nuevoLi.innerHTML = nombre +
-            '<button type="button" class="btn btn-sm btn-outline-danger" onclick="quitarDelGrupo(this)">Quitar</button>';
+            '<button type="button" class="btn btn-sm btn-outline-danger"' +
+            ' onclick="quitarDelGrupo(this)">Quitar</button>';
         listaGrupo.appendChild(nuevoLi);
 
+        // Input oculto para el POST
         var input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "seleccionados";
+        input.type  = "hidden";
+        input.name  = "seleccionados";
         input.value = id;
-        input.id = "input_" + id;
+        input.id    = "input_" + id;
         document.getElementById("inputsOcultos").appendChild(input);
-
-        // Marcar el botón como agregado y deshabilitarlo para evitar duplicados
-        btn.disabled = true;
-        btn.textContent = 'Agregado';
-        btn.classList.remove('btn-outline-primary');
-        btn.classList.add('btn-success');
 
         actualizarContador();
     }
 
     function quitarDelGrupo(btn) {
-        var li = btn.closest("li");
-        var id = li.dataset.id;
+        var li  = btn.closest("li");
+        var id  = li.dataset.id;
 
-        grupo = grupo.filter(function(x) { return x !== id; });
+        grupo = grupo.filter(function (x) { return x !== id; });
 
-        var disponible = document.querySelector("#listaDisponibles [data-id='" + id + "']");
-        if (disponible) disponible.style.display = "";
+        // Restaurar aprendiz en disponibles — quitar efecto verde
+        var disponible = document.querySelector(
+            "#listaDisponibles [data-id='" + id + "']");
+        if (disponible) {
+            disponible.classList.remove("list-group-item-success");
+            disponible.dataset.agregado = "false";
+            var btnAgregar = disponible.querySelector("button");
+            btnAgregar.disabled = false;
+            btnAgregar.textContent = "Agregar";
+            btnAgregar.className = "btn btn-sm btn-outline-primary";
+        }
 
+        // Eliminar input oculto
         var input = document.getElementById("input_" + id);
         if (input) input.remove();
 
         li.remove();
-        // Si existe el botón en la lista de disponibles, reestablecer su estado
-        if (disponible) {
-            var btnDisp = disponible.querySelector('button');
-            if (btnDisp) {
-                btnDisp.disabled = false;
-                btnDisp.textContent = 'Agregar';
-                btnDisp.classList.remove('btn-success');
-                btnDisp.classList.add('btn-outline-primary');
-            }
-        }
         actualizarContador();
     }
 
@@ -133,5 +140,5 @@
         document.getElementById("contadorGrupo").textContent =
             "(" + (grupo.length + 1) + "/" + cupoMaximo + ")";
     }
-    </script>
+</script>
 }
