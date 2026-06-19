@@ -39,6 +39,10 @@
             --sges-shadow-lg: 0 8px 28px rgba(30,42,56,.13);
             --sges-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
             --sges-transition: .18s ease;
+            .sges-tabla tbody tr.seleccionada {
+                background-color: var(--sges-primary-lt) !important;
+                border-left: 3px solid var(--sges-accent);
+            }
         }
 
         /* ── Base ── */
@@ -888,6 +892,23 @@
                 instance.show();
             }
         };
+
+        // ── Resaltar fila seleccionada en tablas ──
+        document.addEventListener('click', function (e) {
+            var radio = e.target.closest('input[name="filaSeleccionada"]');
+            if (radio) {
+                // Esperar un tick para que el radio se marque
+                setTimeout(function () {
+                    // Remover clase de todas las filas
+                    document.querySelectorAll('.sges-tabla tbody tr').forEach(function (tr) {
+                        tr.classList.remove('seleccionada');
+                    });
+                    // Añadir clase a la fila del radio seleccionado
+                    var tr = radio.closest('tr');
+                    if (tr) tr.classList.add('seleccionada');
+                }, 0);
+            }
+        });
     </script>
 
     @if (_hasNotif)

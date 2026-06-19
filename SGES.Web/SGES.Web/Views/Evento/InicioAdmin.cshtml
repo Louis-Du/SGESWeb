@@ -2,14 +2,30 @@
 @using System.Linq
 @using System.Collections.Generic
 @using SGES.Web.Models
+@functions {
+    public string ObtenerColorTipo(string tipo)
+    {
+        switch (tipo)
+        {
+            case "Educativo": return "primary";
+            case "Deportivo": return "success";
+            case "Social": return "warning text-dark";
+            case "Cultural": return "info";
+            default: return "secondary";
+        }
+    }
+}
 @{
     ViewBag.Title = "Inicio Administrador";
     var columnas = new[] { "Nombre", "Tipo", "Modalidad", "Tipo de inscripcion", "Inicio", "Fin" };
     var filas = Model?.Select(e => new object[] {
-        e.NombreEvento, e.TipoEvento, e.ModalidadEvento, e.TipoInscrip,
-        e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
-        e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
-    }) ?? Enumerable.Empty<object[]>();
+    e.NombreEvento,
+    new HtmlString($"<span class='badge bg-{ObtenerColorTipo(e.TipoEvento)}'>{e.TipoEvento}</span>"),
+    e.ModalidadEvento,
+    e.TipoInscrip,
+    e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
+    e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
+}) ?? Enumerable.Empty<object[]>();
     var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
 }
 
