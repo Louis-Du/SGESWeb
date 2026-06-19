@@ -1,4 +1,4 @@
-@*
+﻿@*
     _TablaSeleccion.cshtml — Componente reutilizable de tabla de datos con encabezados y acciones
     (contrato via ViewData documentado en el fichero)
 *@
@@ -49,9 +49,15 @@
             @if (!filasList.Any())
             {
                 <tr>
-                    <td colspan="@totalColumnas" class="text-center text-muted py-4 sges-tabla-vacia">
-                        <i class="bi bi-inbox fs-4 d-block mb-2" aria-hidden="true"></i>
-                        @mensajeVacio
+                    <td colspan="@totalColumnas" class="text-center py-5">
+                        <div class="d-flex flex-column align-items-center gap-3">
+                            <i class="bi bi-inbox" style="font-size: 4rem; color: var(--sges-text-muted);"></i>
+                            <h5 class="text-muted mb-0">No hay registros para mostrar</h5>
+                            <p class="text-muted small">Puedes crear un nuevo evento desde el botón "Crear Evento".</p>
+                            <a href="@Url.Action("CrearEvento", "Evento")" class="btn sges-btn-guardar btn-sm">
+                                <i class="bi bi-plus-circle"></i> Crear el primer evento
+                            </a>
+                        </div>
                     </td>
                 </tr>
             }
