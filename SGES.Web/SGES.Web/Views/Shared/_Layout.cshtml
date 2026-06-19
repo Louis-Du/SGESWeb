@@ -578,8 +578,11 @@
                     var u = (SGES.Web.Models.UsuarioSesion)Session["Usuario"];
                     <ul class="navbar-nav align-items-center gap-2">
                         <li class="nav-item">
-                            <span class="nav-link sges-user-name">
-                                <i class="bi bi-person-circle me-1"></i>@u.Nombre
+                            <span class="nav-link sges-user-name d-flex align-items-center gap-2">
+                                <span class="avatar-circle" style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; background:var(--sges-accent); color:#fff; border-radius:50%; font-weight:600; font-size:0.8rem;">
+                                    @(string.IsNullOrEmpty(u.Nombre) ? "?" : u.Nombre.Substring(0,1).ToUpper())
+                                </span>
+                                @u.Nombre
                             </span>
                         </li>
                         <li class="nav-item">
