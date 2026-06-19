@@ -124,11 +124,11 @@ namespace SGES.Web.Controllers
                 );
             }
 
-            // Validación cupo máximo
-            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo <= 2)
+            // Validación cupo minimo
+            if (evento.TipoInscrip == "Grupal" && evento.CupoMaximo < 2)
             {
                 ModelState.AddModelError("CupoMaximo",
-                    "Para eventos grupales debe indicar un cupo máximo mayor a dos.");
+                    "Para eventos grupales debe indicar un cupo minimo mayor a dos.");
             }
             if (evento.TipoInscrip == "Individual")
             {
