@@ -1,14 +1,196 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width" />
-    <title>Error</title>
-</head>
-<body>
-    <hgroup>
-        <h1>Error.</h1>
-        <h2>Error al procesar la solicitud.</h2>
-    </hgroup>
-</body>
-</html>
+﻿@{
+    // Leer el código HTTP desde el RouteData o HttpContext
+    var statusCode = (int?)ViewBag.StatusCode ?? 0;
+    var requestUrl = ViewBag.RequestUrl as string ?? "";
+
+    string titulo, subtitulo, descripcion, icono, iconoColor;
+
+    switch (statusCode)
+    {
+        case 404:
+            titulo = "Página no encontrada";
+            subtitulo = "Error 404";
+            descripcion = "La página que buscas no existe o fue movida. Verifica la dirección o regresa al inicio.";
+            icono = "bi-map";
+            iconoColor = "var(--sges-warning)";
+            break;
+        case 403:
+            titulo = "Acceso denegado";
+            subtitulo = "Error 403";
+            descripcion = "No tienes permiso para acceder a esta sección. Si crees que es un error, contacta al administrador.";
+            icono = "bi-shield-lock";
+            iconoColor = "var(--sges-danger)";
+            break;
+        case 500:
+            titulo = "Error interno del servidor";
+            subtitulo = "Error 500";
+            descripcion = "Algo salió mal en el servidor. El equipo técnico ha sido notificado. Intenta de nuevo en unos minutos.";
+            icono = "bi-cone-striped";
+            iconoColor = "var(--sges-danger)";
+            break;
+        default:
+            titulo = "Algo salió mal";
+            subtitulo = "Error inesperado";
+            descripcion = "Ocurrió un error al procesar tu solicitud. Intenta de nuevo o regresa al inicio.";
+            icono = "bi-exclamation-circle";
+            iconoColor = "var(--sges-warning)";
+            break;
+    }
+
+    ViewBag.Title = titulo;
+}
+
+<style>
+    .sges-error-page {
+        min-height: 65vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .sges-error-inner {
+        max-width: 520px;
+    }
+
+    .sges-error-icon-wrap {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        background: var(--sges-bg);
+        border: 2px solid var(--sges-border);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--sges-shadow-sm);
+    }
+
+    .sges-error-code {
+        font-size: 4rem;
+        font-weight: 800;
+        color: var(--sges-border);
+        line-height: 1;
+        margin-bottom: .25rem;
+        letter-spacing: -.03em;
+    }
+
+    .sges-error-titulo {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--sges-text);
+        margin-bottom: .5rem;
+    }
+
+    .sges-error-desc {
+        font-size: .9375rem;
+        color: var(--sges-text-muted);
+        line-height: 1.65;
+        margin-bottom: 2rem;
+    }
+
+    .sges-error-url {
+        font-family: monospace;
+        font-size: .8rem;
+        background: var(--sges-bg);
+        border: 1px solid var(--sges-border);
+        border-radius: var(--sges-radius-sm);
+        padding: .4rem .75rem;
+        color: var(--sges-text-muted);
+        display: inline-block;
+        margin-bottom: 2rem;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .sges-error-actions {
+        display: flex;
+        gap: .75rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .sges-error-divider {
+        border: none;
+        border-top: 1px solid var(--sges-border);
+        margin: 2.5rem 0 1.5rem;
+    }
+
+    .sges-error-tips {
+        font-size: .8375rem;
+        color: var(--sges-text-muted);
+        text-align: left;
+    }
+
+        .sges-error-tips ul {
+            margin: .5rem 0 0;
+            padding: 0 0 0 1.25rem;
+        }
+
+        .sges-error-tips li {
+            margin-bottom: .3rem;
+        }
+</style>
+
+<div class="sges-error-page">
+    <div class="sges-error-inner">
+
+        <div class="sges-error-icon-wrap">
+            <i class="bi @icono" style="color: @iconoColor"></i>
+        </div>
+
+        @if (statusCode > 0)
+        {
+            <div class="sges-error-code">@statusCode</div>
+        }
+
+        <h1 class="sges-error-titulo">@titulo</h1>
+        <p class="sges-error-desc">@descripcion</p>
+
+        @if (!string.IsNullOrEmpty(requestUrl))
+        {
+            <div class="sges-error-url" title="@requestUrl">@requestUrl</div>
+        }
+
+        <div class="sges-error-actions">
+            @if (Session["Usuario"] != null)
+            {
+                var u = Session["Usuario"] as SGES.Web.Models.UsuarioSesion;
+                var destino = u != null && u.Tipo == "Administrador"
+                    ? Url.Action("InicioAdmin", "Evento")
+                    : Url.Action("InicioAprendiz", "Evento");
+
+                <a href="@destino" class="btn sges-btn-guardar">
+                    <i class="bi bi-house-door"></i> Ir al inicio
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("Login", "Auth")" class="btn sges-btn-guardar">
+                    <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+                </a>
+            }
+            <a href="javascript:history.back()" class="btn sges-btn-cancelar">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+
+        @if (statusCode == 404)
+        {
+            <hr class="sges-error-divider" />
+            <div class="sges-error-tips">
+                <strong style="color:var(--sges-text); font-size:.85rem">¿Qué puedes hacer?</strong>
+                <ul>
+                    <li>Verifica que la URL esté escrita correctamente.</li>
+                    <li>Es posible que el recurso haya sido eliminado o movido.</li>
+                    <li>Regresa al inicio y navega desde allí.</li>
+                </ul>
+            </div>
+        }
+
+    </div>
+</div>

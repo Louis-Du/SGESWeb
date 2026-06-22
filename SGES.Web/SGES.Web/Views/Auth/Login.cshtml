@@ -2,60 +2,84 @@
 
 @{
     ViewBag.Title = "Iniciar Sesión";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+<style>
+    .sges-login-page {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .sges-login-card {
+        max-width: 420px;
+        width: 100%;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="sges-login-page">
+    <div class="sges-login-card">
+        @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
 {
-    { "titulo",    "Iniciar Sesión" },
-    { "icono",     "bi-person-lock" },
-    { "subtitulo", "Ingrese sus credenciales para continuar" },
-    { "cuerpo", new Func<object, HelperResult>(@<text>
+            { "titulo",    "Iniciar Sesión" },
+            { "icono",     "bi-person-lock" },
+            { "subtitulo", "Ingrese sus credenciales para continuar" },
+            { "cuerpo", new Func<object, HelperResult>(@<text>
     <form action="@Url.Action("Login", "Auth")" method="post">
         @Html.AntiForgeryToken()
 
         @* Campo ID con límite de 10 caracteres y contador *@
         @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-        {
-            { "id",          "Id" },
-            { "label",       "ID de Usuario" },
-            { "type",        "text" },
-            { "inputmode",   "numeric" },
-            { "pattern",     "[0-9]*" },
-            { "value", Model != null ? Model.Id : "" },
-            { "placeholder", "Ingrese su ID" },
-            { "required",    true },
-            { "maxLength",   10 },
-            { "contador",    true }
-        })
+                                    {
+                        { "id",          "Id" },
+                        { "label",       "ID de Usuario" },
+                        { "type",        "text" },
+                        { "inputmode",   "numeric" },
+                        { "pattern",     "[0-9]*" },
+                        { "value", Model != null ? Model.Id : "" },
+                        { "placeholder", "Ingrese su ID" },
+                        { "required",    true },
+                        { "maxLength",   10 },
+                        { "contador",    true }
+                    })
         @Html.ValidationMessage("Id", "", new { @class = "text-danger small" })
 
         @* Campo Contraseña *@
         @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
-        {
-            { "id",          "Contrasena" },
-            { "label",       "Contraseña" },
-            { "type",        "password" },
-            { "placeholder", "Ingrese su contraseña" },
-            { "required",    true }
-        })
+                                    {
+                        { "id",          "Contrasena" },
+                        { "label",       "Contraseña" },
+                        { "type",        "password" },
+                        { "placeholder", "Ingrese su contraseña" },
+                        { "required",    true }
+                    })
         @Html.ValidationMessage("Contrasena", "", new { @class = "text-danger small" })
 
         <div class="mt-3">
             @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
-            {
-                { "texto", "Ingresar" },
-                { "icono", "bi-box-arrow-in-right" }
-            })
+                                                {
+                            { "texto", "Ingresar" },
+                            { "icono", "bi-box-arrow-in-right" }
+                        })
         </div>
 
-        @Html.Partial("_LinkAccion", null, new ViewDataDictionary(ViewData)
-        {
-            { "texto", "¿Quieres restablecer tu contraseña?" },
-            { "url", Url.Action("RestablecerPassword", "Auth") }
-        })
+        <div class="mt-3 text-center">
+            @Html.Partial("_LinkAccion", null, new ViewDataDictionary(ViewData)
+                                                {
+                            { "texto", "¿Quieres restablecer tu contraseña?" },
+                            { "url", Url.Action("RestablecerPassword", "Auth") }
+                        })
+        </div>
     </form>
-    </text>)}
-})
+            </text>)}
+        })
+    </div>
+</div>
+
 
 @section scripts {
     <script>
