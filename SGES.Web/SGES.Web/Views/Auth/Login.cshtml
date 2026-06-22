@@ -1,0 +1,165 @@
+﻿@model SGES.Web.Models.LoginModel
+
+@{
+    ViewBag.Title = "Iniciar Sesión";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .sges-login-page {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .sges-login-card {
+        max-width: 420px;
+        width: 100%;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="sges-login-page">
+    <div class="sges-login-card">
+        @Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+{
+            { "titulo",    "Iniciar Sesión" },
+            { "icono",     "bi-person-lock" },
+            { "subtitulo", "Ingrese sus credenciales para continuar" },
+            { "cuerpo", new Func<object, HelperResult>(@<text>
+    <form action="@Url.Action("Login", "Auth")" method="post">
+        @Html.AntiForgeryToken()
+
+        @* Campo ID con límite de 10 caracteres y contador *@
+        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                                    {
+                        { "id",          "Id" },
+                        { "label",       "ID de Usuario" },
+                        { "type",        "text" },
+                        { "inputmode",   "numeric" },
+                        { "pattern",     "[0-9]*" },
+                        { "value", Model != null ? Model.Id : "" },
+                        { "placeholder", "Ingrese su ID" },
+                        { "required",    true },
+                        { "maxLength",   10 },
+                        { "contador",    true }
+                    })
+        @Html.ValidationMessage("Id", "", new { @class = "text-danger small" })
+
+        @* Campo Contraseña *@
+        @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                                    {
+                        { "id",          "Contrasena" },
+                        { "label",       "Contraseña" },
+                        { "type",        "password" },
+                        { "placeholder", "Ingrese su contraseña" },
+                        { "required",    true }
+                    })
+        @Html.ValidationMessage("Contrasena", "", new { @class = "text-danger small" })
+
+        <div class="mt-3">
+            @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
+                                                {
+                            { "texto", "Ingresar" },
+                            { "icono", "bi-box-arrow-in-right" }
+                        })
+        </div>
+
+        <div class="mt-3 text-center">
+            @Html.Partial("_LinkAccion", null, new ViewDataDictionary(ViewData)
+                                                {
+                            { "texto", "¿Quieres restablecer tu contraseña?" },
+                            { "url", Url.Action("RestablecerPassword", "Auth") }
+                        })
+        </div>
+    </form>
+            </text>)}
+        })
+    </div>
+</div>
+
+
+@section scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var idInput = document.getElementById("Id");
+            if (!idInput) {
+                console.warn("El campo ID no se encontró en el DOM.");
+                return;
+            }
+
+            // ── Función para mostrar error en el span de validación ──
+            function mostrarErrorId(mensaje) {
+                idInput.classList.add("is-invalid");
+                idInput.classList.remove("is-valid");
+                var span = document.querySelector('[data-valmsg-for="Id"]');
+                if (span) {
+                    span.textContent = mensaje;
+                    span.style.display = "block";
+                }
+            }
+
+            function limpiarErrorId() {
+                idInput.classList.remove("is-invalid");
+                idInput.classList.add("is-valid");
+                var span = document.querySelector('[data-valmsg-for="Id"]');
+                if (span) {
+                    span.textContent = "";
+                    span.style.display = "none";
+                }
+            }
+
+            // ── 1. Bloquear caracteres no numéricos (keydown) ──
+            idInput.addEventListener("keydown", function (e) {
+                var permitidos = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
+                if (permitidos.includes(e.key)) return;
+                if (!/^[0-9]$/.test(e.key)) {
+                    e.preventDefault();
+                    mostrarErrorId("Solo se permiten números.");
+                }
+            });
+
+            // ── 2. Validar en tiempo real (input) ──
+            idInput.addEventListener("input", function () {
+                var valor = this.value;
+
+                // Eliminar caracteres no numéricos (excepto que ya tenga error de longitud)
+                var soloNumeros = valor.replace(/[^0-9]/g, '');
+                if (soloNumeros !== valor) {
+                    this.value = soloNumeros;
+                    valor = soloNumeros;
+                    mostrarErrorId("Solo se permiten números.");
+                    return;
+                }
+
+                // Validar longitud máxima
+                if (valor.length > 10) {
+                    this.value = valor.slice(0, 10);
+                    valor = this.value;
+                    mostrarErrorId("El ID no puede tener más de 10 dígitos.");
+                } else if (valor.length > 0) {
+                    limpiarErrorId();
+                } else {
+                    limpiarErrorId();
+                }
+            });
+
+            // ── 3. Validar al enviar el formulario (opcional) ──
+            var form = document.querySelector("form");
+            if (form) {
+                form.addEventListener("submit", function (e) {
+                    var valor = idInput.value;
+                    if (valor.length === 0 || valor.length > 10 || !/^[0-9]+$/.test(valor)) {
+                        mostrarErrorId("El ID debe tener entre 1 y 10 dígitos numéricos.");
+                        e.preventDefault();
+                        return false;
+                    }
+                    limpiarErrorId();
+                    return true;
+                });
+            }
+        });
+    </script>
+}

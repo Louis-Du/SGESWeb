@@ -1,0 +1,208 @@
+﻿@model IEnumerable<SGES.Web.Models.EventoModel>
+@using System.Linq
+@using System.Collections.Generic
+@using SGES.Web.Models
+@functions {
+    public string ObtenerColorTipo(string tipo)
+    {
+        switch (tipo)
+        {
+            case "Educativo": return "primary";
+            case "Deportivo": return "success";
+            case "Social": return "warning text-dark";
+            case "Cultural": return "info";
+            default: return "secondary";
+        }
+    }
+}
+@{
+    ViewBag.Title = "Inicio Administrador";
+    var columnas = new[] { "Nombre", "Tipo", "Modalidad", "Tipo de inscripcion", "Inicio", "Fin" };
+    var filas = Model?.Select(e => new object[] {
+    e.NombreEvento,
+    new HtmlString($"<span class='badge bg-{ObtenerColorTipo(e.TipoEvento)}'>{e.TipoEvento}</span>"),
+    e.ModalidadEvento,
+    e.TipoInscrip,
+    e.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm"),
+    e.FechaHoraFin.ToString("dd/MM/yyyy HH:mm")
+}) ?? Enumerable.Empty<object[]>();
+    var ids = Model?.Select(e => (object)e.IdEvento) ?? Enumerable.Empty<object>();
+}
+
+@Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+{
+    { "titulo",    "Menú de inicio para el administrador" },
+    { "icono",     "bi-house-door-fill" },
+    { "subtitulo", "Elija una acción" },
+    { "cuerpo", new Func<object, HelperResult>(@<text>
+
+    @{
+    var filtro = ViewBag.Filtro as SGES.Web.Models.EventoFiltroModel;
+    var hayFiltro = filtro != null && (!string.IsNullOrEmpty(filtro.Nombre) || filtro.Fecha.HasValue || !string.IsNullOrEmpty(filtro.Modalidad) || !string.IsNullOrEmpty(filtro.TipoInscrip));
+    }
+
+    @Html.Partial("_PanelFiltros", null, new ViewDataDictionary(ViewData)
+    {
+        { "accion", "InicioAdmin" },
+        { "controlador", "Evento" },
+        { "hayFiltro", hayFiltro },
+        { "campos", new System.Web.Mvc.MvcHtmlString(
+            "<div class='col-md-3 col-sm-6'>" +
+                Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
+                    { "id", "Nombre" }, { "label", "Nombre" }, { "type", "text" },
+                    { "placeholder", "Buscar por nombre..." }, { "value", filtro?.Nombre }
+                }).ToString() +
+            "</div>" +
+            "<div class='col-md-2 col-sm-6'>" +
+                Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData) {
+                    { "id", "Fecha" }, { "label", "Fecha" }, { "type", "date" },
+                    { "value", filtro?.Fecha?.ToString("yyyy-MM-dd") }
+                }).ToString() +
+            "</div>" +
+            "<div class='col-md-2 col-sm-6'>" +
+                Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
+                    { "id", "Modalidad" }, { "label", "Modalidad" },
+                    { "items", ViewBag.Modalidades }, { "defaultOption", "Todas" },
+                    { "selectedValue", filtro?.Modalidad }
+                }).ToString() +
+            "</div>" +
+            "<div class='col-md-2 col-sm-6'>" +
+                Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
+                    { "id", "TipoInscrip" }, { "label", "Tipo de Inscripción" },
+                    { "items", ViewBag.TiposInscripcion }, { "defaultOption", "Todos" },
+                    { "selectedValue", filtro?.TipoInscrip }
+                }).ToString() +
+            "</div>"
+        )}
+    })
+    @* ── FORMULARIO MANUAL (con id) ── *@
+    <form action="@Url.Action("Eliminar", "Evento")" method="post" id="frmEliminarEvento">
+        @Html.AntiForgeryToken()
+        <input type="hidden" id="idEvento" name="idEvento" value="" />
+
+        @Html.Partial("_TablaSeleccion", null, new ViewDataDictionary(ViewData)
+        {
+            { "columnas", columnas },
+            { "filas", filas },
+            { "mensajeVacio", "No hay eventos disponibles." },
+            { "seleccionable", true },
+            { "idFila", ids }
+        })
+
+        <div class="mt-3 d-flex gap-2 flex-wrap">
+            @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Crear Evento" },
+                { "icono", "bi-plus-circle" },
+                { "url", Url.Action("CrearEvento", "Evento") }
+            })
+            @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Modificar Evento" },
+                { "icono", "bi-pencil-square" },
+                { "id", "btnModificarEvento" }
+            })
+            @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Ver Aprendices" },
+                { "icono", "bi-people-fill" },
+                { "id", "btnVerAprendices" }
+            })
+            @Html.Partial("_BotonAccion", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Eliminar Evento" },
+                { "icono", "bi-trash3" },
+                { "cssClass", "btn-danger" },
+                { "type", "submit" },
+                { "confirm", "¿Desea eliminar el evento seleccionado?" },
+                { "requireSelection", true }
+            })
+            @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Exportar Eventos" },
+                { "icono", "bi-file-earmark-pdf" },
+                { "url", Url.Action("ReporteEventos", "Evento") }
+            })
+        </div>
+    </form>
+    </text>)}
+})
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // ── 1. Botón "Ver Aprendices" ──
+            var btnAprendices = document.getElementById("btnVerAprendices");
+            if (btnAprendices) {
+                btnAprendices.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
+                    if (!sel) {
+                        sgesUI.alert("Seleccione un evento.");
+                        return;
+                    }
+                    window.location.href = '@Url.Action("AprendicesRegistrados", "Evento")' + '?idEvento=' + encodeURIComponent(sel.value);
+                });
+            }
+
+            // ── 2. Botón "Modificar Evento" ──
+            var btnModificar = document.getElementById("btnModificarEvento");
+            if (btnModificar) {
+                btnModificar.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    var sel = document.querySelector('input[name="filaSeleccionada"]:checked');
+                    if (!sel) {
+                        sgesUI.alert("Seleccione un evento para modificar.");
+                        return;
+                    }
+                    window.location.href = '@Url.Action("ModificarEvento", "Evento")' + '?id=' + encodeURIComponent(sel.value);
+                });
+            }
+
+            // ── 3. Filtro automático en el panel de filtros ──
+            var panelFiltros = document.getElementById("panelFiltros");
+            if (panelFiltros) {
+                var form = panelFiltros.querySelector("form");
+                if (form) {
+                    // Campo Nombre: filtro al dejar de escribir (500ms)
+                    var inputNombre = document.getElementById("Nombre");
+                    if (inputNombre) {
+                        var timeoutNombre;
+                        inputNombre.addEventListener("input", function () {
+                            clearTimeout(timeoutNombre);
+                            timeoutNombre = setTimeout(function () {
+                                form.submit();
+                            }, 500);
+                        });
+                    }
+
+                    // Campo Fecha: filtro al cambiar la fecha
+                    var inputFecha = document.querySelector("input[name='Fecha']");
+                    if (inputFecha) {
+                        inputFecha.addEventListener("change", function () {
+                            form.submit();
+                        });
+                    }
+
+                    // Combo Modalidad: filtro al cambiar la selección
+                    var comboModalidad = document.getElementById("Modalidad");
+                    if (comboModalidad) {
+                        comboModalidad.addEventListener("change", function () {
+                            form.submit();
+                        });
+                    }
+
+                    // Combo Tipo de Inscripción: filtro al cambiar la selección
+                    var comboTipoInscrip = document.getElementById("TipoInscrip");
+                    if (comboTipoInscrip) {
+                        comboTipoInscrip.addEventListener("change", function () {
+                            form.submit();
+                        });
+                    }
+                }
+            }
+
+        });
+    </script>
+}

@@ -1,40 +1,910 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
+    <title>@ViewBag.Title - SGES</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+
+    <style>
+        /* ═══════════════════════════════════════════
+           SGES — Variables de diseño
+        ═══════════════════════════════════════════ */
+        :root {
+            --sges-bg: #f4f6f8;
+            --sges-surface: #ffffff;
+            --sges-border: #dde2e8;
+            --sges-text: #1e2a38;
+            --sges-text-muted: #6b7a8d;
+            --sges-primary: #2c6e91; /* azul pizarra */
+            --sges-primary-dk: #1f5070;
+            --sges-primary-lt: #e8f3f9;
+            --sges-accent: #2a9d8f; /* teal suave */
+            --sges-accent-lt: #e4f5f3;
+            --sges-danger: #c0392b;
+            --sges-danger-lt: #fdecea;
+            --sges-success: #217a57;
+            --sges-success-lt: #e6f5ef;
+            --sges-warning: #b7791f;
+            --sges-warning-lt: #fef3cd;
+            --sges-nav-bg: #1e2a38;
+            --sges-nav-border: #2c3e50;
+            --sges-radius: 8px;
+            --sges-radius-sm: 5px;
+            --sges-shadow-sm: 0 1px 4px rgba(30,42,56,.08);
+            --sges-shadow: 0 3px 12px rgba(30,42,56,.10);
+            --sges-shadow-lg: 0 8px 28px rgba(30,42,56,.13);
+            --sges-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --sges-transition: .18s ease;
+        }
+
+        /* ── Base ── */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--sges-bg);
+            color: var(--sges-text);
+            font-family: var(--sges-font);
+            font-size: .9375rem;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ── Navbar ── */
+        .sges-navbar {
+            background: var(--sges-nav-bg);
+            border-bottom: 1px solid var(--sges-nav-border);
+            padding: .6rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,.18);
+        }
+
+            .sges-navbar .navbar-brand {
+                font-weight: 700;
+                font-size: 1.15rem;
+                letter-spacing: .5px;
+                color: #e8f3f9 !important;
+                display: flex;
+                align-items: center;
+                gap: .45rem;
+            }
+
+                .sges-navbar .navbar-brand::before {
+                    content: '';
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    background: var(--sges-accent);
+                    border-radius: 50%;
+                }
+
+            .sges-navbar .nav-link {
+                color: #adbdcc !important;
+                font-size: .875rem;
+                transition: color var(--sges-transition);
+                padding: .3rem .7rem !important;
+                border-radius: var(--sges-radius-sm);
+            }
+
+                .sges-navbar .nav-link:hover {
+                    color: #e8f3f9 !important;
+                    background: rgba(255,255,255,.06);
+                }
+
+            .sges-navbar .sges-user-name {
+                color: #cdd8e3 !important;
+                font-size: .875rem;
+                font-weight: 500;
+            }
+
+            .sges-navbar .sges-logout {
+                color: #adbdcc !important;
+                font-size: .875rem;
+                border: 1px solid #3a4f63;
+                border-radius: var(--sges-radius-sm);
+                padding: .25rem .75rem !important;
+                transition: all var(--sges-transition);
+            }
+
+                .sges-navbar .sges-logout:hover {
+                    background: var(--sges-danger);
+                    border-color: var(--sges-danger);
+                    color: #fff !important;
+                }
+
+        /* ── Contenedor principal ── */
+        .sges-body {
+            padding: 2rem 0 3rem;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* ── Footer ── */
+        .sges-footer {
+            border-top: 1px solid var(--sges-border);
+            padding: 1rem 0;
+            color: var(--sges-text-muted);
+            font-size: .8125rem;
+            text-align: center;
+        }
+
+        /* ── Card ── */
+        .sges-card {
+            background: var(--sges-surface);
+            border: 1px solid var(--sges-border);
+            border-radius: var(--sges-radius);
+            box-shadow: var(--sges-shadow-sm);
+            overflow: hidden;
+        }
+
+            .sges-card.shadow-sm {
+                box-shadow: var(--sges-shadow-sm);
+            }
+
+            .sges-card.shadow {
+                box-shadow: var(--sges-shadow);
+            }
+
+            .sges-card.shadow-lg {
+                box-shadow: var(--sges-shadow-lg);
+            }
+
+        .sges-card-header {
+            background: var(--sges-primary);
+            color: #fff;
+            padding: .85rem 1.25rem;
+            border-bottom: none;
+        }
+
+        .sges-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+            color: #fff;
+        }
+
+        .sges-card-subtitle {
+            font-size: .8rem;
+            color: rgba(255,255,255,.72);
+            display: block;
+            margin-top: .15rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* ── Inputs ── */
+        .sges-label {
+            font-size: .8375rem;
+            font-weight: 600;
+            color: var(--sges-text);
+            margin-bottom: .35rem;
+            letter-spacing: .01em;
+        }
+
+        .sges-input,
+        .sges-textarea,
+        .sges-select {
+            border: 1.5px solid var(--sges-border);
+            border-radius: var(--sges-radius-sm);
+            background: var(--sges-surface);
+            color: var(--sges-text);
+            font-size: .9rem;
+            padding: .5rem .75rem;
+            transition: border-color var(--sges-transition), box-shadow var(--sges-transition);
+            width: 100%;
+        }
+
+            .sges-input:focus,
+            .sges-textarea:focus,
+            .sges-select:focus {
+                border-color: var(--sges-primary);
+                box-shadow: 0 0 0 3px var(--sges-primary-lt);
+                outline: none;
+            }
+
+            .sges-input.is-valid,
+            .sges-textarea.is-valid,
+            .sges-select.is-valid {
+                border-color: var(--sges-accent);
+                box-shadow: 0 0 0 3px var(--sges-accent-lt);
+            }
+
+            .sges-input.is-invalid,
+            .sges-textarea.is-invalid,
+            .sges-select.is-invalid {
+                border-color: var(--sges-danger);
+                box-shadow: 0 0 0 3px var(--sges-danger-lt);
+            }
+
+            .sges-input::placeholder,
+            .sges-textarea::placeholder {
+                color: #a0adb9;
+                font-size: .875rem;
+            }
+
+        .sges-help-text {
+            font-size: .8rem;
+            color: var(--sges-text-muted);
+            margin-top: .3rem;
+        }
+
+        .invalid-feedback, [data-valmsg-for] {
+            font-size: .8rem;
+            color: var(--sges-danger);
+            margin-top: .3rem;
+        }
+
+        /* ── Botones ── */
+        .btn {
+            font-size: .875rem;
+            font-weight: 500;
+            border-radius: var(--sges-radius-sm);
+            padding: .48rem 1.1rem;
+            transition: all var(--sges-transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            letter-spacing: .01em;
+        }
+
+            .btn:active {
+                transform: translateY(1px);
+            }
+
+        .sges-btn-guardar,
+        .btn-primary {
+            background: var(--sges-primary);
+            border-color: var(--sges-primary);
+            color: #fff;
+        }
+
+            .sges-btn-guardar:hover,
+            .btn-primary:hover {
+                background: var(--sges-primary-dk);
+                border-color: var(--sges-primary-dk);
+                color: #fff;
+            }
+
+        .sges-btn-cancelar,
+        .btn-secondary {
+            background: transparent;
+            border-color: var(--sges-border);
+            color: var(--sges-text-muted);
+        }
+
+            .sges-btn-cancelar:hover,
+            .btn-secondary:hover {
+                background: var(--sges-bg);
+                border-color: #b0bcc9;
+                color: var(--sges-text);
+            }
+
+        .sges-btn-eliminar,
+        .btn-danger {
+            background: var(--sges-danger);
+            border-color: var(--sges-danger);
+            color: #fff;
+        }
+
+            .sges-btn-eliminar:hover,
+            .btn-danger:hover {
+                background: #a93226;
+                border-color: #a93226;
+                color: #fff;
+            }
+
+        .btn-outline-danger {
+            background: transparent;
+            border-color: var(--sges-danger);
+            color: var(--sges-danger);
+        }
+
+            .btn-outline-danger:hover {
+                background: var(--sges-danger-lt);
+            }
+
+        .btn-sm {
+            font-size: .8rem;
+            padding: .28rem .75rem;
+        }
+
+        /* ── Tabla ── */
+        .sges-tabla {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: .875rem;
+        }
+
+            .sges-tabla-thead th,
+            .sges-tabla thead th {
+                background: var(--sges-primary);
+                color: #fff;
+                font-weight: 600;
+                font-size: .8rem;
+                text-transform: uppercase;
+                letter-spacing: .05em;
+                padding: .65rem 1rem;
+                border: none;
+                white-space: nowrap;
+            }
+
+                .sges-tabla-thead th:first-child,
+                .sges-tabla thead th:first-child {
+                    border-radius: var(--sges-radius-sm) 0 0 0;
+                }
+
+                .sges-tabla-thead th:last-child,
+                .sges-tabla thead th:last-child {
+                    border-radius: 0 var(--sges-radius-sm) 0 0;
+                }
+
+            .sges-tabla tbody tr {
+                border-bottom: 1px solid var(--sges-border);
+                transition: background var(--sges-transition);
+            }
+
+            .sges-tabla tbody td {
+                padding: .65rem 1rem;
+                color: var(--sges-text);
+                vertical-align: middle;
+            }
+
+            .sges-tabla.table-striped tbody tr:nth-child(even) {
+                background: #f8fafc;
+            }
+
+            .sges-tabla.table-hover tbody tr:hover {
+                background: var(--sges-primary-lt);
+            }
+
+        .sges-tabla-vacia {
+            color: var(--sges-text-muted);
+            font-size: .9rem;
+        }
+
+        .sges-tabla-titulo {
+            font-size: .95rem;
+            font-weight: 600;
+            color: var(--sges-text);
+        }
+
+        /* Radio en tabla */
+        .sges-tabla input[type="radio"] {
+            width: 1.05rem;
+            height: 1.05rem;
+            accent-color: var(--sges-primary);
+            cursor: pointer;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            border-radius: var(--sges-radius);
+            font-size: .875rem;
+        }
+
+        .text-bg-success {
+            background: var(--sges-success) !important;
+        }
+
+        .text-bg-danger {
+            background: var(--sges-danger) !important;
+        }
+
+        /* ── Modal ── */
+        .modal-content {
+            border: none;
+            border-radius: var(--sges-radius);
+            box-shadow: var(--sges-shadow-lg);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--sges-border);
+            padding: 1rem 1.25rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--sges-border);
+            padding: .85rem 1.25rem;
+            gap: .5rem;
+        }
+
+        .modal-header.bg-warning {
+            background: var(--sges-warning-lt) !important;
+            color: var(--sges-warning);
+        }
+
+        .modal-title {
+            font-size: .95rem;
+            font-weight: 600;
+        }
+
+        /* ── Validación resumen ── */
+        .alert-danger {
+            background: var(--sges-danger-lt);
+            border: 1px solid #f5c6cb;
+            border-radius: var(--sges-radius-sm);
+            color: var(--sges-danger);
+            font-size: .875rem;
+            padding: .75rem 1rem;
+        }
+        /* ── Fix: evita ícono de validación repetido en select ── */
+        .sges-select.is-valid,
+        select.is-valid {
+            background-image: none !important;
+        }
+        /* ── Chatbot flotante ── */
+        #sges-chat-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--sges-accent);
+            color: #fff;
+            border: none;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--sges-shadow-lg);
+            z-index: 1050;
+            transition: background var(--sges-transition), transform var(--sges-transition);
+        }
+
+            #sges-chat-btn:hover {
+                background: var(--sges-primary);
+                transform: scale(1.08);
+            }
+
+        #sges-chat-box {
+            position: fixed;
+            bottom: 4.5rem;
+            right: 1.5rem;
+            width: 340px;
+            max-height: 480px;
+            background: var(--sges-surface);
+            border: 1px solid var(--sges-border);
+            border-radius: var(--sges-radius);
+            box-shadow: var(--sges-shadow-lg);
+            display: none;
+            flex-direction: column;
+            z-index: 1050;
+            overflow: hidden;
+        }
+
+        .sges-chat-header {
+            background: var(--sges-primary);
+            color: #fff;
+            padding: .7rem 1rem;
+            font-weight: 600;
+            font-size: .9rem;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        .sges-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: .75rem;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            min-height: 260px;
+            max-height: 340px;
+        }
+
+        /* Burbuja del bot */
+        .sges-msg-bot {
+            align-self: flex-start;
+            background: var(--sges-primary-lt);
+            color: var(--sges-text);
+            border-radius: 0 var(--sges-radius) var(--sges-radius) var(--sges-radius);
+            padding: .5rem .75rem;
+            font-size: .85rem;
+            max-width: 85%;
+        }
+
+        /* Burbuja del usuario */
+        .sges-msg-user {
+            align-self: flex-end;
+            background: var(--sges-accent);
+            color: #fff;
+            border-radius: var(--sges-radius) 0 var(--sges-radius) var(--sges-radius);
+            padding: .5rem .75rem;
+            font-size: .85rem;
+            max-width: 85%;
+        }
+
+        .sges-chat-footer {
+            border-top: 1px solid var(--sges-border);
+            padding: .5rem .75rem;
+            display: flex;
+            gap: .4rem;
+        }
+
+            .sges-chat-footer input {
+                flex: 1;
+                border: 1.5px solid var(--sges-border);
+                border-radius: var(--sges-radius-sm);
+                padding: .4rem .65rem;
+                font-size: .85rem;
+                outline: none;
+                transition: border-color var(--sges-transition);
+            }
+
+                .sges-chat-footer input:focus {
+                    border-color: var(--sges-primary);
+                }
+
+            .sges-chat-footer button {
+                background: var(--sges-primary);
+                color: #fff;
+                border: none;
+                border-radius: var(--sges-radius-sm);
+                padding: .4rem .75rem;
+                font-size: .85rem;
+                cursor: pointer;
+                transition: background var(--sges-transition);
+            }
+
+                .sges-chat-footer button:hover {
+                    background: var(--sges-primary-dk);
+                }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-sm sges-navbar">
         <div class="container">
-            @Html.ActionLink("Nombre de la aplicación", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
+            <span class="navbar-brand">SGES</span>
+            <button type="button" class="navbar-toggler border-secondary" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Acerca de", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                </ul>
+                <ul class="navbar-nav flex-grow-1"></ul>
+                @if (Session["Usuario"] != null)
+                {
+                    var u = (SGES.Web.Models.UsuarioSesion)Session["Usuario"];
+                    <ul class="navbar-nav align-items-center gap-2">
+                        <li class="nav-item">
+                            <span class="nav-link sges-user-name d-flex align-items-center gap-2">
+                                <span class="avatar-circle" style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; background:var(--sges-accent); color:#fff; border-radius:50%; font-weight:600; font-size:0.8rem;">
+                                    @(string.IsNullOrEmpty(u.Nombre) ? "?" : u.Nombre.Substring(0,1).ToUpper())
+                                </span>
+                                @u.Nombre
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Logout", "Auth")" class="nav-link sges-logout"
+                               onclick="sgesUI.confirm('¿Está seguro que desea cerrar la sesión?', function () { sessionStorage.removeItem('sges-chat-historial'); window.location.href='@Url.Action("Logout", "Auth")'; }); return false;">
+                                <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión
+                            </a>
+                        </li>
+                    </ul>
+                }
             </div>
         </div>
     </nav>
-    <div class="container body-content">
+
+    <div class="container sges-body">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Mi aplicación ASP.NET</p>
-        </footer>
     </div>
 
+    <footer class="sges-footer">
+        <div class="container">
+            &copy; @DateTime.Now.Year &mdash; Sistema de Gestión de Eventos SGES
+        </div>
+    </footer>
+
+    @* ── Toast flotante: Éxito / Error ── *@
+    @{
+        var _hasNotif = TempData["Success"] != null || TempData["Error"] != null;
+        var _esExito = TempData["Success"] != null;
+        var _mensaje = _esExito ? TempData["Success"]?.ToString() : TempData["Error"]?.ToString();
+    }
+
+    @* ── Modal: Confirmación con inscritos ── *@
+    @{
+        var _hasConfirm = TempData["ConfirmarEliminar"] != null;
+        var _eventoId = TempData["EventoId"];
+        var _mensajeConf = TempData["Mensaje"]?.ToString() ?? "¿Desea eliminar este evento?";
+    }
+    @if (_hasConfirm)
+    {
+        var eventoId = _eventoId;
+        var mensajeConf = _mensajeConf;
+
+        <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1"
+             aria-labelledby="modalConfirmarLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                        <h5 class="modal-title" id="modalConfirmarLabel">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar eliminación
+                        </h5>
+                    </div>
+                    <div class="modal-body" style="font-size:.9rem; color:var(--sges-text)">
+                        @mensajeConf
+                    </div>
+                    <div class="modal-footer">
+                        @using (Html.BeginForm("EliminarConfirmado", "Evento", FormMethod.Post, new { id = "frmEliminarConfirmado" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="idEvento" value="@eventoId" />
+                            <button type="submit" class="btn sges-btn-eliminar">
+                                <i class="bi bi-trash3"></i>Sí, eliminar todo
+                            </button>
+                        }
+                        <a href="@Url.Action("InicioAdmin", "Evento")" class="btn sges-btn-cancelar">
+                            Cancelar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @* ── Chatbot flotante (HU-11) ──────────────────────────────────────────
+        Solo se muestra si hay una sesión activa.
+        Usa la API de Gemini para responder preguntas sobre el SGES. *@
+    @if (Session["Usuario"] != null)
+    {
+        <button id="sges-chat-btn" title="Asistente SGES">
+            <i class="bi bi-robot"></i>
+        </button>
+
+        <div id="sges-chat-box">
+            <div class="sges-chat-header">
+                <i class="bi bi-robot"></i> Asistente SGES
+            </div>
+            <div class="sges-chat-messages" id="sges-chat-messages">
+                @* Mensaje de bienvenida que aparece al abrir el chat *@
+            </div>
+            <div class="sges-chat-footer">
+                <input type="text" id="sges-chat-input" placeholder="Escribe tu pregunta..." maxlength="300" />
+                <button id="sges-chat-send"><i class="bi bi-send"></i></button>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                var GEMINI_API_KEY = "AIzaSyDKqd99Z-kkqU1ioItC3rONjSRt4IBt16I";
+                var SYSTEM_CONTEXT = "Eres un asistente virtual del Sistema de Gestión de Eventos del SENA llamado SGES. " +
+                    "Solo debes responder preguntas relacionadas con este sistema. " +
+                    "Si te preguntan algo fuera del contexto del SGES, responde amablemente que solo puedes ayudar con temas del sistema. " +
+                    "Responde siempre en español y de forma breve y clara. " +
+
+                    "INFORMACIÓN EXACTA DEL SISTEMA: " +
+
+                    "CREAR EVENTO (solo administradores): Los campos exactos son: " +
+                    "1. Nombre del evento (texto, máximo 100 caracteres). " +
+                    "2. Tipo de evento (opciones: Educativo, Deportivo, Social, Cultural). " +
+                    "3. Fecha y hora de inicio (no puede ser anterior a la fecha actual). " +
+                    "4. La modalidad (Virtual o Presencial). " +
+                    "5. Fecha y hora de fin (debe ser posterior al inicio y con mínimo 30 minutos de diferencia). " +
+                    "6. El tipo de inscripcion (grupal o individal). " +
+                    "El sistema NO tiene campo de descripción ni de ubicación. " +
+
+                    "INSCRIBIRSE A UN EVENTO (solo aprendices): El aprendiz selecciona un evento del listado y elige una modalidad: Presencial o Virtual. " +
+                    "Validaciones: no puede inscribirse en el mismo evento dos veces, y no puede inscribirse si el horario se cruza con otro evento en el que ya está inscrito. " +
+
+                    "ROLES DEL SISTEMA: Administrador (puede crear, modificar y eliminar eventos, ver aprendices registrados y generar reportes) y Aprendiz (puede ver eventos disponibles, inscribirse y consultar el chatbot). " +
+
+                    "INICIO DE SESIÓN: Se ingresa con ID numérico y contraseña. La contraseña es sensible a mayúsculas y minúsculas.";
+
+                var btn = document.getElementById("sges-chat-btn");
+                var box = document.getElementById("sges-chat-box");
+                var messages = document.getElementById("sges-chat-messages");
+                var input = document.getElementById("sges-chat-input");
+                var send = document.getElementById("sges-chat-send");
+
+                // ── Cargar historial guardado en sessionStorage ────────────────────
+                // sessionStorage persiste mientras la pestaña esté abierta,
+                // así el chat no se reinicia al navegar entre páginas.
+                function cargarHistorial() {
+                    var historial = JSON.parse(sessionStorage.getItem("sges-chat-historial") || "[]");
+                    historial.forEach(function (msg) {
+                        renderMensaje(msg.texto, msg.tipo);
+                    });
+                    // Si no hay historial, mostramos el mensaje de bienvenida
+                    if (historial.length === 0) {
+                        renderMensaje("¡Hola! Soy el asistente del SGES. Puedo ayudarte con preguntas sobre eventos e inscripciones. ¿En qué te puedo ayudar?", "bot");
+                        guardarEnHistorial("¡Hola! Soy el asistente del SGES. Puedo ayudarte con preguntas sobre eventos e inscripciones. ¿En qué te puedo ayudar?", "bot");
+                    }
+                }
+
+                // ── Guardar mensaje en sessionStorage ─────────────────────────────
+                function guardarEnHistorial(texto, tipo) {
+                    var historial = JSON.parse(sessionStorage.getItem("sges-chat-historial") || "[]");
+                    historial.push({ texto: texto, tipo: tipo });
+                    sessionStorage.setItem("sges-chat-historial", JSON.stringify(historial));
+                }
+
+                // ── Renderizar burbuja en pantalla (sin guardar) ──────────────────
+                function renderMensaje(texto, tipo) {
+                    var div = document.createElement("div");
+                    div.className = tipo === "bot" ? "sges-msg-bot" : "sges-msg-user";
+                    div.textContent = texto;
+                    messages.appendChild(div);
+                    messages.scrollTop = messages.scrollHeight;
+                }
+
+                // ── Agregar mensaje: renderiza Y guarda en historial ──────────────
+                function agregarMensaje(texto, tipo) {
+                    renderMensaje(texto, tipo);
+                    guardarEnHistorial(texto, tipo);
+                }
+
+                function mostrarEscribiendo() {
+                    var div = document.createElement("div");
+                    div.className = "sges-msg-bot";
+                    div.id = "sges-escribiendo";
+                    div.textContent = "Escribiendo...";
+                    messages.appendChild(div);
+                    messages.scrollTop = messages.scrollHeight;
+                }
+
+                function ocultarEscribiendo() {
+                    var el = document.getElementById("sges-escribiendo");
+                    if (el) el.remove();
+                }
+
+                function enviarMensaje() {
+                    var texto = input.value.trim();
+                    if (!texto) return;
+
+                    agregarMensaje(texto, "user");
+                    input.value = "";
+                    send.disabled = true;
+                    mostrarEscribiendo();
+
+                    var body = JSON.stringify({
+                        contents: [{
+                            role: "user",
+                            parts: [{ text: SYSTEM_CONTEXT + "\n\nPregunta del usuario: " + texto }]
+                        }]
+                    });
+
+                    fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: body
+                    })
+                        .then(function (res) { return res.json(); })
+                        .then(function (data) {
+                            ocultarEscribiendo();
+                            var respuesta = data.candidates &&
+                                data.candidates[0] &&
+                                data.candidates[0].content &&
+                                data.candidates[0].content.parts &&
+                                data.candidates[0].content.parts[0].text;
+                            agregarMensaje(respuesta || "No pude procesar tu pregunta. Intenta de nuevo.", "bot");
+                        })
+                        .catch(function () {
+                            ocultarEscribiendo();
+                            agregarMensaje("Ocurrió un error al conectar con el asistente. Verifica tu conexión e intenta de nuevo.", "bot");
+                        })
+                        .finally(function () {
+                            send.disabled = false;
+                            input.focus();
+                        });
+                }
+
+                btn.addEventListener("click", function () {
+                    var isOpen = box.style.display === "flex";
+                    box.style.display = isOpen ? "none" : "flex";
+                    if (!isOpen) input.focus();
+                });
+
+                send.addEventListener("click", enviarMensaje);
+                input.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter") enviarMensaje();
+                });
+
+                // ── Cargar historial al iniciar la página ─────────────────────────
+                cargarHistorial();
+            }());
+        </script>
+    }
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    @* ── sgesUI global — modales dinámicos Bootstrap ── *@
+    <script>
+        window.sgesUI = {
+            toast: function (message, isSuccess) {
+                var container = document.getElementById("sges-toast-container");
+                if (!container) {
+                    container = document.createElement("div");
+                    container.id = "sges-toast-container";
+                    container.className = "toast-container position-fixed top-0 start-50 translate-middle-x p-3";
+                    container.style.zIndex = "1100";
+                    document.body.appendChild(container);
+                }
+                var toast = document.createElement("div");
+                toast.className = "toast align-items-center border-0 shadow " + (isSuccess ? "text-bg-success" : "text-bg-danger");
+                toast.setAttribute("role", "alert");
+                toast.setAttribute("data-bs-autohide", "true");
+                toast.setAttribute("data-bs-delay", "4000");
+                toast.innerHTML =
+                    '<div class="d-flex">' +
+                    '<div class="toast-body d-flex align-items-center gap-2">' +
+                    '<i class="bi ' + (isSuccess ? "bi-check-circle-fill" : "bi-x-circle-fill") + ' fs-5"></i>' +
+                    '<span></span></div>' +
+                    '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+                    '</div>';
+                toast.querySelector("span").textContent = message || "";
+                container.appendChild(toast);
+                bootstrap.Toast.getOrCreateInstance(toast).show();
+                toast.addEventListener("hidden.bs.toast", function () { toast.remove(); });
+            },
+            alert: function (message) {
+                window.sgesUI.toast(message, false);
+            },
+            confirm: function (message, onConfirm) {
+                var id = "sgesConfirmModal";
+                var modal = document.getElementById(id);
+                if (!modal) {
+                    modal = document.createElement("div");
+                    modal.id = id;
+                    modal.className = "modal fade";
+                    modal.setAttribute("data-bs-backdrop", "static");
+                    modal.innerHTML =
+                        '<div class="modal-dialog modal-dialog-centered">' +
+                        '<div class="modal-content">' +
+                        '<div class="modal-header" style="background:var(--sges-warning-lt)">' +
+                        '<h5 class="modal-title" style="color:var(--sges-warning);font-size:.95rem;font-weight:600">' +
+                        '<i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar acción</h5>' +
+                        '</div>' +
+                        '<div class="modal-body sges-confirm-body" style="font-size:.9rem"></div>' +
+                        '<div class="modal-footer">' +
+                        '<button class="btn sges-btn-eliminar" data-sges-confirm><i class="bi bi-check-lg me-1"></i>Aceptar</button>' +
+                        '<button class="btn sges-btn-cancelar" data-sges-cancel>Cancelar</button>' +
+                        '</div></div></div>';
+                    document.body.appendChild(modal);
+                }
+                modal.querySelector(".sges-confirm-body").textContent = message || "¿Desea continuar?";
+                var instance = bootstrap.Modal.getOrCreateInstance(modal);
+                var okBtn = modal.querySelector("[data-sges-confirm]");
+                var cancelBtn = modal.querySelector("[data-sges-cancel]");
+                var okNew = okBtn.cloneNode(true);
+                var cancelNew = cancelBtn.cloneNode(true);
+                okBtn.replaceWith(okNew);
+                cancelBtn.replaceWith(cancelNew);
+                okNew.addEventListener("click", function () { instance.hide(); if (onConfirm) onConfirm(); });
+                cancelNew.addEventListener("click", function () { instance.hide(); });
+                instance.show();
+            }
+        };
+    </script>
+
+    @if (_hasNotif)
+    {
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            window.sgesUI.toast(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(_mensaje)), @(_esExito ? "true" : "false"));
+        });
+        </script>
+    }
+    @if (_hasConfirm)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                new bootstrap.Modal(document.getElementById("modalConfirmarEliminar")).show();
+            });
+        </script>
+    }
 </body>
 </html>

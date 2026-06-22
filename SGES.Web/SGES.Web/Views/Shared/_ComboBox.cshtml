@@ -1,0 +1,101 @@
+﻿@*
+    _ComboBox.cshtml — Componente reutilizable de lista desplegable (select)
+
+    Parámetros (vía ViewData al invocar el partial):
+        "id"              : string      — Atributo id/name del select (requerido)
+        "label"           : string      — Etiqueta visible del campo (requerido)
+        "items"           : SelectList  — Lista de opciones (requerido)
+        "selectedValue"   : object      — Valor actualmente seleccionado (opcional)
+        "defaultOption"   : string      — Texto de la opción vacía inicial, ej: "-- Seleccione --" (opcional)
+        "required"        : bool        — Marca el campo como obligatorio (default: false)
+        "disabled"        : bool        — Deshabilita el campo (default: false)
+        "cssClass"        : string      — Clases CSS adicionales (opcional)
+        "helpText"        : string      — Texto de ayuda debajo del campo (opcional)
+        "onchange"        : string      — Código JavaScript para el evento onchange (opcional)
+
+    Uso básico:
+        @Html.Partial("_ComboBox", null, new ViewDataDictionary(ViewData) {
+            { "id",            "gradoId" },
+            { "label",         "Grado" },
+            { "items",         new SelectList(Model.Grados, "GradoId", "Nombre") },
+            { "selectedValue", Model.GradoId },
+            { "defaultOption", "-- Seleccione un grado --" },
+            { "required",      true }
+        })
+*@
+
+@using System.Web.Mvc.Html
+
+@{
+    var id = ViewData["id"]?.ToString() ?? "select";
+    var label = ViewData["label"]?.ToString() ?? "Campo";
+    var items = ViewData["items"] as SelectList;
+    var selectedValue = ViewData["selectedValue"];
+    var defaultOption = ViewData["defaultOption"]?.ToString();
+    var required = ViewData["required"] is bool && (bool)ViewData["required"];
+    var disabled = ViewData["disabled"] is bool && (bool)ViewData["disabled"];
+    var cssClass = ViewData["cssClass"]?.ToString() ?? "";
+    var helpText = ViewData["helpText"]?.ToString();
+    var onchange = ViewData["onchange"]?.ToString() ?? "";
+
+    var selectClass = "form-select sges-select " + cssClass;
+    var helpId = id + "Help";
+
+    // Reconstruir la SelectList con el valor seleccionado si se proporcionó
+    if (items != null && selectedValue != null)
+    {
+        var primeraOpcion = items.Items.Cast<object>().FirstOrDefault();
+        if (primeraOpcion is string)
+        {
+            // Lista de strings simples — Value y Text son el mismo valor
+            items = new SelectList(items.Items, selectedValue?.ToString());
+        }
+        else
+        {
+            // Lista de objetos con propiedades Value/Text
+            items = new SelectList(items.Items, "Value", "Text", selectedValue);
+        }
+    }
+}
+
+<div class="mb-3 sges-field">
+    <label for="@id" class="form-label sges-label">
+        @label
+        @if (required)
+        {
+            <span class="text-danger ms-1" title="Campo obligatorio" aria-hidden="true">*</span>
+        }
+    </label>
+
+    <select id="@id"
+            name="@id"
+            class="@selectClass"
+            @(required ? "required" : "")
+            @(disabled ? "disabled" : "")
+            @(!string.IsNullOrEmpty(onchange) ? $"onchange=\"{onchange}\"" : "")
+            @(!string.IsNullOrEmpty(helpText) ? $"aria-describedby=\"{helpId}\"" : "")>
+
+        @if (!string.IsNullOrEmpty(defaultOption))
+        {
+            <option value="">@defaultOption</option>
+        }
+
+        @if (items != null)
+        {
+            foreach (var item in items)
+            {
+                <option value="@item.Value"
+                        @(item.Selected ? "selected" : "")>
+                    @item.Text
+                </option>
+            }
+        }
+    </select>
+
+    @if (!string.IsNullOrEmpty(helpText))
+    {
+        <div id="@helpId" class="form-text sges-help-text">
+            @helpText
+        </div>
+    }
+</div>

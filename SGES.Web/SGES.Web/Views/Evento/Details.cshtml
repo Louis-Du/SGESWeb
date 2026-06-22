@@ -1,0 +1,106 @@
+﻿@using System.Web.Mvc
+@model SGES.Web.Models.InscripcionModel
+
+@{
+    ViewBag.Title = "Detalle del Evento";
+    var evento = ViewBag.Evento as SGES.Web.Models.EventoModel;
+}
+
+@Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+{
+    { "titulo", evento != null ? evento.NombreEvento : "Detalle del Evento" },
+    { "icono", "bi-calendar-event" },
+    { "subtitulo", "Información del evento e inscripción" },
+    { "cuerpo", new Func<object, HelperResult>(@<text>
+    @if (evento != null)
+        {
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                {
+                { "id", "TipoEvento" },
+                { "label", "Tipo de Evento" },
+                { "value", evento.TipoEvento },
+                { "readonly", true }
+            })
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                {
+                { "id", "ModalidadEvento" },
+                { "label", "Modalidad" },
+                { "value", evento.ModalidadEvento },
+                { "readonly", true }
+            })
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                {
+                { "id", "FechaInicio" },
+                { "label", "Fecha Inicio" },
+                { "value", evento.FechaHoraInicio.ToString("dd/MM/yyyy HH:mm") },
+                { "readonly", true }
+            })
+
+    @Html.Partial("_TextBox", null, new ViewDataDictionary(ViewData)
+                {
+                { "id", "FechaFin" },
+                { "label", "Fecha Fin" },
+                { "value", evento.FechaHoraFin.ToString("dd/MM/yyyy HH:mm") },
+                { "readonly", true }
+            })
+        }
+
+    @if (evento.TipoInscrip == "Individual")
+        {
+    <form action="@Url.Action("Details", "Evento")" method="post">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+        @Html.HiddenFor(m => m.IdEvento)
+
+        <div class="mt-3">
+            @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
+                                {
+                        { "texto", "Inscribirme al evento" },
+                        { "icono", "bi-person-check" }
+                    })
+            @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
+                                {
+                        { "texto", "Volver" },
+                        { "url", Url.Action("InicioAprendiz", "Evento") }
+                    })
+        </div>
+    </form>
+        }
+        else
+        {
+    <div class="mt-3">
+        <a href="@Url.Action("InscribirGrupo", "Evento", new { id = evento.IdEvento })"
+           class="btn btn-primary">
+            <i class="bi bi-people"></i> Inscribir mi grupo
+        </a>
+
+        @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
+                        {
+                    { "texto", "Volver" },
+                    { "url", Url.Action("InicioAprendiz", "Evento") }
+                })
+    </div>
+        }
+    </text>)}
+})
+
+@section scripts
+{
+    <script>
+        (function () {
+            var formulario = document.querySelector("form");
+            if (!formulario) return;
+
+            formulario.addEventListener("submit", function (e) {
+                var idEvento = document.querySelector("input[name='IdEvento']");
+                if (!idEvento || !idEvento.value) {
+                    sgesUI.alert("No se encontró el evento seleccionado.");
+                    e.preventDefault();
+                    return;
+                }
+            });
+        })();
+    </script>
+}

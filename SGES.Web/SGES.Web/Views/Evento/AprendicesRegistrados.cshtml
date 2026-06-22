@@ -1,0 +1,54 @@
+﻿@using SGES.Web.Models
+@model IEnumerable<SGES.Web.Models.AprendizModel>
+
+@{
+    ViewBag.Title = "Aprendices Registrados";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+{
+    { "titulo",    "Aprendices Registrados" },
+    { "icono",     "bi-people-fill" },
+    { "subtitulo", "Lista de aprendices inscritos en el evento seleccionado" },
+    { "cuerpo", new Func<object, HelperResult>(@<text>
+    @Html.Partial("_TablaSeleccion", null,
+            new ViewDataDictionary(ViewData)
+                {
+                { "titulo", "Aprendices Registrados" },
+                { "columnas", new[]
+                        {
+                        "ID",
+                        "Nombre",
+                        "Correo",
+                        "Contacto"
+                    }
+                },
+                { "filas", (Model ?? Enumerable.Empty<AprendizModel>()).Select(a => new List<object>
+                        {
+                        a.IdApr,
+                        a.NombreApr,
+                        a.EmailApr,
+                        a.ContactoApr
+                    })
+                }
+            })
+
+    <div class="mt-3 d-flex gap-2">
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+                    {
+                { "texto", "Regresar" },
+                { "icono", "bi-arrow-left" },
+                { "id", "btnRegresar" },
+                { "url", Url.Action("InicioAdmin", "Evento") }
+            })
+
+        @Html.Partial("_BotonIr", null, new ViewDataDictionary(ViewData)
+                    {
+                { "texto", "Exportar Aprendices" },
+                { "icono", "bi-file-earmark-pdf" },
+                { "url", Url.Action("ReporteAprendices", "Evento", new { idEvento = ViewBag.IdEvento }) }
+            })
+    </div>
+    </text>)}
+})

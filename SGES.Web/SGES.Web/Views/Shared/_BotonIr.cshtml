@@ -1,0 +1,60 @@
+﻿@*
+    _BotonIr.cshtml — Botón para navegación entre vistas
+
+    ```
+    Parámetros (vía ViewData al invocar el partial):
+        "texto"     : string — Texto visible del botón (default: "Ir")
+        "icono"     : string — Clase Bootstrap Icons (default: "bi-arrow-right")
+        "url"       : string — URL destino (requerido)
+        "cssClass"  : string — Clases CSS adicionales (opcional)
+        "id"        : string — Id del botón (opcional)
+        "disabled"  : bool   — Deshabilita el botón (default: false)
+
+    Uso:
+        @Html.Partial("_BotonIr", null,
+            new ViewDataDictionary(ViewData)
+            {
+                { "texto", "Crear Evento" },
+                { "icono", "bi-plus-circle" },
+                { "url", Url.Action("CrearEvento", "Evento") }
+            })
+    ```
+
+*@
+
+@using System.Web
+
+@{
+    // Contrato ViewData:
+    // ViewData["texto"] : string (texto del botón)
+    // ViewData["icono"] : string (clases de icono opcional, p. ej. "bi-plus-circle")
+    // ViewData["url"]   : string (url a la que navegar si se desea)
+    // ViewData["id"]    : string (id DOM opcional, p. ej. "btnVerAprendices")
+    // ViewData["class"] : string clases css adicionales
+    var texto = ViewData["texto"] as string ?? "Ir";
+    var icono = ViewData["icono"] as string;
+    var url = ViewData["url"] as string;
+    var id = ViewData["id"] as string;
+    var cssClass = ("btn btn-primary " + (ViewData["class"] as string ?? "")).Trim();
+}
+
+@if (!string.IsNullOrEmpty(url))
+{
+    <a id="@(id ?? "")" class="@cssClass" href="@url" role="button">
+        @if (!string.IsNullOrEmpty(icono))
+        {
+            <i class="@icono"></i>@Html.Raw("&nbsp;")
+        }
+        @texto
+    </a>
+}
+else
+{
+    <button id="@(id ?? "")" type="button" class="@cssClass">
+        @if (!string.IsNullOrEmpty(icono))
+        {
+            <i class="@icono"></i>@Html.Raw("&nbsp;")
+        }
+        @texto
+    </button>
+}

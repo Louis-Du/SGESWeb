@@ -1,0 +1,33 @@
+﻿@{
+    var accion = ViewData["accion"]?.ToString();
+    var controlador = ViewData["controlador"]?.ToString();
+    var hayFiltro = ViewData["hayFiltro"] is bool && (bool)ViewData["hayFiltro"];
+    var campos = ViewData["campos"] as System.Web.Mvc.MvcHtmlString;
+}
+
+<button class="btn sges-btn-cancelar" type="button"
+        data-bs-toggle="collapse" data-bs-target="#panelFiltros"
+        aria-controls="panelFiltros">
+    <i class="bi bi-funnel"></i> Filtrar
+</button>
+
+<div class="collapse mt-3 @(hayFiltro ? "show" : "")" id="panelFiltros">
+    <div class="sges-card p-3">
+        @using (Html.BeginForm(accion, controlador, FormMethod.Get))
+        {
+            <div class="row g-3 align-items-end">
+                @Html.Raw(campos)
+
+                @* Botones alineados horizontalmente *@
+                <div class="col-md-2 col-sm-6 d-flex gap-2">
+                    <button type="submit" class="btn sges-btn-guardar w-100">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                    <a href="@Url.Action(accion, controlador)" class="btn sges-btn-cancelar w-100">
+                        <i class="bi bi-x-circle"></i> Limpiar
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

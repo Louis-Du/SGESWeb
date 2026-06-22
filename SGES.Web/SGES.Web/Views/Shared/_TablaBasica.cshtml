@@ -1,0 +1,211 @@
+@*
+    _TablaBasica.cshtml — Componente reutilizable de tabla de datos con encabezados y acciones
+
+    Parámetros (vía ViewData al invocar el partial):
+        "columnas"        : IEnumerable<string>       — Encabezados de las columnas (requerido)
+        "filas"           : IEnumerable<IEnumerable<object>> — Filas de datos en el mismo orden que columnas (requerido)
+        "acciones"        : IEnumerable<string>       — Encabezados de columnas de acción, ej: ["Editar","Eliminar"] (opcional)
+        "accionesHtml"    : IEnumerable<IEnumerable<MvcHtmlString>> — HTML de cada botón de acción por fila (opcional)
+        "titulo"          : string  — Título opcional sobre la tabla (opcional)
+        "striped"         : bool    — Filas alternadas (default: true)
+        "hover"           : bool    — Resaltar fila al pasar el mouse (default: true)
+        "bordered"        : bool    — Bordes en celdas (default: false)
+        "small"           : bool    — Tabla compacta (default: false)
+        "responsive"      : bool    — Contenedor responsive (default: true)
+        "mensajeVacio"    : string  — Mensaje cuando no hay registros (default: "No hay registros para mostrar.")
+        "cssClass"        : string  — Clases CSS adicionales a la tabla (opcional)
+        "id"              : string  — Atributo id de la tabla (opcional)
+
+    Uso básico:
+        @Html.Partial("_TablaBasica", null, new ViewDataDictionary(ViewData) {
+            { "columnas", new[] { "Código", "Nombre", "Apellido", "Grado" } },
+            { "filas",    Model.Estudiantes.Select(e => new object[] {
+                              e.Codigo, e.Nombre, e.Apellido, e.Grado.Nombre }) },
+            { "acciones", new[] { "Acciones" } },
+            { "accionesHtml", Model.Estudiantes.Select(e => new[] {
+                  Html.Raw(Html.Partial("_BotonEliminar", null,
+                    new ViewDataDictionary(ViewData) {
+                      { "id", e.EstudianteId },
+                      { "controlador", "Estudiantes" },
+                      { "size", "sm" }
+                    }).ToHtmlString()) }) }
+        })
+*@
+@using System.Linq
+@using System.Web.Mvc
+
+@{
+    var columnas = (ViewData["columnas"] as IEnumerable<string>) ?? Enumerable.Empty<string>();
+    var filas = (ViewData["filas"] as IEnumerable<IEnumerable<object>>) ?? Enumerable.Empty<IEnumerable<object>>();
+    var acciones = (ViewData["acciones"] as IEnumerable<string>) ?? Enumerable.Empty<string>();
+    var accionesHtml = ViewData["accionesHtml"] as IEnumerable<IEnumerable<object>>;
+
+    var titulo = ViewData["titulo"] != null ? ViewData["titulo"].ToString() : null;
+
+    var striped = !(ViewData["striped"] is bool && !(bool)ViewData["striped"]);
+    var hover = !(ViewData["hover"] is bool && !(bool)ViewData["hover"]);
+    var bordered = ViewData["bordered"] is bool && (bool)ViewData["bordered"];
+    var small = ViewData["small"] is bool && (bool)ViewData["small"];
+    var responsive = !(ViewData["responsive"] is bool && !(bool)ViewData["responsive"]);
+
+    var mensajeVacio = ViewData["mensajeVacio"] != null
+        ? ViewData["mensajeVacio"].ToString()
+        : "No hay registros para mostrar.";
+
+    var cssClass = ViewData["cssClass"] != null
+        ? ViewData["cssClass"].ToString()
+        : "";
+
+    var tableId = ViewData["id"] != null
+        ? ViewData["id"].ToString()
+        : "";
+
+    var tableClasses = new System.Text.StringBuilder("table sges-tabla");
+
+    if (striped)
+    {
+        tableClasses.Append(" table-striped");
+    }
+
+    if (hover)
+    {
+        tableClasses.Append(" table-hover");
+    }
+
+    if (bordered)
+    {
+        tableClasses.Append(" table-bordered");
+    }
+
+    if (small)
+    {
+        tableClasses.Append(" table-sm");
+    }
+
+    tableClasses.Append(" sges-tabla-base");
+
+    if (!string.IsNullOrEmpty(cssClass))
+    {
+        tableClasses.Append(" " + cssClass);
+    }
+
+    var seleccionable = ViewData["seleccionable"] is bool
+&& (bool)ViewData["seleccionable"];
+
+    var totalColumnas = columnas.Count() + acciones.Count();
+
+    if (seleccionable)
+    {
+        totalColumnas++;
+    }
+
+    var filasLista = filas.ToList();
+
+    var accionesLista = accionesHtml != null
+        ? accionesHtml.ToList()
+        : null;
+
+    var idsFila = ViewData["idFila"] as IEnumerable<object>;
+
+    var idsLista = idsFila != null
+        ? idsFila.ToList()
+        : new List<object>();
+
+    var tableWrapClass = responsive ? "sges-tabla-wrap table-responsive" : "sges-tabla-wrap";
+}
+
+@if (!string.IsNullOrEmpty(titulo))
+{
+    <div class="sges-tabla-encabezado">
+        <h5 class="sges-tabla-titulo mb-0">
+            <i class="bi bi-table me-2" aria-hidden="true"></i>
+            @titulo
+        </h5>
+    </div>
+}
+
+<div class="@tableWrapClass">
+
+<table class="@tableClasses.ToString()" id="@tableId">
+
+    <thead class="sges-tabla-thead">
+        <tr>
+
+            @if (seleccionable)
+            {
+                <th class="sges-col-seleccion" aria-label="Seleccionar"></th>
+            }
+
+            @foreach (var col in columnas)
+            {
+                <th scope="col">@col</th>
+            }
+
+            @foreach (var acc in acciones)
+            {
+                <th scope="col" class="text-center sges-col-acciones">
+                    @acc
+                </th>
+            }
+
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (!filasLista.Any())
+        {
+            <tr>
+                <td colspan="@totalColumnas"
+                    class="text-center text-muted py-4 sges-tabla-vacia">
+
+                    <i class="bi bi-inbox fs-4 d-block mb-2"
+                       aria-hidden="true"></i>
+
+                    @mensajeVacio
+                </td>
+            </tr>
+        }
+        else
+        {
+            var filaIndex = 0;
+
+            foreach (var fila in filasLista)
+            {
+                <tr>
+
+                    @if (seleccionable)
+                    {
+                        <td class="align-middle text-center">
+                            <input type="radio"
+                                   name="filaSeleccionada"
+                                   value="@(filaIndex < idsLista.Count ? idsLista[filaIndex] : "")" />
+                        </td>
+                    }
+
+                    @foreach (var celda in fila)
+                    {
+                        <td>@celda</td>
+                    }
+
+                    @if (accionesLista != null && filaIndex < accionesLista.Count)
+                    {
+                        var accionFila = accionesLista[filaIndex].ToList();
+
+                        foreach (var accionBtn in accionFila)
+                        {
+                            <td class="text-center sges-col-acciones">
+                                @Html.Raw(accionBtn != null ? accionBtn.ToString() : "")
+                            </td>
+                        }
+                    }
+
+                </tr>
+
+                filaIndex++;
+            }
+        }
+    </tbody>
+
+</table>
+
+</div>

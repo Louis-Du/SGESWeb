@@ -1,0 +1,144 @@
+﻿@{
+    ViewBag.Title = "Inscribir Grupo";
+    var evento = ViewBag.Evento as SGES.Web.Models.EventoModel;
+    var disponibles = ViewBag.Disponibles as List<SGES.Web.Models.AprendizModel>;
+}
+
+@Html.Partial("_Card", null, new ViewDataDictionary(ViewData)
+{
+    { "titulo",    "Inscribir Grupo" },
+    { "icono",     "bi-people" },
+    { "subtitulo", $"Selecciona hasta {evento.CupoMaximo - 1} compañeros (tú ya estás incluido)" }
+})
+
+@using (Html.BeginForm("InscribirGrupo", "Evento", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="idEvento" value="@evento.IdEvento" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <h6>Aprendices disponibles</h6>
+
+            <ul class="list-group" id="listaDisponibles">
+                @foreach (var aprendiz in disponibles)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        data-id="@aprendiz.IdApr" data-nombre="@aprendiz.NombreApr">
+                        <span>
+                            @aprendiz.NombreApr
+                            <small class="text-muted d-block">@aprendiz.EmailApr</small>
+                        </span>
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                onclick="agregarAlGrupo(this)">
+                            Agregar
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h6>Mi grupo <span id="contadorGrupo">(1/@evento.CupoMaximo)</span></h6>
+            <ul class="list-group" id="listaGrupo">
+                <li class="list-group-item">Tú (inscrito automáticamente)</li>
+            </ul>
+            <div id="inputsOcultos"></div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        @Html.Partial("_BotonGuardar", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Confirmar inscripción" },
+            { "icono", "bi-check-circle" }
+        })
+        @Html.Partial("_BotonCancelar", null, new ViewDataDictionary(ViewData)
+        {
+            { "texto", "Volver" },
+            { "url",   Url.Action("Details", "Evento", new { id = evento.IdEvento }) }
+        })
+    </div>
+}
+
+@section scripts {
+<script>
+    var grupo = [];
+    var cupoMaximo = @evento.CupoMaximo;
+    var limiteCompaneros = cupoMaximo - 1;
+
+    function agregarAlGrupo(btn) {
+        if (grupo.length >= limiteCompaneros) {
+            alert("El grupo ya alcanzó el máximo de " + cupoMaximo +
+                  " integrantes (incluyéndote a ti).");
+            return;
+        }
+
+        var li = btn.closest("li");
+        var id = li.dataset.id;
+        var nombre = li.dataset.nombre;
+
+        if (grupo.indexOf(id) !== -1) return;
+        grupo.push(id);
+
+        // Efecto verde "Agregado" en la lista de disponibles
+        var btnAgregar = li.querySelector("button");
+        btnAgregar.disabled = true;
+        btnAgregar.textContent = "Agregado";
+        btnAgregar.className = "btn btn-sm btn-success";
+        li.classList.add("list-group-item-success");
+        li.dataset.agregado = "true";
+
+        // Agregar a Mi grupo
+        var listaGrupo = document.getElementById("listaGrupo");
+        var nuevoLi = document.createElement("li");
+        nuevoLi.className = "list-group-item d-flex justify-content-between align-items-center";
+        nuevoLi.dataset.id = id;
+        nuevoLi.innerHTML = nombre +
+            '<button type="button" class="btn btn-sm btn-outline-danger"' +
+            ' onclick="quitarDelGrupo(this)">Quitar</button>';
+        listaGrupo.appendChild(nuevoLi);
+
+        // Input oculto para el POST
+        var input = document.createElement("input");
+        input.type  = "hidden";
+        input.name  = "seleccionados";
+        input.value = id;
+        input.id    = "input_" + id;
+        document.getElementById("inputsOcultos").appendChild(input);
+
+        actualizarContador();
+    }
+
+    function quitarDelGrupo(btn) {
+        var li  = btn.closest("li");
+        var id  = li.dataset.id;
+
+        grupo = grupo.filter(function (x) { return x !== id; });
+
+        // Restaurar aprendiz en disponibles — quitar efecto verde
+        var disponible = document.querySelector(
+            "#listaDisponibles [data-id='" + id + "']");
+        if (disponible) {
+            disponible.classList.remove("list-group-item-success");
+            disponible.dataset.agregado = "false";
+            var btnAgregar = disponible.querySelector("button");
+            btnAgregar.disabled = false;
+            btnAgregar.textContent = "Agregar";
+            btnAgregar.className = "btn btn-sm btn-outline-primary";
+        }
+
+        // Eliminar input oculto
+        var input = document.getElementById("input_" + id);
+        if (input) input.remove();
+
+        li.remove();
+        actualizarContador();
+    }
+
+    function actualizarContador() {
+        document.getElementById("contadorGrupo").textContent =
+            "(" + (grupo.length + 1) + "/" + cupoMaximo + ")";
+    }
+</script>
+}
