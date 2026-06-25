@@ -21,12 +21,12 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
 
-    - name: Restore packages
-      run: nuget restore SGES.Web.sln
+    - name: Restore NuGet packages
+      run: nuget restore SGES.Web/SGES.Web/SGES.Web.sln
 
 
     - name: Build
-      run: msbuild SGES.Web.sln /p:Configuration=Release
+      run: msbuild SGES.Web/SGES.Web/SGES.Web.sln /p:Configuration=Release
 
 
     - name: Deploy Azure
