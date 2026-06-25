@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build:
 
+  build:
     runs-on: windows-latest
 
     steps:
@@ -25,7 +25,8 @@ jobs:
 
 
     - name: Build
-      run: msbuild SGES.Web/SGES.Web/SGES.Web.sln /p:Configuration=Release
+      run: |
+        msbuild SGES.Web/SGES.Web/SGES.Web.csproj /p:Configuration=Release
 
 
     - name: Deploy Azure
