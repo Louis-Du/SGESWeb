@@ -21,21 +21,17 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
 
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v2
-
-
-    - name: Restore NuGet packages
+    - name: Restore NuGet
       run: nuget restore SGES.Web/SGES.Web/SGES.Web.sln
 
 
-    - name: Build and Publish
+    - name: Publish
       run: |
-        msbuild SGES.Web/SGES.Web/SGES.Web.csproj `
-        /p:Configuration=Release `
-        /p:DeployOnBuild=true `
-        /p:WebPublishMethod=FileSystem `
-        /p:PublishUrl="${{ github.workspace }}/publish"
+        msbuild SGES.Web/SGES.Web/SGES.Web.csproj ^
+        /p:Configuration=Release ^
+        /p:DeployOnBuild=true ^
+        /p:WebPublishMethod=FileSystem ^
+        /p:PublishUrl=./publish
 
 
     - name: Deploy Azure
