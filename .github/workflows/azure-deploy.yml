@@ -1,36 +1,45 @@
-name: Deploy SGES Azure
+name: Deploy SGES to Azure App Service
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: sges-sena
+  DOTNET_VERSION: '4'   # MSBuild, no dotnet CLI
 
 jobs:
-  build:
-
-    runs-on: windows-latest
+  build-and-deploy:
+    runs-on: windows-latest   # ← CRÍTICO: .NET Framework requiere Windows
 
     steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
 
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
 
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
+      - name: Restaurar paquetes NuGet
+        run: nuget restore SGES.Web/SGES.Web/SGES.Web.sln
 
+      - name: Compilar y publicar con MSBuild
+        run: |
+          msbuild SGES.Web/SGES.Web/SGES.Web.sln `
+            /p:Configuration=Release `
+            /p:DeployOnBuild=true `
+            /p:WebPublishMethod=Package `
+            /p:PackageAsSingleFile=true `
+            /p:SkipInvalidConfigurations=true `
+            /p:PackageLocation="${{ github.workspace }}\artifact"
 
-    - name: Restore NuGet
-      run: nuget restore SGES.Web/SGES.Web/SGES.Web.sln
-
-
-    - name: Build
-      run: msbuild SGES.Web/SGES.Web/SGES.Web.sln /p:Configuration=Release
-
-
-    - name: Deploy Azure
-      uses: azure/webapps-deploy@v3
-      with:
-        app-name: sges-sena
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: SGES.Web/SGES.Web
+      - name: Desplegar en Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: '${{ github.workspace }}\artifact\*.zip'
