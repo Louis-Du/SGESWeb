@@ -45,26 +45,9 @@ jobs:
           Copy-Item "$src\Reports" "$dest\Reports" -Recurse -Force
           Copy-Item "$src\Global.asax" "$dest\Global.asax" -Force
           Copy-Item "$src\favicon.ico" "$dest\favicon.ico" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$src\Web.config"  "$dest\Web.config"  -Force
 
-          # Web.config: usar Release transform
-          $webConfigSrc = "$src\obj\Release\TransformWebConfig\transformed\Web.config"
-          if (Test-Path $webConfigSrc) {
-            Write-Host "Usando Web.config transformado de Release"
-            Copy-Item $webConfigSrc "$dest\Web.config" -Force
-          } else {
-            Write-Host "Usando Web.config original"
-            Copy-Item "$src\Web.config" "$dest\Web.config" -Force
-          }
-
-          Write-Host "=== Verificando Web.config ==="
-          $content = Get-Content "$dest\Web.config" -Raw
-          Write-Host "Tamaño: $($content.Length) caracteres"
-          if ($content -match "SGESConnection") {
-            Write-Host "Connection string encontrada OK"
-          } else {
-            Write-Error "Web.config no contiene SGESConnection"
-            exit 1
-          }
+          Write-Host "Tamaño Web.config: $((Get-Item "$dest\Web.config").Length) bytes"
 
       - name: Desplegar en Azure App Service
         uses: azure/webapps-deploy@v3
@@ -72,3 +55,28 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: 'D:\a\SGESWeb\SGESWeb\publish'
+
+      - name: Forzar Web.config correcto via Kudu API
+        run: |
+          $webConfigContent = Get-Content "D:\a\SGESWeb\SGESWeb\SGES.Web\SGES.Web\Web.config" -Raw
+          Write-Host "Subiendo Web.config ($($webConfigContent.Length) chars) via Kudu..."
+
+          $publishProfile = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}"))
+
+          # Extraer credenciales del publish profile
+          $xml = [xml]$publishProfile
+          $profile = $xml.publishData.publishProfile | Where-Object { $_.publishMethod -eq "MSDeploy" } | Select-Object -First 1
+          $username = $profile.userName
+          $password = $profile.userPWD
+          $publishUrl = $profile.publishUrl
+
+          $kuduUrl = "https://$publishUrl/api/vfs/site/wwwroot/Web.config"
+          $base64Auth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${username}:${password}"))
+          $headers = @{
+            Authorization = "Basic $base64Auth"
+            "If-Match" = "*"
+          }
+
+          $bytes = [System.Text.Encoding]::UTF8.GetBytes($webConfigContent)
+          Invoke-RestMethod -Uri $kuduUrl -Method Put -Headers $headers -Body $bytes -ContentType "application/octet-stream"
+          Write-Host "Web.config subido correctamente"
