@@ -8,11 +8,10 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: sges-sena
-  DOTNET_VERSION: '4'   # MSBuild, no dotnet CLI
 
 jobs:
   build-and-deploy:
-    runs-on: windows-latest   # ← CRÍTICO: .NET Framework requiere Windows
+    runs-on: windows-latest
 
     steps:
       - name: Checkout código
@@ -32,14 +31,13 @@ jobs:
           msbuild SGES.Web/SGES.Web/SGES.Web.sln `
             /p:Configuration=Release `
             /p:DeployOnBuild=true `
-            /p:WebPublishMethod=Package `
-            /p:PackageAsSingleFile=true `
-            /p:SkipInvalidConfigurations=true `
-            /p:PackageLocation="${{ github.workspace }}\artifact"
+            /p:WebPublishMethod=FileSystem `
+            /p:PublishUrl="${{ github.workspace }}\publish" `
+            /p:SkipInvalidConfigurations=true
 
       - name: Desplegar en Azure App Service
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: '${{ github.workspace }}\artifact\*.zip'
+          package: '${{ github.workspace }}\publish'
