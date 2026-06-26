@@ -38,18 +38,33 @@ jobs:
           $dest = "D:\a\SGESWeb\SGESWeb\publish"
           New-Item -ItemType Directory -Force -Path $dest
 
-          # Copiar bin, Content, Scripts, Views, Reports
           Copy-Item "$src\bin"     "$dest\bin"     -Recurse -Force
           Copy-Item "$src\Content" "$dest\Content" -Recurse -Force
           Copy-Item "$src\Scripts" "$dest\Scripts" -Recurse -Force
           Copy-Item "$src\Views"   "$dest\Views"   -Recurse -Force
           Copy-Item "$src\Reports" "$dest\Reports" -Recurse -Force
-          Copy-Item "$src\Web.config"  "$dest\Web.config"  -Force
           Copy-Item "$src\Global.asax" "$dest\Global.asax" -Force
           Copy-Item "$src\favicon.ico" "$dest\favicon.ico" -Force -ErrorAction SilentlyContinue
 
-          Write-Host "Archivos en publish:"
-          Get-ChildItem $dest | Select-Object Name
+          # Web.config: usar Release transform
+          $webConfigSrc = "$src\obj\Release\TransformWebConfig\transformed\Web.config"
+          if (Test-Path $webConfigSrc) {
+            Write-Host "Usando Web.config transformado de Release"
+            Copy-Item $webConfigSrc "$dest\Web.config" -Force
+          } else {
+            Write-Host "Usando Web.config original"
+            Copy-Item "$src\Web.config" "$dest\Web.config" -Force
+          }
+
+          Write-Host "=== Verificando Web.config ==="
+          $content = Get-Content "$dest\Web.config" -Raw
+          Write-Host "Tamaño: $($content.Length) caracteres"
+          if ($content -match "SGESConnection") {
+            Write-Host "Connection string encontrada OK"
+          } else {
+            Write-Error "Web.config no contiene SGESConnection"
+            exit 1
+          }
 
       - name: Desplegar en Azure App Service
         uses: azure/webapps-deploy@v3
