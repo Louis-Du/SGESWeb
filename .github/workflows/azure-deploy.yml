@@ -35,18 +35,13 @@ jobs:
             /p:PublishUrl="D:\a\SGESWeb\SGESWeb\publish" `
             /p:SkipInvalidConfigurations=true
 
-      - name: Verificar contenido publicado
+      - name: Diagnosticar rutas
         run: |
-          Write-Host "Contenido de publish:"
-          Get-ChildItem "D:\a\SGESWeb\SGESWeb\publish" -ErrorAction SilentlyContinue
-          if (-not (Test-Path "D:\a\SGESWeb\SGESWeb\publish")) {
-            Write-Error "La carpeta publish no existe"
-            exit 1
-          }
-
-      - name: Desplegar en Azure App Service
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: 'D:\a\SGESWeb\SGESWeb\publish'
+          Write-Host "=== github.workspace ==="
+          Write-Host "${{ github.workspace }}"
+          Write-Host "=== Contenido de D:\a\SGESWeb\SGESWeb\ ==="
+          Get-ChildItem "D:\a\SGESWeb\SGESWeb\" | Select-Object Name, PSIsContainer
+          Write-Host "=== Buscar carpeta publish en D:\a\ ==="
+          Get-ChildItem "D:\a\" -Recurse -Directory -Filter "publish" -ErrorAction SilentlyContinue | Select-Object FullName
+          Write-Host "=== Buscar bin\Release en el proyecto ==="
+          Get-ChildItem "D:\a\SGESWeb\SGESWeb\SGES.Web\SGES.Web\bin" -ErrorAction SilentlyContinue | Select-Object Name
