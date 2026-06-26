@@ -26,22 +26,34 @@ jobs:
       - name: Restaurar paquetes NuGet
         run: nuget restore SGES.Web/SGES.Web/SGES.Web.sln
 
-      - name: Compilar y publicar con MSBuild
+      - name: Compilar con MSBuild
         run: |
           msbuild SGES.Web/SGES.Web/SGES.Web.sln `
             /p:Configuration=Release `
-            /p:DeployOnBuild=true `
-            /p:WebPublishMethod=FileSystem `
-            /p:PublishUrl="D:\a\SGESWeb\SGESWeb\publish" `
             /p:SkipInvalidConfigurations=true
 
-      - name: Diagnosticar rutas
+      - name: Empaquetar para despliegue
         run: |
-          Write-Host "=== github.workspace ==="
-          Write-Host "${{ github.workspace }}"
-          Write-Host "=== Contenido de D:\a\SGESWeb\SGESWeb\ ==="
-          Get-ChildItem "D:\a\SGESWeb\SGESWeb\" | Select-Object Name, PSIsContainer
-          Write-Host "=== Buscar carpeta publish en D:\a\ ==="
-          Get-ChildItem "D:\a\" -Recurse -Directory -Filter "publish" -ErrorAction SilentlyContinue | Select-Object FullName
-          Write-Host "=== Buscar bin\Release en el proyecto ==="
-          Get-ChildItem "D:\a\SGESWeb\SGESWeb\SGES.Web\SGES.Web\bin" -ErrorAction SilentlyContinue | Select-Object Name
+          $src = "D:\a\SGESWeb\SGESWeb\SGES.Web\SGES.Web"
+          $dest = "D:\a\SGESWeb\SGESWeb\publish"
+          New-Item -ItemType Directory -Force -Path $dest
+
+          # Copiar bin, Content, Scripts, Views, Reports
+          Copy-Item "$src\bin"     "$dest\bin"     -Recurse -Force
+          Copy-Item "$src\Content" "$dest\Content" -Recurse -Force
+          Copy-Item "$src\Scripts" "$dest\Scripts" -Recurse -Force
+          Copy-Item "$src\Views"   "$dest\Views"   -Recurse -Force
+          Copy-Item "$src\Reports" "$dest\Reports" -Recurse -Force
+          Copy-Item "$src\Web.config"  "$dest\Web.config"  -Force
+          Copy-Item "$src\Global.asax" "$dest\Global.asax" -Force
+          Copy-Item "$src\favicon.ico" "$dest\favicon.ico" -Force -ErrorAction SilentlyContinue
+
+          Write-Host "Archivos en publish:"
+          Get-ChildItem $dest | Select-Object Name
+
+      - name: Desplegar en Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: 'D:\a\SGESWeb\SGESWeb\publish'
